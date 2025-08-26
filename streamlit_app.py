@@ -136,7 +136,7 @@ def main():
     with tabs[0]:
         st.title("Datos base · EDA")
 
-        # 1) Cargar tu CSV (ya lo vienes usando con load_raw_csv)
+        # 1) Cargar tu CSV
         data_path = "Copia de Calidad_del_agua_del_Rio_Cauca.csv"
         df_raw, info = load_raw_csv(data_path)
 
@@ -146,29 +146,26 @@ def main():
             st.caption(f"lectura: {info}")
             st.write(f"Filas: {len(df_raw):,} · Columnas: {df_raw.shape[1]}")
 
-            # 2) Reproducción de tu limpieza básica (comas → punto, coerción a numérico y drop de columnas vacías)
+            # 2) Limpieza básica
             df_eda = df_raw.copy()
             for c in df_eda.columns:
                 if df_eda[c].dtype == "object":
                     s = df_eda[c].astype(str).str.strip()
                     s = s.replace({"None": pd.NA, "nan": pd.NA, "": pd.NA})
-                    s = s.str.replace(".", "", regex=False)   # quita separador de miles
-                    s = s.str.replace(",", ".", regex=False)  # coma → punto
+                    s = s.str.replace(".", "", regex=False)
+                    s = s.str.replace(",", ".", regex=False)
                     num = pd.to_numeric(s, errors="coerce")
                     if num.notna().sum() > 0:
                         df_eda[c] = num
-            # elimina columnas totalmente vacías
             df_eda.dropna(axis="columns", how="all", inplace=True)
 
             st.subheader("Muestra del dataset limpio")
             st.dataframe(df_eda.head(200), use_container_width=True)
 
-            # 3) Construcción de la tabla de estadísticas (igual a tu notebook)
+            # 3) Tabla de estadísticas
             import numpy as np
-
             def build_stats_table(df_num: pd.DataFrame) -> pd.DataFrame:
                 est = df_num.describe().T
-
                 est["Tipo de dato"] = df_num.dtypes
                 est["IQR"] = est["75%"] - est["25%"]
                 est["MAD"] = (df_num - df_num.mean()).abs().mean()
@@ -180,7 +177,6 @@ def main():
                 est["SE.Skewness"] = np.sqrt((6*n*(n-1))/((n-2)*(n+1)*(n+3)))
                 est["Pct.Valid"] = (est["count"]/n)*100
 
-                # Renombrar como en tu código
                 est = est.rename(columns={
                     "count":"N.Valid","mean":"Mean","std":"Std.Dev","min":"Min",
                     "25%":"Q1","50%":"Median","75%":"Q3","max":"Max"
@@ -190,7 +186,6 @@ def main():
                         "Q1","Median","Q3","Max","IQR","MAD","CV","Skewness","SE.Skewness","Kurtosis"]
                 est = est[cols]
 
-                # Formato: enteros sin decimales; floats con 2 decimales. Deja "Tipo de dato" tal cual.
                 def _fmt(x):
                     if pd.isna(x): return ""
                     if isinstance(x,(int,np.integer)): return f"{x}"
@@ -202,7 +197,6 @@ def main():
                 for c in est_fmt.columns:
                     if c not in ("Tipo de dato",):
                         est_fmt[c] = est_fmt[c].map(_fmt)
-                # nombre de fila = variable
                 est_fmt = est_fmt.reset_index().rename(columns={"index":"Variable"})
                 return est_fmt
 
@@ -212,18 +206,16 @@ def main():
             st.subheader("Estadísticas completas (post-limpieza/normalización)")
             st.dataframe(stats_tbl, use_container_width=True)
 
-            # 4) Descarga opcional
             st.download_button(
                 "Descargar estadísticas (CSV)",
                 data=stats_tbl.to_csv(index=False).encode("utf-8"),
                 file_name="estadisticas_completas.csv",
                 mime="text/csv",
             )
-            
-            # 5) Auditoría rápida de completitud (variables con pocos datos válidos)
+
+            # 4) Auditoría rápida de completitud (variables con pocos datos válidos)
             st.subheader("Variables con menos del % de datos válidos")
 
-            # usa solo columnas numéricas limpias
             n = len(df_num)
             n_valid = df_num.notna().sum()
             pct_valid = (n_valid / n * 100).round(2)
@@ -242,11 +234,14 @@ def main():
                 .reset_index(drop=True)
             )
 
+            # aquí primero el slider
             umbral = st.slider("Elige umbral (%)", min_value=50, max_value=100, value=80, step=1)
-            vars_baja = audit[audit["Pct.Valid"] < umbral]
 
-            st.write(f"Variables con menos del {umbral}% de datos válidos: {len(vars_baja)}")
-            st.dataframe(vars_baja, use_container_width=True)
+            # luego la marca de estado
+            audit["Estado"] = np.where(audit["Pct.Valid"] < umbral, "❌ Bajo umbral", "✅ OK")
+
+            st.write(f"Total de variables auditadas: {len(audit)}")
+            st.dataframe(audit, use_container_width=True)
 
             # descarga opcional del reporte de completitud
             st.download_button(
@@ -255,7 +250,50 @@ def main():
                 file_name="reporte_completitud.csv",
                 mime="text/csv",
             )
-     
+            
+            # 5) Análisis de valores nulos · ANTES de imputación (solo columnas >= umbral)
+            st.subheader("Análisis de valores nulos · Antes de imputación")
+
+            # columnas que cumplen el umbral (>=)
+            cols_keep = audit.loc[audit["Pct.Valid"] >= umbral, "Variable"].tolist()
+            st.caption(f"Variables que cumplen ≥ {umbral}% de válidos: {len(cols_keep)}")
+
+            if len(cols_keep) == 0:
+                st.info("No hay variables que cumplan el umbral seleccionado.")
+            else:
+                # trabajar solo con las columnas que pasan el umbral (deben ser 27 con umbral=80)
+                df_pass = df_num[cols_keep].copy()
+
+                # tabla de nulos
+                null_counts = df_pass.isna().sum()
+                null_percent = (null_counts / len(df_pass)) * 100
+
+                tabla_nulos = (
+                    pd.DataFrame({
+                        "Variable": cols_keep,
+                        "Nulos": null_counts.values,
+                        "% Nulos": null_percent.values
+                    })
+                    .sort_values(by="% Nulos", ascending=False)
+                    .reset_index(drop=True)
+                )
+
+                st.dataframe(tabla_nulos, use_container_width=True)
+
+                # heatmap
+                
+                import matplotlib.pyplot as plt
+                import seaborn as sns
+
+                st.write("Mapa de valores nulos (antes de imputación)")
+                fig, ax = plt.subplots(figsize=(12, 6))
+                sns.heatmap(df_pass.isna(), cbar=False, cmap="viridis", yticklabels=False, ax=ax)
+                ax.set_title(f"Mapa de valores nulos ANTES de imputación · {len(cols_keep)} variables", fontsize=14)
+                ax.set_xlabel("Variables")
+                ax.set_ylabel("Registros")
+                st.pyplot(fig)
+
+
     with tabs[1]:
         render_diccionario("diccionario.xlsx","Hoja1")
 
@@ -279,3 +317,7 @@ if __name__ == "__main__":
     main()
 
 # streamlit run streamlit_app.py --PARA EJECUTAR EN TERMINAL
+## EJECUTAR LINEA POR LINEA EN TERMINAL PARA ACTUALIZAR EN GITHUB
+# git add .
+# git commit -m "actualización de archivos"
+# git push origin main
