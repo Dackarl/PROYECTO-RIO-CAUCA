@@ -219,7 +219,43 @@ def main():
                 file_name="estadisticas_completas.csv",
                 mime="text/csv",
             )
+            
+            # 5) Auditoría rápida de completitud (variables con pocos datos válidos)
+            st.subheader("Variables con menos del % de datos válidos")
 
+            # usa solo columnas numéricas limpias
+            n = len(df_num)
+            n_valid = df_num.notna().sum()
+            pct_valid = (n_valid / n * 100).round(2)
+            tipo = df_num.dtypes.astype(str)
+
+            audit = (
+                pd.DataFrame(
+                    {
+                        "Variable": pct_valid.index,
+                        "Pct.Valid": pct_valid.values,
+                        "N.Valid": n_valid.values,
+                        "Tipo de dato": tipo.values,
+                    }
+                )
+                .sort_values("Pct.Valid")
+                .reset_index(drop=True)
+            )
+
+            umbral = st.slider("Elige umbral (%)", min_value=50, max_value=100, value=80, step=1)
+            vars_baja = audit[audit["Pct.Valid"] < umbral]
+
+            st.write(f"Variables con menos del {umbral}% de datos válidos: {len(vars_baja)}")
+            st.dataframe(vars_baja, use_container_width=True)
+
+            # descarga opcional del reporte de completitud
+            st.download_button(
+                "Descargar reporte de completitud (CSV)",
+                data=audit.to_csv(index=False).encode("utf-8"),
+                file_name="reporte_completitud.csv",
+                mime="text/csv",
+            )
+     
     with tabs[1]:
         render_diccionario("diccionario.xlsx","Hoja1")
 
