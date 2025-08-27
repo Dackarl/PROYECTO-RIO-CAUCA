@@ -2,6 +2,9 @@
 import os, glob, json, csv
 import pandas as pd
 import streamlit as st
+import seaborn as sns
+import pandas as _pd
+PD_NA = _pd.NA
 
 st.set_page_config(page_title="Río Cauca • Dashboard", layout="wide")
 
@@ -137,7 +140,7 @@ def main():
         st.title("Datos base · EDA")
 
         # 1) Cargar tu CSV
-        data_path = "Copia de Calidad_del_agua_del_Rio_Cauca.csv"
+        data_path = "Calidad_del_agua_del_Rio_Cauca.csv"
         df_raw, info = load_raw_csv(data_path)
 
         if df_raw is None:
@@ -213,86 +216,93 @@ def main():
                 mime="text/csv",
             )
 
-            # 4) Auditoría rápida de completitud (variables con pocos datos válidos)
-            st.subheader("Variables con menos del % de datos válidos")
+            # 4) Auditoría rápida de completitud (EDA puro, solo numéricas)
+            st.subheader("Variables con menos del 80% de datos válidos")
 
-            n = len(df_num)
-            n_valid = df_num.notna().sum()
+            # quedarnos únicamente con columnas numéricas
+            df_eda_num = df_eda.select_dtypes(include='number')
+
+            n = len(df_eda_num)
+            n_valid = df_eda_num.notna().sum()
             pct_valid = (n_valid / n * 100).round(2)
-            tipo = df_num.dtypes.astype(str)
+            tipo = df_eda_num.dtypes.astype(str)
 
             audit = (
-                pd.DataFrame(
-                    {
-                        "Variable": pct_valid.index,
-                        "Pct.Valid": pct_valid.values,
-                        "N.Valid": n_valid.values,
-                        "Tipo de dato": tipo.values,
-                    }
-                )
+                pd.DataFrame({
+                    "Variable": pct_valid.index,
+                    "Pct.Valid": pct_valid.values,
+                    "N.Valid": n_valid.values,
+                    "Tipo de dato": tipo.values
+                })
                 .sort_values("Pct.Valid")
                 .reset_index(drop=True)
             )
 
-            # aquí primero el slider
-            umbral = st.slider("Elige umbral (%)", min_value=50, max_value=100, value=80, step=1)
-
-            # luego la marca de estado
+            umbral = 80
             audit["Estado"] = np.where(audit["Pct.Valid"] < umbral, "❌ Bajo umbral", "✅ OK")
 
             st.write(f"Total de variables auditadas: {len(audit)}")
             st.dataframe(audit, use_container_width=True)
 
-            # descarga opcional del reporte de completitud
-            st.download_button(
-                "Descargar reporte de completitud (CSV)",
-                data=audit.to_csv(index=False).encode("utf-8"),
-                file_name="reporte_completitud.csv",
-                mime="text/csv",
+            # Enunciado final (solo diagnóstico, no filtra aún)
+            n_supervivientes = (audit["Pct.Valid"] >= umbral).sum()
+            st.info(f"Con un umbral del {umbral}%, quedarían **{n_supervivientes} variables numéricas** para continuar.")
+
+            # ===== PASO 5 y 6: Nulos antes / Imputación KNN / Nulos después =====
+            import numpy as np, pandas as pd, matplotlib.pyplot as plt, seaborn as sns
+            from sklearn.preprocessing import StandardScaler
+            from sklearn.impute import KNNImputer
+
+            st.subheader("Mapa de nulos ANTES de la imputación")
+
+            # base para imputación: solo numéricas del EDA
+            df_eda_num = df_eda.select_dtypes(include="number").copy()
+
+            # definir filtrado por completitud (umbral fijo)
+            umbral = 80
+            pct_valid_eda = (df_eda_num.notna().sum() / len(df_eda_num) * 100)
+            cols_ok = pct_valid_eda[pct_valid_eda >= umbral].index.tolist()
+            df_filtrado = df_eda_num[cols_ok].copy()
+
+            # resumen + heatmap antes
+            tabla_nulos_antes = (
+                pd.DataFrame({
+                    "Variable": df_filtrado.columns,
+                    "Nulos": df_filtrado.isna().sum().values,
+                    "% Nulos": (df_filtrado.isna().sum().values / len(df_filtrado) * 100).round(2)
+                }).sort_values("% Nulos", ascending=False)
             )
-            
-            # 5) Análisis de valores nulos · ANTES de imputación (solo columnas >= umbral)
-            st.subheader("Análisis de valores nulos · Antes de imputación")
+            st.dataframe(tabla_nulos_antes, use_container_width=True)
 
-            # columnas que cumplen el umbral (>=)
-            cols_keep = audit.loc[audit["Pct.Valid"] >= umbral, "Variable"].tolist()
-            st.caption(f"Variables que cumplen ≥ {umbral}% de válidos: {len(cols_keep)}")
+            fig, ax = plt.subplots(figsize=(12,6))
+            sns.heatmap(df_filtrado.isna(), cbar=False, cmap="viridis", yticklabels=False, ax=ax)
+            ax.set_title("Mapa de valores nulos · ANTES de la imputación")
+            ax.set_xlabel("Variables"); ax.set_ylabel("Registros")
+            st.pyplot(fig)
 
-            if len(cols_keep) == 0:
-                st.info("No hay variables que cumplan el umbral seleccionado.")
-            else:
-                # trabajar solo con las columnas que pasan el umbral (deben ser 27 con umbral=80)
-                df_pass = df_num[cols_keep].copy()
+            st.caption(f"Con umbral {umbral}%, variables consideradas: {len(df_filtrado.columns)}")
 
-                # tabla de nulos
-                null_counts = df_pass.isna().sum()
-                null_percent = (null_counts / len(df_pass)) * 100
+            st.subheader("Imputación KNN y verificación")
 
-                tabla_nulos = (
-                    pd.DataFrame({
-                        "Variable": cols_keep,
-                        "Nulos": null_counts.values,
-                        "% Nulos": null_percent.values
-                    })
-                    .sort_values(by="% Nulos", ascending=False)
-                    .reset_index(drop=True)
-                )
+            # máscara de nulos para identificar imputados
+            mask_imputed = df_filtrado.isna()
 
-                st.dataframe(tabla_nulos, use_container_width=True)
+            # escalar → imputar → desescalar
+            scaler = StandardScaler()
+            X_scaled = pd.DataFrame(scaler.fit_transform(df_filtrado), columns=df_filtrado.columns)
+            imputer = KNNImputer(n_neighbors=5, weights="distance")
+            X_imp_scaled = pd.DataFrame(imputer.fit_transform(X_scaled), columns=X_scaled.columns)
+            df_imputed = pd.DataFrame(scaler.inverse_transform(X_imp_scaled), columns=df_filtrado.columns, index=df_filtrado.index)
 
-                # heatmap
-                
-                import matplotlib.pyplot as plt
-                import seaborn as sns
+            # verificación posterior
+            fig, ax = plt.subplots(figsize=(12,6))
+            sns.heatmap(df_imputed.isna(), cbar=False, cmap="viridis", yticklabels=False, ax=ax)
+            ax.set_title("Mapa de valores nulos · DESPUÉS de la imputación")
+            ax.set_xlabel("Variables"); ax.set_ylabel("Registros")
+            st.pyplot(fig)
 
-                st.write("Mapa de valores nulos (antes de imputación)")
-                fig, ax = plt.subplots(figsize=(12, 6))
-                sns.heatmap(df_pass.isna(), cbar=False, cmap="viridis", yticklabels=False, ax=ax)
-                ax.set_title(f"Mapa de valores nulos ANTES de imputación · {len(cols_keep)} variables", fontsize=14)
-                ax.set_xlabel("Variables")
-                ax.set_ylabel("Registros")
-                st.pyplot(fig)
-
+            imputaciones = int(mask_imputed.sum().sum())
+            st.success(f"Imputación completada. Celdas imputadas: {imputaciones}. Columnas en df_filtrado: {len(df_filtrado.columns)}")
 
     with tabs[1]:
         render_diccionario("diccionario.xlsx","Hoja1")
