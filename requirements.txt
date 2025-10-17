@@ -1,0 +1,20 @@
+# Librerías base de ciencia de datos
+pandas
+numpy
+matplotlib
+seaborn
+openpyxl
+
+# Machine Learning y estadística
+scikit-learn
+statsmodels
+shap
+optuna
+
+# Utilidades
+joblib
+streamlit
+ipywidgets
+
+# Recomendadas para notebooks
+ipython
