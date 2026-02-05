@@ -12,7 +12,7 @@ El análisis utiliza datos fisicoquímicos históricos del río y emplea técnic
 
 ```
 PROYECTO-RIO-CAUCA/
-├── General_1.1.ipynb              # Notebook principal con pipeline completo
+├── rio_cauca_ml_pipeline.ipynb         # Notebook principal con pipeline completo
 ├── Calidad_del_agua_del_Rio_Cauca.csv  # Dataset principal
 ├── diccionario.xlsx                # Diccionario de datos de variables
 ├── requirements.txt                # Dependencias del proyecto
@@ -93,7 +93,7 @@ pip install -r requirements.txt
 ```
 
 ### Ejecución
-1. Abrir el notebook `General_1.1.ipynb`
+1. Abrir el notebook `rio_cauca_ml_pipeline.ipynb`
 2. Ejecutar las celdas secuencialmente
 3. Los resultados y gráficas se generan automáticamente
 4. Las gráficas de presentación se exportan a `presentacion_graficas/`
