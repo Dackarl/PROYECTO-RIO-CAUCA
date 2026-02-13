@@ -1,0 +1,190 @@
+                    <!-- Grid LADO A LADO -->
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+                      <!-- ========================= -->
+                      <!-- GRÁFICA 1: TOP 5 POR R² -->
+                      <!-- ========================= -->
+                      <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                        <div class="flex items-center justify-between mb-4">
+                          <h4 class="text-white font-semibold text-lg">
+                            Top 5 modelos por R² (DBO)
+                          </h4>
+                          <span class="text-gray-400 text-xs italic">Escala 0–1</span>
+                        </div>
+
+                        <svg viewBox="0 0 1100 360" class="w-full h-auto">
+                          <g transform="translate(70,30)">
+                            <!-- Grid -->
+                            <g stroke="rgba(255,255,255,0.12)">
+                              <line x1="0" y1="235" x2="1000" y2="235"/>
+                              <line x1="0" y1="188" x2="1000" y2="188"/>
+                              <line x1="0" y1="141" x2="1000" y2="141"/>
+                              <line x1="0" y1="94"  x2="1000" y2="94"/>
+                              <line x1="0" y1="47"  x2="1000" y2="47"/>
+                              <line x1="0" y1="0"   x2="1000" y2="0"/>
+                            </g>
+
+                            <!-- Ejes -->
+                            <line x1="0" y1="235" x2="1000" y2="235" stroke="rgba(255,255,255,0.25)"/>
+                            <line x1="0" y1="0" x2="0" y2="235" stroke="rgba(255,255,255,0.25)"/>
+
+                            <!-- Barras -->
+                            <g fill="rgba(212,175,55,0.75)">
+                              <rect x="40"  y="22" width="130" height="213"/>
+                              <rect x="240" y="25" width="130" height="210"/>
+                              <rect x="440" y="30" width="130" height="205"/>
+                              <rect x="640" y="31" width="130" height="204"/>
+                              <rect x="840" y="39" width="130" height="196"/>
+                            </g>
+
+                            <!-- Valores -->
+                            <g fill="white" font-size="20" font-weight="700" text-anchor="middle">
+                              <text x="105" y="16">0.904</text>
+                              <text x="305" y="16">0.892</text>
+                              <text x="505" y="16">0.872</text>
+                              <text x="705" y="16">0.867</text>
+                              <text x="905" y="16">0.833</text>
+                            </g>
+
+                            <!-- Etiquetas X -->
+                            <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+
+                              <text x="105" y="270">MLPRegressor</text>
+                              <text x="105" y="300" fill="rgba(255,255,255,0.6)">DBO (RFE)</text>
+
+                              <text x="305" y="270">MLPRegressor</text>
+                              <text x="305" y="300" fill="rgba(255,255,255,0.6)">Unión RFE</text>
+
+                              <text x="505" y="270">XGBoost</text>
+                              <text x="505" y="300" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+
+                              <text x="705" y="270">RandomForest</text>
+                              <text x="705" y="300" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+
+                              <text x="905" y="270">MLPRegressor</text>
+                              <text x="905" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+
+                            </g>
+                          </g>
+                        </svg>
+                      </div>
+
+                      <!-- ========================= -->
+                      <!-- GRÁFICA 2: RMSE / MAE -->
+                      <!-- ========================= -->
+                      <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                        <div class="flex items-center justify-between mb-4">
+                          <h4 class="text-white font-semibold text-lg">
+                            RMSE y MAE – Top 5 (DBO)
+                          </h4>
+                          <div class="flex gap-4 text-xs text-gray-300">
+                            <span>■ RMSE</span>
+                            <span>■ MAE</span>
+                          </div>
+                        </div>
+
+                        <svg viewBox="0 0 1100 380" class="w-full h-auto">
+                          <g transform="translate(70,30)">
+                            <!-- Grid -->
+                            <g stroke="rgba(255,255,255,0.12)">
+                              <line x1="0" y1="240" x2="1000" y2="240"/>
+                              <line x1="0" y1="192" x2="1000" y2="192"/>
+                              <line x1="0" y1="144" x2="1000" y2="144"/>
+                              <line x1="0" y1="96"  x2="1000" y2="96"/>
+                              <line x1="0" y1="48"  x2="1000" y2="48"/>
+                              <line x1="0" y1="0"   x2="1000" y2="0"/>
+                            </g>
+
+                            <!-- Ejes -->
+                            <line x1="0" y1="240" x2="1000" y2="240" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
+                            <line x1="0" y1="0"   x2="0"    y2="240" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
+
+                            <!-- Etiquetas eje Y (0 a 5) -->
+                            <g fill="rgba(255,255,255,0.75)" font-size="14" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                              <text x="-12" y="244" text-anchor="end">0</text>
+                              <text x="-12" y="196" text-anchor="end">1</text>
+                              <text x="-12" y="148" text-anchor="end">2</text>
+                              <text x="-12" y="100" text-anchor="end">3</text>
+                              <text x="-12" y="52"  text-anchor="end">4</text>
+                              <text x="-12" y="4"   text-anchor="end">5</text>
+                            </g>
+
+                            <!-- Barras -->
+                            <g>
+                              <!-- Grupo 1 -->
+                              <rect x="65"  y="82" width="45" height="158" fill="rgba(212,175,55,0.75)"/>
+                              <rect x="124" y="147" width="45" height="93" fill="rgba(255,255,255,0.55)"/>
+
+                              <!-- Grupo 2 -->
+                              <rect x="265" y="73" width="45" height="167" fill="rgba(212,175,55,0.75)"/>
+                              <rect x="324" y="138" width="45" height="102" fill="rgba(255,255,255,0.55)"/>
+
+                              <!-- Grupo 3 -->
+                              <rect x="465" y="58" width="45" height="182" fill="rgba(212,175,55,0.75)"/>
+                              <rect x="524" y="142" width="45" height="98" fill="rgba(255,255,255,0.55)"/>
+
+                              <!-- Grupo 4 -->
+                              <rect x="665" y="55" width="45" height="185" fill="rgba(212,175,55,0.75)"/>
+                              <rect x="724" y="148" width="45" height="92" fill="rgba(255,255,255,0.55)"/>
+
+                              <!-- Grupo 5 -->
+                              <rect x="865" y="32" width="45" height="208" fill="rgba(212,175,55,0.75)"/>
+                              <rect x="924" y="144" width="45" height="96" fill="rgba(255,255,255,0.55)"/>
+                            </g>
+
+                            <!-- Valores encima de cada barra (RMSE y MAE) -->
+                            <g fill="rgba(255,255,255,0.95)" font-size="20" font-weight="700"
+                              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto" text-anchor="middle">
+                              <!-- Grupo 1 -->
+                              <text x="87.5"  y="72">3.28</text>
+                              <text x="146.5" y="137">1.93</text>
+
+                              <!-- Grupo 2 -->
+                              <text x="287.5" y="63">3.48</text>
+                              <text x="346.5" y="128">2.12</text>
+
+                              <!-- Grupo 3 -->
+                              <text x="487.5" y="48">3.79</text>
+                              <text x="546.5" y="132">2.02</text>
+
+                              <!-- Grupo 4 -->
+                              <text x="687.5" y="45">3.86</text>
+                              <text x="746.5" y="138">1.91</text>
+
+                              <!-- Grupo 5 -->
+                              <text x="887.5" y="22">4.33</text>
+                              <text x="946.5" y="134">1.99</text>
+                            </g>
+
+                            <!-- Etiquetas X (con separación vertical entre línea 1 y línea 2) -->
+                            <g fill="rgba(255,255,255,0.85)" font-size="20"
+                              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto" text-anchor="middle">
+
+                              <!-- Centros de grupo: (65+124+45)/2 -> mejor usar 117; mantengo la estética como en la 1ra -->
+                              <text x="117" y="275">MLPRegressor</text>
+                              <text x="117" y="305" fill="rgba(255,255,255,0.6)">DBO (RFE)</text>
+
+                              <text x="317" y="275">MLPRegressor</text>
+                              <text x="317" y="305" fill="rgba(255,255,255,0.6)">Unión RFE</text>
+
+                              <text x="517" y="275">XGBoost</text>
+                              <text x="517" y="305" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+
+                              <text x="717" y="275">RandomForest</text>
+                              <text x="717" y="305" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+
+                              <text x="917" y="275">MLPRegressor</text>
+                              <text x="917" y="305" fill="rgba(255,255,255,0.6)">VIF</text>
+                            </g>
+
+                            <!-- Label eje Y -->
+                            <text x="-55" y="120" transform="rotate(-90 -55 120)"
+                                  fill="rgba(255,255,255,0.75)" font-size="16"
+                                  font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                              Error
+                            </text>
+                          </g>
+                        </svg>
+                      </div>
+
+                    </div>

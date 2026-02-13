@@ -1,0 +1,16 @@
+<!-- ========================= -->
+<!-- GRÁFICA: Learning Curve — pH (Imagen) -->
+<!-- ========================= -->
+<div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)] mt-6">
+  <div class="flex items-center justify-between mb-4">
+    <h4 class="text-white font-semibold text-lg">
+      Learning Curve — pH
+    </h4>
+    <span class="text-gray-400 text-xs italic">Imagen original</span>
+  </div>
+
+  <!-- Contenedor claro para legibilidad -->
+  <div class="bg-white p-4 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <img src="Learing curve pH.png" alt="Learning Curve pH" class="w-full h-auto rounded-lg" />
+  </div>
+</div>

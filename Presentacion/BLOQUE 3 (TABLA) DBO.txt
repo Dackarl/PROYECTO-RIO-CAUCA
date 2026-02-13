@@ -1,0 +1,58 @@
+<!-- ========================= -->
+<!-- TABLA: MODELOS SELECCIONADOS -->
+<!-- ========================= -->
+
+<div class="overflow-x-auto mt-6">
+  <table class="w-full border border-[rgba(212,175,55,0.25)] text-sm text-white">
+    
+    <!-- Título -->
+    <caption class="caption-top text-center text-gray-300 mb-2 italic">
+      Tabla 27. Modelos seleccionados
+    </caption>
+
+    <!-- Encabezado -->
+    <thead class="bg-black bg-opacity-60">
+      <tr>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">OBJETIVO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">ESCENARIO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MODELO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">R²</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">RMSE</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MAE</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">N° VARS</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">TÉCNICA</th>
+      </tr>
+    </thead>
+
+    <!-- Cuerpo -->
+    <tbody class="bg-black bg-opacity-40 text-center">
+      <tr>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          Demanda bioquímica de oxígeno (mg O₂/L)
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          pH-RFE
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          RandomForest
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          0,91
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          3,21
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          1,81
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          5
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          Grid
+        </td>
+      </tr>
+    </tbody>
+
+  </table>
+</div>

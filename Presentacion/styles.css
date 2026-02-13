@@ -1,0 +1,414 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #000000;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Fondo dinámico: Negro profundo con flujos de luz dorada */
+.river-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, #1a1400 0%, #050505 50%, #000000 100%);
+    background-size: 200% 200%;
+    animation: flowBackground 15s ease-in-out infinite;
+    z-index: -2;
+}
+
+@keyframes flowBackground {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+}
+
+/* Ondas del río refinadas con brillo metálico */
+.waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45vh;
+    margin-bottom: -7px; 
+    min-height: 120px;
+    max-height: 280px;
+    z-index: -1;
+}
+
+.parallax > use {
+    animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite;
+}
+.parallax > use:nth-child(1) {
+    animation-delay: -2s;
+    animation-duration: 9s;
+    fill: rgba(212, 175, 55, 0.1);
+}
+.parallax > use:nth-child(2) {
+    animation-delay: -3s;
+    animation-duration: 12s;
+    fill: rgba(184, 138, 68, 0.2);
+}
+.parallax > use:nth-child(3) {
+    animation-delay: -4s;
+    animation-duration: 16s;
+    fill: rgba(255, 215, 0, 0.3);
+}
+.parallax > use:nth-child(4) {
+    animation-delay: -5s;
+    animation-duration: 22s;
+    fill: #7a5e2a; /* Base sólida elegante */
+}
+
+@keyframes move-forever {
+    0% { transform: translate3d(-90px,0,0); }
+    100% { transform: translate3d(85px,0,0); }
+}
+
+.glass-card {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 40px;
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 1);
+    transition: opacity 0.6s ease-in-out, transform 0.5s ease-out;
+}
+.glass-card--soft {
+    background: rgba(0, 0, 0, 0.55);   /* menos oscuro */
+    backdrop-filter: blur(18px);       /* menos blur */
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9);
+}
+
+
+/* Texto dorado con gradiente más definido */
+.gold-text {
+    background: linear-gradient(135deg, #fff9c4 0%, #e8c55e 30%, #b88a44 50%, #e8c55e 70%, #fff9c4 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'Playfair Display', serif;
+    filter: drop-shadow(0 4px 15px rgba(212, 175, 55, 0.2));
+}
+
+.gold-border-text {
+    -webkit-text-stroke: 1px rgba(212, 175, 55, 0.5);
+    color: transparent;
+    font-family: 'Playfair Display', serif;
+}
+
+/* Ancho y alto estandar del contenedor principal */
+.slide-width {
+    width: 100% !important;
+    max-width: 1445px !important;
+    min-height: 680px !important;
+}
+
+.nav-btn {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    cursor: pointer;
+}
+.nav-btn:hover {
+    background: rgba(212, 175, 55, 0.15);
+    transform: scale(1.1);
+    color: #d4af37;
+    border-color: #d4af37;
+}
+
+/* Estilo para el Logo optimizado */
+.logo-container {
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.2));
+}
+.logo-container:hover {
+    transform: translateY(-5px) scale(1.05);
+    filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.5));
+}
+
+/* Clases para manejo de slides */
+.slide-container {
+    display: none !important;
+    opacity: 0 !important;
+    transition: opacity 0.6s ease-in-out;
+    width: 100%;
+}
+.slide-container.active {
+    display: block !important;
+    opacity: 1 !important;
+}
+
+/* Grid para la diapositiva 2 */
+.stat-item {
+    border-left: 1px solid rgba(212, 175, 55, 0.3);
+    padding-left: 1.5rem;
+}
+
+/* Ancho estándar ampliado para todas las diapositivas (40% más que max-w-7xl) */
+.slide-width {
+    max-width: 1445px !important;
+    width: 100% !important;
+}
+
+/* Forzar estandar en el contenedor principal de cada diapositiva */
+.slide-container > .glass-card {
+    width: 100% !important;
+    max-width: 1445px !important;
+    min-height: 680px !important;
+    box-sizing: border-box;
+}
+
+/* Ajuste responsive para pantallas más pequeñas */
+@media (max-width: 1720px) {
+    .slide-width {
+        max-width: 95vw !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .slide-width {
+        max-width: 98vw !important;
+    }
+}
+
+/* Estilos para Modales */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.98) 0%, rgba(17, 24, 39, 0.98) 100%);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 24px;
+    padding: 3rem;
+    max-width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+}
+
+.modal-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(212, 175, 55, 0.2);
+    border: 2px solid #d4af37;
+    color: #d4af37;
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    background: #d4af37;
+    color: #111827;
+    transform: rotate(90deg);
+}
+
+.modal-title {
+    color: #d4af37;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.modal-intro {
+    color: #e5e7eb;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    text-align: center;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.modal-table-container {
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+}
+
+.modal-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(17, 24, 39, 0.5);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.modal-table thead {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+}
+
+.modal-table th {
+    padding: 1rem;
+    text-align: left;
+    color: #d4af37;
+    font-weight: bold;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+}
+
+.modal-table td {
+    padding: 1rem;
+    color: #e5e7eb;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    vertical-align: top;
+}
+
+.modal-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.modal-table tbody tr:hover {
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.modal-table .doc-ref {
+    color: #d4af37;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.modal-note {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    font-style: italic;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* Estilos para Pipeline */
+.pipeline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.pipeline-phase {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(17, 24, 39, 0.4) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.pipeline-phase:hover {
+    border-color: rgba(212, 175, 55, 0.6);
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.15);
+    transform: translateX(8px);
+}
+
+.phase-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(90deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.phase-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #d4af37;
+    font-family: 'Playfair Display', serif;
+    min-width: 60px;
+}
+
+.phase-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0;
+}
+
+.phase-content {
+    padding: 1.5rem;
+}
+
+.phase-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.phase-list li {
+    color: #e5e7eb;
+    font-size: 1rem;
+    line-height: 1.6;
+    padding-left: 2rem;
+    position: relative;
+}
+
+.phase-list li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #d4af37;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+/* Custom Scrollbar para modales */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212, 175, 55, 0.5) rgba(0, 0, 0, 0.3);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.5);
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(212, 175, 55, 0.7);
+}

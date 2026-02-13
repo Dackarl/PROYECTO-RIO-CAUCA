@@ -1,0 +1,281 @@
+<!-- ========================= -->
+<!-- BLOQUE: PERMUTATION (media+std) + SHAP (mean|SHAP|) — pH -->
+<!-- ========================= -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+  <!-- ===================================================== -->
+  <!-- GRÁFICA 1: Permuted Importance (Importancia + Std) pH -->
+  <!-- ===================================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">Permuted Importance — pH</h4>
+      <span class="text-gray-400 text-xs italic">Media ± desviación estándar</span>
+    </div>
+
+    <!-- max(mean+std) = 0.29+0.04 = 0.33 ; chartW=760 ; x0=300 -->
+    <svg viewBox="0 0 1100 440" class="w-full h-auto">
+      <g transform="translate(40,30)">
+        <!-- Grid vertical (0 a 0.33) -->
+        <g stroke="rgba(255,255,255,0.10)">
+          <line x1="300" y1="10" x2="300" y2="330"/>
+          <line x1="452" y1="10" x2="452" y2="330"/>
+          <line x1="604" y1="10" x2="604" y2="330"/>
+          <line x1="756" y1="10" x2="756" y2="330"/>
+          <line x1="908" y1="10" x2="908" y2="330"/>
+          <line x1="1060" y1="10" x2="1060" y2="330"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="300" y1="330" x2="1060" y2="330" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="300" y1="10"  x2="300"  y2="330" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Etiquetas eje X -->
+        <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          <text x="300" y="355">0,00</text>
+          <text x="452" y="355">0,07</text>
+          <text x="604" y="355">0,13</text>
+          <text x="756" y="355">0,20</text>
+          <text x="908" y="355">0,26</text>
+          <text x="1060" y="355">0,33</text>
+        </g>
+
+        <text x="680" y="385" text-anchor="middle"
+              fill="rgba(255,255,255,0.75)" font-size="16"
+              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          Importancia media (± DE)
+        </text>
+
+        <!-- Barras (media) + error bar (± std) -->
+        <!-- barH=20 ; gap=10 ; startY=24 ; centerY = y + 10 -->
+        <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+          <!-- 1) BICARBONATOS mean=0.29 -> 668 ; std=0.04 -> 92 -->
+          <text x="290" y="44" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            BICARBONATOS (mg CaCO3/l)
+          </text>
+          <rect x="300" y="24" width="668" height="20" fill="rgba(212,175,55,0.75)"/>
+          <line x1="876" y1="34" x2="1060" y2="34" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="876" y1="27" x2="876"  y2="41" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="1060" y1="27" x2="1060" y2="41" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="1076" y="39" fill="rgba(255,255,255,0.90)" font-size="13">0,29 ± 0,04</text>
+
+          <!-- 2) NITRATOS mean=0.12 -> 276 ; std=0.03 -> 69 -->
+          <text x="290" y="74" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            NITRATOS (mg N-NO3/l)
+          </text>
+          <rect x="300" y="54" width="276" height="20" fill="rgba(212,175,55,0.75)"/>
+          <line x1="507" y1="64" x2="645" y2="64" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="507" y1="57" x2="507" y2="71" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="645" y1="57" x2="645" y2="71" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="665" y="69" fill="rgba(255,255,255,0.90)" font-size="13">0,12 ± 0,03</text>
+
+          <!-- 3) POTASIO mean=0.09 -> 207 ; std=0.02 -> 46 -->
+          <text x="290" y="104" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            POTASIO TOTAL (mg K/l)
+          </text>
+          <rect x="300" y="84" width="207" height="20" fill="rgba(212,175,55,0.75)"/>
+          <line x1="461" y1="94" x2="553" y2="94" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="461" y1="87" x2="461" y2="101" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="553" y1="87" x2="553" y2="101" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="573" y="99" fill="rgba(255,255,255,0.90)" font-size="13">0,09 ± 0,02</text>
+
+          <!-- 4) CLORUROS mean=0.06 -> 138 ; std=0.01 -> 23 -->
+          <text x="290" y="134" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            CLORUROS (mg Cl/l)
+          </text>
+          <rect x="300" y="114" width="138" height="20" fill="rgba(212,175,55,0.75)"/>
+          <line x1="415" y1="124" x2="461" y2="124" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="415" y1="117" x2="415" y2="131" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="461" y1="117" x2="461" y2="131" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="481" y="129" fill="rgba(255,255,255,0.90)" font-size="13">0,06 ± 0,01</text>
+
+          <!-- 5) OXIGENO DISUELTO mean=0.06 -> 138 ; std=0.01 -> 23 -->
+          <text x="290" y="164" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            OXIGENO DISUELTO (mg O2/l)
+          </text>
+          <rect x="300" y="144" width="138" height="20" fill="rgba(212,175,55,0.75)"/>
+          <line x1="415" y1="154" x2="461" y2="154" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="415" y1="147" x2="415" y2="161" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="461" y1="147" x2="461" y2="161" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="481" y="159" fill="rgba(255,255,255,0.90)" font-size="13">0,06 ± 0,01</text>
+
+          <!-- 6) TEMPERATURA mean=0.05 -> 115 ; std=0.01 -> 23 -->
+          <text x="290" y="194" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            TEMPERATURA (°C)
+          </text>
+          <rect x="300" y="174" width="115" height="20" fill="rgba(212,175,55,0.75)"/>
+          <line x1="392" y1="184" x2="438" y2="184" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="392" y1="177" x2="392" y2="191" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="438" y1="177" x2="438" y2="191" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="458" y="189" fill="rgba(255,255,255,0.90)" font-size="13">0,05 ± 0,01</text>
+
+          <!-- 7) SULFATOS mean=0.05 -> 115 ; std=0.01 -> 23 -->
+          <text x="290" y="224" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            SULFATOS (mg SO4/l)
+          </text>
+          <rect x="300" y="204" width="115" height="20" fill="rgba(212,175,55,0.75)"/>
+          <line x1="392" y1="214" x2="438" y2="214" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="392" y1="207" x2="392" y2="221" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="438" y1="207" x2="438" y2="221" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="458" y="219" fill="rgba(255,255,255,0.90)" font-size="13">0,05 ± 0,01</text>
+
+          <!-- 8) COLIFORMES FECALES mean=0.04 -> 92 ; std=0.01 -> 23 -->
+          <text x="290" y="254" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            COLIFORMES FECALES (NMP/100 ml)
+          </text>
+          <rect x="300" y="234" width="92" height="20" fill="rgba(212,175,55,0.75)"/>
+          <line x1="369" y1="244" x2="415" y2="244" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="369" y1="237" x2="369" y2="251" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="415" y1="237" x2="415" y2="251" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="435" y="249" fill="rgba(255,255,255,0.90)" font-size="13">0,04 ± 0,01</text>
+
+          <!-- 9) TURBIEDAD mean=0.04 -> 92 ; std=0.01 -> 23 -->
+          <text x="290" y="284" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            TURBIEDAD (UNT)
+          </text>
+          <rect x="300" y="264" width="92" height="20" fill="rgba(212,175,55,0.75)"/>
+          <line x1="369" y1="274" x2="415" y2="274" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="369" y1="267" x2="369" y2="281" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="415" y1="267" x2="415" y2="281" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="435" y="279" fill="rgba(255,255,255,0.90)" font-size="13">0,04 ± 0,01</text>
+
+          <!-- 10) DUREZA TOTAL mean=0.04 -> 92 ; std=0.01 -> 23 -->
+          <text x="290" y="314" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            DUREZA TOTAL (mg CaCO3/l)
+          </text>
+          <rect x="300" y="294" width="92" height="20" fill="rgba(212,175,55,0.75)"/>
+          <line x1="369" y1="304" x2="415" y2="304" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="369" y1="297" x2="369" y2="311" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="415" y1="297" x2="415" y2="311" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="435" y="309" fill="rgba(255,255,255,0.90)" font-size="13">0,04 ± 0,01</text>
+
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===================================== -->
+  <!-- GRÁFICA 2: SHAP Global (mean |SHAP|) pH -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">SHAP — Importancia global (pH)</h4>
+      <span class="text-gray-400 text-xs italic">mean(|SHAP|)</span>
+    </div>
+
+    <!-- max = 0.08 ; chartW=760 ; x0=300 -->
+    <svg viewBox="0 0 1100 440" class="w-full h-auto">
+      <g transform="translate(40,30)">
+
+        <!-- Grid vertical (0 a 0.08) -->
+        <g stroke="rgba(255,255,255,0.10)">
+          <line x1="300" y1="10" x2="300" y2="330"/>
+          <line x1="452" y1="10" x2="452" y2="330"/>
+          <line x1="604" y1="10" x2="604" y2="330"/>
+          <line x1="756" y1="10" x2="756" y2="330"/>
+          <line x1="908" y1="10" x2="908" y2="330"/>
+          <line x1="1060" y1="10" x2="1060" y2="330"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="300" y1="330" x2="1060" y2="330" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="300" y1="10"  x2="300"  y2="330" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Etiquetas eje X -->
+        <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          <text x="300" y="355">0,00</text>
+          <text x="452" y="355">0,02</text>
+          <text x="604" y="355">0,03</text>
+          <text x="756" y="355">0,05</text>
+          <text x="908" y="355">0,06</text>
+          <text x="1060" y="355">0,08</text>
+        </g>
+
+        <text x="680" y="385" text-anchor="middle"
+              fill="rgba(255,255,255,0.75)" font-size="16"
+              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          mean(|SHAP|)
+        </text>
+
+        <!-- Barras (orden como tu tabla) -->
+        <!-- widths: value/max*760 -> 0.08=760 ; 0.05=475 ; 0.03=285 ; 0.02=190 -->
+        <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+          <!-- 1) NITRATOS 0.08 -->
+          <text x="290" y="44" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            NITRATOS (mg N-NO3/l)
+          </text>
+          <rect x="300" y="24" width="760" height="20" fill="rgba(212,175,55,0.75)"/>
+          <text x="1076" y="39" fill="rgba(255,255,255,0.90)" font-size="13">0,08</text>
+
+          <!-- 2) BICARBONATOS 0.08 -->
+          <text x="290" y="74" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            BICARBONATOS (mg CaCO3/l)
+          </text>
+          <rect x="300" y="54" width="760" height="20" fill="rgba(212,175,55,0.75)"/>
+          <text x="1076" y="69" fill="rgba(255,255,255,0.90)" font-size="13">0,08</text>
+
+          <!-- 3) POTASIO TOTAL 0.05 -->
+          <text x="290" y="104" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            POTASIO TOTAL (mg K/l)
+          </text>
+          <rect x="300" y="84" width="475" height="20" fill="rgba(212,175,55,0.75)"/>
+          <text x="790" y="99" fill="rgba(255,255,255,0.90)" font-size="13">0,05</text>
+
+          <!-- 4) OXIGENO DISUELTO 0.03 -->
+          <text x="290" y="134" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            OXIGENO DISUELTO (mg O2/l)
+          </text>
+          <rect x="300" y="114" width="285" height="20" fill="rgba(212,175,55,0.75)"/>
+          <text x="600" y="129" fill="rgba(255,255,255,0.90)" font-size="13">0,03</text>
+
+          <!-- 5) DEMANDA BIOQUIMICA DE OXIGENO 0.03 -->
+          <text x="290" y="164" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            DEMANDA BIOQUIMICA DE OXIGENO (mg O2/l)
+          </text>
+          <rect x="300" y="144" width="285" height="20" fill="rgba(212,175,55,0.75)"/>
+          <text x="600" y="159" fill="rgba(255,255,255,0.90)" font-size="13">0,03</text>
+
+          <!-- 6) TEMPERATURA 0.03 -->
+          <text x="290" y="194" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            TEMPERATURA (°C)
+          </text>
+          <rect x="300" y="174" width="285" height="20" fill="rgba(212,175,55,0.75)"/>
+          <text x="600" y="189" fill="rgba(255,255,255,0.90)" font-size="13">0,03</text>
+
+          <!-- 7) CALCIO 0.03 -->
+          <text x="290" y="224" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            CALCIO (mg Ca/l)
+          </text>
+          <rect x="300" y="204" width="285" height="20" fill="rgba(212,175,55,0.75)"/>
+          <text x="600" y="219" fill="rgba(255,255,255,0.90)" font-size="13">0,03</text>
+
+          <!-- 8) SULFATOS 0.03 -->
+          <text x="290" y="254" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            SULFATOS (mg SO4/l)
+          </text>
+          <rect x="300" y="234" width="285" height="20" fill="rgba(212,175,55,0.75)"/>
+          <text x="600" y="249" fill="rgba(255,255,255,0.90)" font-size="13">0,03</text>
+
+          <!-- 9) CLORUROS 0.02 -->
+          <text x="290" y="284" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            CLORUROS (mg Cl/l)
+          </text>
+          <rect x="300" y="264" width="190" height="20" fill="rgba(212,175,55,0.75)"/>
+          <text x="505" y="279" fill="rgba(255,255,255,0.90)" font-size="13">0,02</text>
+
+          <!-- 10) SOLIDOS DISUELTOS 0.02 -->
+          <text x="290" y="314" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="14">
+            SOLIDOS DISUELTOS (mg SD/l)
+          </text>
+          <rect x="300" y="294" width="190" height="20" fill="rgba(212,175,55,0.75)"/>
+          <text x="505" y="309" fill="rgba(255,255,255,0.90)" font-size="13">0,02</text>
+
+        </g>
+      </g>
+    </svg>
+  </div>
+
+</div>

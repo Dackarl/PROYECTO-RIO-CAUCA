@@ -1,0 +1,176 @@
+<!-- ========================= -->
+<!-- BLOQUE: Modelado base — pH -->
+<!-- ========================= -->
+
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+  <!-- ===================================== -->
+  <!-- GRÁFICA 1: Top 5 modelos por R² (pH) -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        Top 5 modelos por R² (pH)
+      </h4>
+      <span class="text-gray-400 text-xs italic">Escala 0–1</span>
+    </div>
+
+    <svg viewBox="0 0 1100 360" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Grid -->
+        <g stroke="rgba(255,255,255,0.12)">
+          <line x1="0" y1="235" x2="1000" y2="235"/>
+          <line x1="0" y1="188" x2="1000" y2="188"/>
+          <line x1="0" y1="141" x2="1000" y2="141"/>
+          <line x1="0" y1="94"  x2="1000" y2="94"/>
+          <line x1="0" y1="47"  x2="1000" y2="47"/>
+          <line x1="0" y1="0"   x2="1000" y2="0"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="0" y1="235" x2="1000" y2="235" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="0" y1="0" x2="0" y2="235" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Barras (R²) -->
+        <g fill="rgba(212,175,55,0.75)">
+          <!-- R² max = 0.408 -->
+          <rect x="40"  y="11" width="130" height="224"/>  <!-- 0.408 -->
+          <rect x="240" y="41" width="130" height="194"/>  <!-- 0.335 -->
+          <rect x="440" y="55" width="130" height="180"/>  <!-- 0.312 -->
+          <rect x="640" y="60" width="130" height="175"/>  <!-- 0.305 -->
+          <rect x="840" y="89" width="130" height="146"/>  <!-- 0.253 -->
+        </g>
+
+        <!-- Valores -->
+        <g fill="white" font-size="20" font-weight="700" text-anchor="middle">
+          <text x="105" y="6">0.408</text>
+          <text x="305" y="36">0.335</text>
+          <text x="505" y="50">0.312</text>
+          <text x="705" y="55">0.305</text>
+          <text x="905" y="84">0.253</text>
+        </g>
+
+        <!-- Etiquetas X -->
+        <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+          <text x="105" y="270">XGBoost</text>
+          <text x="105" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+
+          <text x="305" y="270">RandomForest</text>
+          <text x="305" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+
+          <text x="505" y="270">XGBoost</text>
+          <text x="505" y="300" fill="rgba(255,255,255,0.6)">Unión (DBOupH)</text>
+
+          <text x="705" y="270">RandomForest</text>
+          <text x="705" y="300" fill="rgba(255,255,255,0.6)">Unión RFE (DBOupH)</text>
+
+          <text x="905" y="270">RandomForest</text>
+          <text x="905" y="300" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+        </g>
+
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===================================== -->
+  <!-- GRÁFICA 2: RMSE y MAE (pH) -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        RMSE y MAE – Top 5 (pH)
+      </h4>
+      <div class="flex gap-4 text-xs text-gray-300">
+        <span>■ RMSE</span>
+        <span>■ MAE</span>
+      </div>
+    </div>
+
+    <svg viewBox="0 0 1100 380" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Grid -->
+        <g stroke="rgba(255,255,255,0.12)">
+          <line x1="0" y1="240" x2="1000" y2="240"/>
+          <line x1="0" y1="192" x2="1000" y2="192"/>
+          <line x1="0" y1="144" x2="1000" y2="144"/>
+          <line x1="0" y1="96"  x2="1000" y2="96"/>
+          <line x1="0" y1="48"  x2="1000" y2="48"/>
+          <line x1="0" y1="0"   x2="1000" y2="0"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="0" y1="240" x2="1000" y2="240" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="0" y1="0" x2="0" y2="240" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Barras -->
+        <g>
+          <!-- Escala máx ~0.33 -->
+          <!-- Grupo 1 -->
+          <rect x="65"  y="21" width="45" height="219" fill="rgba(212,175,55,0.75)"/>
+          <rect x="124" y="63" width="45" height="177" fill="rgba(255,255,255,0.55)"/>
+
+          <!-- Grupo 2 -->
+          <rect x="265" y="32" width="45" height="208" fill="rgba(212,175,55,0.75)"/>
+          <rect x="324" y="50" width="45" height="190" fill="rgba(255,255,255,0.55)"/>
+
+          <!-- Grupo 3 -->
+          <rect x="465" y="32" width="45" height="208" fill="rgba(212,175,55,0.75)"/>
+          <rect x="524" y="46" width="45" height="194" fill="rgba(255,255,255,0.55)"/>
+
+          <!-- Grupo 4 -->
+          <rect x="665" y="32" width="45" height="208" fill="rgba(212,175,55,0.75)"/>
+          <rect x="724" y="46" width="45" height="194" fill="rgba(255,255,255,0.55)"/>
+
+          <!-- Grupo 5 -->
+          <rect x="865" y="24" width="45" height="216" fill="rgba(212,175,55,0.75)"/>
+          <rect x="924" y="40" width="45" height="200" fill="rgba(255,255,255,0.55)"/>
+        </g>
+
+        <!-- Valores -->
+        <g fill="white" font-size="18" font-weight="700" text-anchor="middle">
+          <text x="87.5"  y="15">0.30</text>
+          <text x="146.5" y="57">0.21</text>
+
+          <text x="287.5" y="26">0.32</text>
+          <text x="346.5" y="44">0.23</text>
+
+          <text x="487.5" y="26">0.32</text>
+          <text x="546.5" y="40">0.24</text>
+
+          <text x="687.5" y="26">0.32</text>
+          <text x="746.5" y="40">0.24</text>
+
+          <text x="887.5" y="18">0.33</text>
+          <text x="946.5" y="34">0.25</text>
+        </g>
+
+        <!-- Etiquetas X -->
+        <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+          <text x="117" y="300">XGBoost</text>
+          <text x="117" y="325" fill="rgba(255,255,255,0.6)">VIF</text>
+
+          <text x="317" y="300">RandomForest</text>
+          <text x="317" y="325" fill="rgba(255,255,255,0.6)">VIF</text>
+
+          <text x="517" y="300">XGBoost</text>
+          <text x="517" y="325" fill="rgba(255,255,255,0.6)">Unión (DBOupH)</text>
+
+          <text x="717" y="300">RandomForest</text>
+          <text x="717" y="325" fill="rgba(255,255,255,0.6)">Unión RFE (DBOupH)</text>
+
+          <text x="917" y="300">RandomForest</text>
+          <text x="917" y="325" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+        </g>
+
+        <text x="-55" y="120" transform="rotate(-90 -55 120)"
+              fill="rgba(255,255,255,0.75)" font-size="16">
+          Error
+        </text>
+
+      </g>
+    </svg>
+  </div>
+
+</div>

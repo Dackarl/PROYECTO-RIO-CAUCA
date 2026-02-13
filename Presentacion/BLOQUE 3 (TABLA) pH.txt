@@ -1,0 +1,39 @@
+<!-- ========================= -->
+<!-- TABLA 27: MODELOS SELECCIONADOS (pH) -->
+<!-- ========================= -->
+<div class="overflow-x-auto mt-6">
+  <table class="w-full border border-[rgba(212,175,55,0.25)] text-sm text-white">
+    <!-- Título -->
+    <caption class="caption-top text-center text-gray-300 mb-2 italic">
+      Tabla 27. Modelos seleccionados
+    </caption>
+
+    <!-- Encabezado -->
+    <thead class="bg-black bg-opacity-60">
+      <tr>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">OBJETIVO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">ESCENARIO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MODELO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">R²</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">RMSE</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MAE</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">N_VARS</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">TÉCNICA</th>
+      </tr>
+    </thead>
+
+    <!-- Cuerpo -->
+    <tbody class="bg-black bg-opacity-40 text-center">
+      <tr>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">pH</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">VIF</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">XGBoost</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">0,40</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">0,30</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">0,22</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">20</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">Optuna</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

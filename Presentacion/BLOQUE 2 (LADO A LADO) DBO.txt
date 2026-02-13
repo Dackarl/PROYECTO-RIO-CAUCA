@@ -1,0 +1,171 @@
+<!-- ========================= -->
+<!-- SEGUNDA MODELACIÓN – DBO -->
+<!-- ========================= -->
+
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+  <!-- ========================= -->
+  <!-- GRÁFICA 1: TOP 5 POR R² (DBO) -->
+  <!-- ========================= -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        Top 5 modelos por R² (DBO)
+      </h4>
+      <span class="text-gray-400 text-xs italic">Escala 0–1</span>
+    </div>
+
+    <svg viewBox="0 0 1100 360" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Grid -->
+        <g stroke="rgba(255,255,255,0.12)">
+          <line x1="0" y1="235" x2="1000" y2="235"/>
+          <line x1="0" y1="188" x2="1000" y2="188"/>
+          <line x1="0" y1="141" x2="1000" y2="141"/>
+          <line x1="0" y1="94"  x2="1000" y2="94"/>
+          <line x1="0" y1="47"  x2="1000" y2="47"/>
+          <line x1="0" y1="0"   x2="1000" y2="0"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="0" y1="235" x2="1000" y2="235" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="0" y1="0" x2="0" y2="235" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Barras -->
+        <g fill="rgba(212,175,55,0.75)">
+          <rect x="40"  y="22" width="130" height="213"/>
+          <rect x="240" y="25" width="130" height="210"/>
+          <rect x="440" y="30" width="130" height="205"/>
+          <rect x="640" y="31" width="130" height="204"/>
+          <rect x="840" y="39" width="130" height="196"/>
+        </g>
+
+        <!-- Valores -->
+        <g fill="white" font-size="20" font-weight="700" text-anchor="middle">
+          <text x="105" y="16">0.908</text>
+          <text x="305" y="16">0.898</text>
+          <text x="505" y="16">0.886</text>
+          <text x="705" y="16">0.884</text>
+          <text x="905" y="16">0.874</text>
+        </g>
+
+        <!-- Etiquetas X -->
+        <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+
+          <text x="105" y="270">RandomForest</text>
+          <text x="105" y="300" fill="rgba(255,255,255,0.6)">RFE grid</text>
+
+          <text x="305" y="270">XGBoost</text>
+          <text x="305" y="300" fill="rgba(255,255,255,0.6)">RFE DBOUpH optuna</text>
+
+          <text x="505" y="270">XGBoost</text>
+          <text x="505" y="300" fill="rgba(255,255,255,0.6)">RFE optuna</text>
+
+          <text x="705" y="270">MLPRegressor</text>
+          <text x="705" y="300" fill="rgba(255,255,255,0.6)">RFE DBOUpH grid</text>
+
+          <text x="905" y="270">MLPRegressor</text>
+          <text x="905" y="300" fill="rgba(255,255,255,0.6)">RFE grid</text>
+
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ========================= -->
+  <!-- GRÁFICA 2: RMSE Y MAE (DBO) -->
+  <!-- ========================= -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        RMSE y MAE – Top 5 (DBO)
+      </h4>
+      <div class="flex gap-4 text-xs text-gray-300">
+        <span>■ RMSE</span>
+        <span>■ MAE</span>
+      </div>
+    </div>
+
+    <svg viewBox="0 0 1100 380" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Grid -->
+        <g stroke="rgba(255,255,255,0.12)">
+          <line x1="0" y1="240" x2="1000" y2="240"/>
+          <line x1="0" y1="192" x2="1000" y2="192"/>
+          <line x1="0" y1="144" x2="1000" y2="144"/>
+          <line x1="0" y1="96"  x2="1000" y2="96"/>
+          <line x1="0" y1="48"  x2="1000" y2="48"/>
+          <line x1="0" y1="0"   x2="1000" y2="0"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="0" y1="240" x2="1000" y2="240" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="0" y1="0" x2="0" y2="240" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Barras -->
+        <g>
+          <rect x="65"  y="86" width="45" height="154" fill="rgba(212,175,55,0.75)"/>
+          <rect x="124" y="153" width="45" height="87" fill="rgba(255,255,255,0.55)"/>
+
+          <rect x="265" y="78" width="45" height="162" fill="rgba(212,175,55,0.75)"/>
+          <rect x="324" y="153" width="45" height="87" fill="rgba(255,255,255,0.55)"/>
+
+          <rect x="465" y="69" width="45" height="171" fill="rgba(212,175,55,0.75)"/>
+          <rect x="524" y="149" width="45" height="91" fill="rgba(255,255,255,0.55)"/>
+
+          <rect x="665" y="67" width="45" height="173" fill="rgba(212,175,55,0.75)"/>
+          <rect x="724" y="141" width="45" height="99" fill="rgba(255,255,255,0.55)"/>
+
+          <rect x="865" y="60" width="45" height="180" fill="rgba(212,175,55,0.75)"/>
+          <rect x="924" y="140" width="45" height="100" fill="rgba(255,255,255,0.55)"/>
+        </g>
+
+        <!-- Valores -->
+        <g fill="rgba(255,255,255,0.95)" font-size="20" font-weight="700" text-anchor="middle">
+          <text x="87.5"  y="76">3.21</text>
+          <text x="146.5" y="143">1.81</text>
+
+          <text x="287.5" y="68">3.38</text>
+          <text x="346.5" y="143">1.81</text>
+
+          <text x="487.5" y="59">3.57</text>
+          <text x="546.5" y="139">1.89</text>
+
+          <text x="687.5" y="57">3.60</text>
+          <text x="746.5" y="131">2.07</text>
+
+          <text x="887.5" y="50">3.76</text>
+          <text x="946.5" y="130">2.08</text>
+        </g>
+
+        <!-- Etiquetas X -->
+        <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+          <text x="117" y="275">RandomForest</text>
+          <text x="117" y="305" fill="rgba(255,255,255,0.6)">RFE grid</text>
+
+          <text x="317" y="275">XGBoost</text>
+          <text x="317" y="305" fill="rgba(255,255,255,0.6)">RFE DBOUpH optuna</text>
+
+          <text x="517" y="275">XGBoost</text>
+          <text x="517" y="305" fill="rgba(255,255,255,0.6)">RFE optuna</text>
+
+          <text x="717" y="275">MLPRegressor</text>
+          <text x="717" y="305" fill="rgba(255,255,255,0.6)">RFE DBOUpH grid</text>
+
+          <text x="917" y="275">MLPRegressor</text>
+          <text x="917" y="305" fill="rgba(255,255,255,0.6)">RFE grid</text>
+        </g>
+
+        <!-- Label eje Y -->
+        <text x="-55" y="120" transform="rotate(-90 -55 120)"
+              fill="rgba(255,255,255,0.75)" font-size="16">
+          Error
+        </text>
+
+      </g>
+    </svg>
+  </div>
+
+</div>

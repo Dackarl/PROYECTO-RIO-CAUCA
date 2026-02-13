@@ -1,0 +1,3271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predicción pH y DBO - Río Cauca</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+<!-- Fondo animado -->
+<div class="river-bg"></div>
+
+<!-- Logo Universidad -->
+<div class="logo-container fixed top-8 right-8 z-30">
+    <img src="logo.png" alt="Logo de la universidad" class="h-32 w-auto opacity-90">
+</div>
+
+<!-- Ondas -->
+<svg class="waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none">
+    <defs>
+        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s58 18 88 18s58-18 88-18s58 18 88 18v44h-352z" />
+    </defs>
+    <g class="parallax">
+        <use href="#gentle-wave" x="48" y="0" />
+        <use href="#gentle-wave" x="48" y="3" />
+        <use href="#gentle-wave" x="48" y="5" />
+        <use href="#gentle-wave" x="48" y="7" />
+    </g>
+</svg>
+
+<!-- Contenedor principal -->
+<main class="w-full mx-auto px-6 z-10 relative min-h-screen flex items-center justify-center py-12">
+    <div class="slide-deck">
+
+        <!-- DIAPOSITIVA 1: PORTADA -->
+        <div id="slide-1" class="slide-container w-full active">
+            <div class="slide-width mx-auto w-full glass-card min-h-[680px] p-10 md:p-12 text-center transform transition-all duration-700 hover-target flex flex-col justify-center">
+                
+                <!-- Encabezado Institucional -->
+                <span class="text-[#d4af37] tracking-[0.5em] uppercase text-[12px] mb-4 block font-black opacity-90">
+                    Facultad de Ingeniería y Ciencias • Maestría en Ciencia de Datos
+                </span>
+                
+                <!-- Título del Proyecto -->
+                <div class="mb-8">
+                    <h1 class="text-4xl md:text-6xl font-bold gold-text tracking-tight leading-tight mb-4">
+                        PREDICCIÓN DEL PH Y EL DBO EN EL RÍO CAUCA UTILIZANDO TÉCNICAS DE MACHINE LEARNING
+                    </h1>
+                    <p class="text-white tracking-[0.45em] uppercase text-xs font-light opacity-70">
+                        Anticipando cambios críticos de calidad
+                    </p>
+                </div>
+
+                <!-- Autores y Director del Proyecto -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto my-12">
+                    <div class="text-center p-6 border border-[rgba(212,175,55,0.2)] rounded-2xl bg-black/20 flex flex-col justify-center">
+                        <p class="text-[#d4af37] text-[14px] tracking-widest uppercase mb-3 font-bold">Autores</p>
+                        <p class="text-white text-lg font-semibold">DANIEL SOTELO DE LA CRUZ</p>
+                        <p class="text-white text-lg font-semibold mt-2">WEIMAR CORTES MONTIEL</p>
+                    </div>
+                    <div class="text-center p-6 border border-[rgba(212,175,55,0.2)] rounded-2xl bg-black/20 min-h-[140px] flex flex-col justify-center">
+                        <p class="text-[#d4af37] text-[14px] tracking-widest uppercase mb-3 font-bold">Director del Proyecto</p>
+                        <p class="text-white text-lg font-semibold">CRISTIAN ALEJANDRO TORRES VALENCIA</p>
+                    </div>
+                </div>
+
+                <div class="text-center text-gray-300 text-[15px] tracking-wide">
+                    Proyecto Aplicado para optar al título de Magister en Ciencia de Datos
+                </div>
+
+                <!-- Pie de Portada -->
+                <div class="flex flex-col items-center justify-center space-y-1">
+                    <p class="text-white text-[12px] tracking-[0.2em] font-bold">SANTIAGO DE CALI, 2026</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 2: DEFINICIÓN DEL PROBLEMA -->
+        <div id="slide-2" class="slide-container w-full">
+            <div class="slide-width mx-auto w-full glass-card min-h-[680px] p-10 md:p-12 pt-16 md:pt-20 text-left transform transition-all duration-700 hover-target">
+                
+                <!-- Cabecera de la Diapositiva -->
+                <div class="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-[#d4af37] border-opacity-30 pb-8">
+                    <div>
+                        <span class="text-[#d4af37] tracking-[0.4em] uppercase text-[14px] mb-3 block font-black">Contextualización</span>
+                        <h2 class="text-5xl md:text-6xl font-bold gold-text">Definición del Problema</h2>
+                    </div>
+                    <div class="text-right mt-6 md:mt-0">
+                        <span class="gold-border-text text-6xl font-bold opacity-30">pH & DBO</span>
+                        <span class="text-[#d4af37] block text-[14px] tracking-widest mt-2">VARIABLES CRÍTICAS</span>
+                    </div>
+                </div>
+                
+                <!-- Cuerpo: Tres pilares del problema -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+                    
+                    <!-- Columna 1: El Origen -->
+                    <div class="stat-item">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-[#d4af37] font-serif italic text-2xl">01.</span>
+                            <h3 class="text-white text-xl font-bold">Presión Ambiental</h3>
+                        </div>
+                        <p class="text-gray-400 text-[15px] leading-relaxed text-justify">
+                            Deterioro progresivo en la cuenca alta (Cauca, Valle y Risaralda) por actividades agrícolas, industriales y urbanas. El vertimiento de aguas residuales sin tratamiento altera drásticamente el equilibrio químico del ecosistema fluvial <span class="text-[#d4af37] font-semibold">[1]</span>.
+                        </p>
+                    </div>
+                    
+                    <!-- Columna 2: El Vacío -->
+                    <div class="stat-item">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-[#d4af37] font-serif italic text-2xl">02.</span>
+                            <h3 class="text-white text-xl font-bold">Brecha de Monitoreo</h3>
+                        </div>
+                        <p class="text-gray-400 text-[15px] leading-relaxed text-justify">
+                            Los sistemas tradicionales poseen una capacidad limitada de cobertura temporal y espacial. Esta limitación técnica impide anticipar cambios críticos, dificultando una respuesta proactiva ante la descomposición de materia orgánica <span class="text-[#d4af37] font-semibold">[2]</span>.
+                        </p>
+                    </div>
+                    
+                    <!-- Columna 3: El Enfoque -->
+                    <div class="stat-item">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-[#d4af37] font-serif italic text-2xl">03.</span>
+                            <h3 class="text-white text-xl font-bold">Modelado Predictivo</h3>
+                        </div>
+                        <p class="text-gray-400 text-[15px] leading-relaxed text-justify">
+                            Surge la necesidad de implementar modelos de <strong>Machine Learning</strong>. El aprovechamiento de datos fisicoquímicos permite automatizar la detección de patrones y estimar con precisión los indicadores de calidad del agua <span class="text-[#d4af37] font-semibold">[3]</span>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Pregunta de Investigación / Cierre -->
+                <div class="mt-auto bg-[#d4af37] bg-opacity-5 p-8 rounded-3xl border border-[#d4af37] border-opacity-20 flex flex-col md:flex-row items-center gap-6">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 rounded-full border border-[#d4af37] flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[12px] text-[#d4af37] uppercase tracking-[0.3em] font-black mb-2 text-center md:text-left">Pregunta Central de Investigación</p>
+                        <p class="text-[15px] text-white italic font-serif leading-snug text-center md:text-left">
+                            "¿Cómo predecir los niveles de pH y Demanda Bioquímica de Oxígeno (DBO) en el Río Cauca, a partir del análisis de datos y variables fisicoquímicas utilizando modelos de Machine Learning"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 3: OBJETIVOS -->
+        <div id="slide-3" class="slide-container w-full">
+            <div class="slide-width mx-auto w-full glass-card min-h-[680px] p-10 md:p-12 text-left transform transition-all duration-700 hover-target">
+
+                <!-- Cabecera de la Diapositiva -->
+                <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-[#d4af37] border-opacity-30 pb-8">
+                    <div>
+                        <span class="text-[#d4af37] tracking-[0.4em] uppercase text-[14px] mb-3 block font-black">Investigación</span>
+                        <h2 class="text-5xl md:text-6xl font-bold gold-text">Objetivos</h2>
+                    </div>
+                    <div class="text-right mt-6 md:mt-0">
+                        <span class="gold-border-text text-6xl font-bold opacity-30">Metas</span>
+                        <span class="text-[#d4af37] block text-[14px] tracking-widest mt-2">PROPÓSITO DEL PROYECTO</span>
+                    </div>
+                </div>
+
+                <!-- Objetivo General -->
+                <div class="mb-10">
+                    <div class="bg-gradient-to-r from-[rgba(212,175,55,0.1)] to-transparent p-8 rounded-3xl border-l-4 border-[#d4af37]">
+                        <span class="text-[#d4af37] text-[14px] uppercase tracking-[0.3em] font-black mb-3 block">Objetivo General</span>
+                        <p class="text-[15px] text-white leading-snug">
+                            Predecir los niveles de pH y DBO en el Río Cauca, mediante el análisis de variables
+                            fisicoquímicas utilizando modelos de Machine Learning.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Objetivos Específicos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="stat-item">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-[#d4af37] font-serif italic text-2xl">01</span>
+                            <h3 class="text-white text-xl font-bold">Preparación</h3>
+                        </div>
+                        <p class="text-gray-400 text-[15px] leading-relaxed">
+                            Preparar los conjuntos de datos de calidad del agua del Río Cauca para el análisis predictivo.
+                        </p>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-[#d4af37] font-serif italic text-2xl">02</span>
+                            <h3 class="text-white text-xl font-bold">Identificación</h3>
+                        </div>
+                        <p class="text-gray-400 text-[15px] leading-relaxed">
+                            Identificar las variables fisicoquímicas significativas que influyen en los niveles de pH y DBO.
+                        </p>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-[#d4af37] font-serif italic text-2xl">03</span>
+                            <h3 class="text-white text-xl font-bold">Entrenamiento</h3>
+                        </div>
+                        <p class="text-gray-400 text-[15px] leading-relaxed">
+                            Entrenar diferentes modelos de regresión para la predicción de niveles a partir de datos históricos.
+                        </p>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-[#d4af37] font-serif italic text-2xl">04</span>
+                            <h3 class="text-white text-xl font-bold">Evaluación</h3>
+                        </div>
+                        <p class="text-gray-400 text-[15px] leading-relaxed">
+                            Evaluar los modelos de regresión mediante métricas de rendimiento para asegurar la fiabilidad.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 4: MARCO TEÓRICO - HUB -->
+        <div id="slide-4" class="slide-container w-full">
+            <div class="slide-width mx-auto w-[3600px] glass-card min-h-[680px] p-10 md:p-12 text-left transform transition-all duration-700 hover-target">
+
+                <!-- Cabecera de la Diapositiva -->
+                <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-[#d4af37] border-opacity-30 pb-8">
+                    <div>
+                        <span class="text-[#d4af37] tracking-[0.4em] uppercase mb-3 block font-black" style="font-size: 14px;">Fundamentación Teórica</span>
+                        <h2 class="text-5xl md:text-6xl font-bold gold-text">Marco Teórico</h2>
+                    </div>
+                    <div class="text-right mt-6 md:mt-0">
+                        <span class="gold-border-text text-6xl font-bold opacity-30">Metodología</span>
+                        <span class="block tracking-widest mt-2" style="color: #d4af37; font-size: 14px;">5 FUNDAMENTOS CLAVE</span>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="bg-[rgba(212,175,55,0.05)] p-6 rounded-3xl border border-[rgba(212,175,55,0.2)] mb-10">
+                    <p class="text-white leading-relaxed" style="font-size: 16px;">
+                        Haz clic en cada módulo para explorar los fundamentos metodológicos que sustentan el modelado predictivo de calidad del agua.
+                    </p>
+                </div>
+
+                <!-- Botones de Módulos Teóricos -->
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                    
+                    <!-- Módulo 1: Calidad del Agua -->
+                    <button id="btnModulo1" class="group p-12 rounded-2xl border-2 border-[#d4af37] bg-gradient-to-r from-[rgba(212,175,55,0.1)] to-[rgba(212,175,55,0.05)] hover:from-[rgba(212,175,55,0.2)] hover:to-[rgba(212,175,55,0.1)] transition-all duration-300 transform hover:scale-105 min-h-[280px] flex items-center justify-center">
+                        <div class="flex flex-col items-center gap-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                            </svg>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-[#d4af37] text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">CALIDAD</span>
+                                <span class="text-[#d4af37] text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">DEL AGUA</span>
+                            </div>
+                            <span class="text-gray-400 text-xs mt-2 text-center">pH & DBO</span>
+                        </div>
+                    </button>
+
+                    <!-- Módulo 2: Algoritmos -->
+                    <button id="btnModulo2" class="group p-12 rounded-2xl border-2 border-[#d4af37] bg-gradient-to-r from-[rgba(212,175,55,0.1)] to-[rgba(212,175,55,0.05)] hover:from-[rgba(212,175,55,0.2)] hover:to-[rgba(212,175,55,0.1)] transition-all duration-300 transform hover:scale-105 min-h-[280px] flex items-center justify-center">
+                        <div class="flex flex-col items-center gap-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-[#d4af37] text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">ALGORITMOS</span>
+                                <span class="text-[#d4af37] text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">ML</span>
+                            </div>
+                            <span class="text-gray-400 text-xs mt-2 text-center">6 Modelos</span>
+                        </div>
+                    </button>
+
+                    <!-- Módulo 3: Optimización -->
+                    <button id="btnModulo3" class="group p-12 rounded-2xl border-2 border-[#d4af37] bg-gradient-to-r from-[rgba(212,175,55,0.1)] to-[rgba(212,175,55,0.05)] hover:from-[rgba(212,175,55,0.2)] hover:to-[rgba(212,175,55,0.1)] transition-all duration-300 transform hover:scale-105 min-h-[280px] flex items-center justify-center">
+                        <div class="flex flex-col items-center gap-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M12 1v6m0 6v6"></path>
+                                <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"></path>
+                                <path d="M1 12h6m6 0h6"></path>
+                                <path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24"></path>
+                            </svg>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-[#d4af37] text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">OPTIMIZA</span>
+                                <span class="text-[#d4af37] text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">CIÓN</span>
+                            </div>
+                            <span class="text-gray-400 text-xs mt-2 text-center">Grid & Optuna</span>
+                        </div>
+                    </button>
+
+                    <!-- Módulo 4: Validación -->
+                    <button id="btnModulo4" class="group p-12 rounded-2xl border-2 border-[#d4af37] bg-gradient-to-r from-[rgba(212,175,55,0.1)] to-[rgba(212,175,55,0.05)] hover:from-[rgba(212,175,55,0.2)] hover:to-[rgba(212,175,55,0.1)] transition-all duration-300 transform hover:scale-105 min-h-[280px] flex items-center justify-center">
+                        <div class="flex flex-col items-center gap-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors">
+                                <polyline points="9 11 12 14 22 4"></polyline>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-[#d4af37] text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">VALIDA</span>
+                                <span class="text-[#d4af37] text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">CIÓN</span>
+                            </div>
+                            <span class="text-gray-400 text-xs mt-2 text-center">RMSE, R², MAE</span>
+                        </div>
+                    </button>
+
+                    <!-- Módulo 5: Explicabilidad -->
+                    <button id="btnModulo5" class="group p-12 rounded-2xl border-2 border-[#d4af37] bg-gradient-to-r from-[rgba(212,175,55,0.1)] to-[rgba(212,175,55,0.05)] hover:from-[rgba(212,175,55,0.2)] hover:to-[rgba(212,175,55,0.1)] transition-all duration-300 transform hover:scale-105 min-h-[280px] flex items-center justify-center">
+                        <div class="flex flex-col items-center gap-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 16v-4"></path>
+                                <path d="M12 8h.01"></path>
+                            </svg>
+                            <div class="flex flex-col gap-1">
+                                <span class="text-[#d4af37] text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">EXPLICABI</span>
+                                <span class="text-[#d4af37] text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">LIDAD (XAI)</span>
+                            </div>
+                            <span class="text-gray-400 text-xs mt-2 text-center">PI, SHAP, LC</span>
+                        </div>
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 9: REVISIÓN DE LITERATURA -->
+        <div id="slide-5" class="slide-container w-full">
+            <div class="slide-width mx-auto w-full glass-card min-h-[680px] p-10 md:p-12 text-left transform transition-all duration-700 hover-target">
+
+                <!-- Cabecera de la Diapositiva -->
+                <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-[#d4af37] border-opacity-30 pb-8">
+                    <div>
+                        <span class="text-[#d4af37] tracking-[0.4em] uppercase text-[14px] mb-3 block font-black">Revisión de Literatura</span>
+                        <h2 class="text-4xl md:text-5xl font-bold gold-text">Estudios Representativos</h2>
+                    </div>
+                    <div class="text-right mt-6 md:mt-0">
+                        <span class="gold-border-text text-5xl font-bold opacity-30">Referencias</span>
+                        <span class="text-[#d4af37] block text-[14px] tracking-widest mt-2">TRAZABILIDAD</span>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="bg-[rgba(212,175,55,0.05)] p-6 rounded-3xl border border-[rgba(212,175,55,0.2)] mb-8">
+                    <p class="text-white text-[15px] leading-relaxed">
+                        Seleccione el idioma para ver los estudios representativos alineados con las variables objetivo
+                        (pH / DBO / OD / WQI), modelos de ML y enfoques de interpretabilidad.
+                    </p>
+                </div>
+
+                <!-- Botones de Referencias -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Botón Español -->
+                    <button id="btnReferencesES" class="group p-12 rounded-2xl border-2 border-[#d4af37] bg-gradient-to-r from-[rgba(212,175,55,0.1)] to-[rgba(212,175,55,0.05)] hover:from-[rgba(212,175,55,0.2)] hover:to-[rgba(212,175,55,0.1)] transition-all duration-300 transform hover:scale-105 min-h-[250px] flex items-center justify-center">
+                        <div class="flex flex-col items-center gap-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            <div class="flex flex-col gap-2">
+                                <span class="text-[#d4af37] text-xl font-bold tracking-wider group-hover:text-white transition-colors text-center">REFERENCIAS</span>
+                                <span class="text-[#d4af37] text-xl font-bold tracking-wider group-hover:text-white transition-colors text-center">EN ESPAÑOL</span>
+                            </div>
+                            <span class="text-gray-400 text-[14px] mt-2">3 estudios representativos</span>
+                        </div>
+                    </button>
+
+                    <!-- Botón Inglés -->
+                    <button id="btnReferencesEN" class="group p-12 rounded-2xl border-2 border-[#d4af37] bg-gradient-to-r from-[rgba(212,175,55,0.1)] to-[rgba(212,175,55,0.05)] hover:from-[rgba(212,175,55,0.2)] hover:to-[rgba(212,175,55,0.1)] transition-all duration-300 transform hover:scale-105 min-h-[250px] flex items-center justify-center">
+                        <div class="flex flex-col items-center gap-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            <div class="flex flex-col gap-2">
+                                <span class="text-[#d4af37] text-xl font-bold tracking-wider group-hover:text-white transition-colors text-center">REFERENCES</span>
+                                <span class="text-[#d4af37] text-xl font-bold tracking-wider group-hover:text-white transition-colors text-center">IN ENGLISH</span>
+                            </div>
+                            <span class="text-gray-400 text-[14px] mt-2">3 representative studies</span>
+                        </div>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 10: METODOLOGÍA -->
+        <div id="slide-6" class="slide-container w-full">
+            <div class="slide-width mx-auto w-full glass-card min-h-[680px] p-10 md:p-12 text-left transform transition-all duration-700 hover-target">
+
+                <!-- Cabecera de la Diapositiva -->
+                <div class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-[#d4af37] border-opacity-30 pb-6">
+                    <div>
+                        <span class="text-[#d4af37] tracking-[0.4em] uppercase text-[14px] mb-3 block font-black">Metodología</span>
+                        <h2 class="text-4xl md:text-5xl font-bold gold-text">Pipeline de Modelado Predictivo</h2>
+                    </div>
+                    <div class="text-right mt-6 md:mt-0">
+                        <span class="gold-border-text text-5xl font-bold opacity-30">ML</span>
+                        <span class="text-[#d4af37] block text-[14px] tracking-widest mt-2">pH & DBO – Río Cauca</span>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-10">
+                    <p class="text-white text-[15px] leading-relaxed">
+                        La metodología se estructura como un pipeline secuencial que integra control de calidad de datos, 
+                        selección robusta de variables, comparación de modelos, optimización de hiperparámetros e interpretabilidad, 
+                        garantizando robustez estadística y transparencia.
+                    </p>
+                </div>
+
+                <!-- Botón Pipeline -->
+                <div class="flex justify-center items-center h-64">
+                    <button id="btnPipeline" class="group px-16 py-8 rounded-2xl border-2 border-[#d4af37] bg-gradient-to-r from-[rgba(212,175,55,0.15)] to-[rgba(212,175,55,0.08)] hover:from-[rgba(212,175,55,0.25)] hover:to-[rgba(212,175,55,0.15)] transition-all duration-300 transform hover:scale-105">
+                        <div class="flex flex-col items-center gap-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                                <path d="M7 7h10M7 11h10"></path>
+                            </svg>
+                            <span class="text-[#d4af37] text-2xl font-bold tracking-wider group-hover:text-white transition-colors">VER PIPELINE COMPLETO</span>
+                        </div>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 11: RESULTADOS - ESCENARIOS (TABLA COMPLETA) -->
+        <div id="slide-7" class="slide-container w-full">
+            <div class="slide-width w-full mx-auto glass-card glass-card--soft min-h-[680px] p-10 md:p-12 text-left transform transition-all duration-700 hover-target">
+
+            <!-- Cabecera -->
+            <div class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-[rgba(212,175,55,0.30)] pb-6">
+                <div>
+                <span class="text-[#d4af37] tracking-[0.4em] uppercase text-xs mb-2 block font-black">
+                    Resultados y análisis
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold gold-text leading-tight">
+                    Escenarios de selección de variables
+                </h2>
+                </div>
+                <div class="text-right mt-4 md:mt-0">
+                <span class="gold-border-text text-5xl font-bold opacity-30">Variables</span>
+                <span class="text-[#d4af37] block text-sm tracking-widest mt-1">
+                    SELECCIÓN
+                </span>
+                </div>
+            </div>
+
+            <!-- Mini intro -->
+            <div class="mb-6">
+                <p class="text-gray-300 text-[16px] leading-relaxed italic border-l-2 border-[rgba(212,175,55,0.45)] pl-6">
+                Se compararon <span class="text-white font-bold">4 escenarios</span> de variables (VIF y RFE por objetivo)
+                para evaluar su impacto en la predicción de <span class="text-white font-bold">pH</span> y
+                <span class="text-white font-bold">DBO</span>.
+                </p>
+            </div>
+
+            <!-- Contenido -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+
+                <!-- TABLA -->
+                <div
+                class="md:col-span-9 p-6 rounded-2xl border"
+                style="
+                    background: linear-gradient(180deg, rgba(212,175,55,0.04), rgba(0,0,0,0.22));
+                    border-color: rgba(212,175,55,0.18);
+                    box-shadow: 0 0 0 1px rgba(0,0,0,0.55) inset;
+                "
+                >
+
+                <div class="flex items-center justify-between mb-3">
+                    <p class="text-[#d4af37] text-[10px] uppercase tracking-widest font-black">
+                    Matriz completa (variable × escenario)
+                    </p>
+                    <p class="text-gray-400 text-[11px] italic">
+                    Celdas coloreadas = variable incluida
+                    </p>
+                </div>
+
+                <!-- Scroll interno para no romper la diapositiva -->
+                <div
+                    class="rounded-xl border p-3 overflow-auto"
+                    style="
+                    max-height: 280px;
+                    background: rgba(0,0,0,0.38);
+                    border-color: rgba(212,175,55,0.14);
+                    "
+                >
+
+                    <table class="w-full border-collapse text-[13px]">
+                    <thead>
+                        <tr class="text-gray-300 border-b border-[rgba(212,175,55,0.18)]">
+                        <th class="text-left py-2 pr-3 font-semibold">Variable</th>
+                        <th class="text-center py-2 px-2 font-semibold">VIF</th>
+                        <th class="text-center py-2 px-2 font-semibold">RFE DBO</th>
+                        <th class="text-center py-2 px-2 font-semibold">RFE pH</th>
+                        <th class="text-center py-2 px-2 font-semibold">RFE DBO ∪ pH</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="text-gray-200">
+
+
+                        <!-- Helper: celdas cuadradas -->
+                        <!-- Usa: bg-[#d4af37] (amarillo), bg-[#0b1f3a] (azul), bg-[#6d28d9] (morado), bg-[#16a34a] (verde) -->
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">CALCIO (mg Ca/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#0b1f3a]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">MAGNESIO (mg Mg/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#0b1f3a]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">SÓLIDOS TOTALES (mg SST/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#0b1f3a]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">TURBIEDAD (UNT)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#0b1f3a]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">HIERRO TOTAL (mg Fe/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#0b1f3a]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">CONDUCTIVIDAD ELÉCTRICA (µS/cm)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#6d28d9]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">SULFATOS (mg SO4/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#6d28d9]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">DEMANDA BIOQUÍMICA DE OXÍGENO (mg O2/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">BICARBONATOS (mg CaCO3/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#6d28d9]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">DUREZA TOTAL (mg CaCO3/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">OXÍGENO DISUELTO (mg O2/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">SÓLIDOS DISUELTOS (mg SD/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">POTASIO TOTAL (mg K/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#6d28d9]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">COLOR (UPC)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">SODIO TOTAL (mg Na/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">DEMANDA QUÍMICA DE OXÍGENO (mg O2/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">TEMPERATURA (°C)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#6d28d9]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">CLORUROS (mg Cl/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">COLIFORMES FECALES (NMP/100 ml)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                        </tr>
+
+                        <tr class="border-b border-[rgba(255,255,255,0.06)]">
+                          <td class="py-2 pr-3">NITRATOS (mg N-NO3/l)</td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                        </tr>
+
+                        <!-- pH (objetivo) -->
+                        <tr>
+                          <td class="py-2 pr-3"><span class="text-white font-semibold">pH</span></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#d4af37]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                          <td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-transparent border border-[rgba(255,255,255,0.08)]"></div></td>
+                        </tr>
+
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <p class="text-gray-400 text-[11px] italic mt-3">
+                    Nota: pH se presenta como variable objetivo; las celdas representan variables predictoras incluidas por escenario.
+                  </p>
+                </div>
+
+                <!-- LEYENDA -->
+                <div class="md:col-span-3">
+                  <div class="bg-[rgba(212,175,55,0.03)] p-6 rounded-2xl border border-[rgba(212,175,55,0.15)]">
+                    <h3 class="text-[#d4af37] font-black uppercase tracking-widest text-xs mb-4">
+                      Escenarios
+                    </h3>
+
+                    <div class="space-y-3 text-gray-200 text-[13px]">
+                      <div class="flex items-center gap-3">
+                        <div class="w-4 h-4 rounded-sm bg-[#d4af37]"></div>
+                        <span>VIF</span>
+                      </div>
+
+                      <div class="flex items-center gap-3">
+                        <div class="w-4 h-4 rounded-sm bg-[#0b1f3a]"></div>
+                        <span>RFE DBO</span>
+                      </div>
+
+                      <div class="flex items-center gap-3">
+                        <div class="w-4 h-4 rounded-sm bg-[#6d28d9]"></div>
+                        <span>RFE pH</span>
+                      </div>
+
+                      <div class="flex items-center gap-3">
+                        <div class="w-4 h-4 rounded-sm bg-[#16a34a]"></div>
+                        <span>RFE DBO ∪ pH</span>
+                      </div>
+                    </div>
+
+                    <div class="mt-6 text-gray-400 text-[12px] leading-relaxed">
+                      <span class="text-white font-semibold">Lectura:</span> cada fila es una variable; cada columna indica si fue incluida en el escenario correspondiente.
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- DIAPOSITIVA 12: RESULTADOS DE MODELACIÓN -->
+        <div id="slide-8" class="slide-container w-full">
+            <div class="slide-width mx-auto w-full glass-card min-h-[680px] p-10 md:p-12 text-left transform transition-all duration-700 hover-target">
+
+                <!-- Cabecera de la Diapositiva -->
+                <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-[#d4af37] border-opacity-30 pb-8">
+                    <div>
+                        <span class="text-[#d4af37] tracking-[0.4em] uppercase text-[14px] mb-3 block font-black">Análisis Profundo</span>
+                        <h2 class="text-5xl md:text-6xl font-bold gold-text">Resultados de Modelación</h2>
+                    </div>
+                    <div class="text-right mt-6 md:mt-0">
+                        <span class="gold-border-text text-6xl font-bold opacity-30">Modelos</span>
+                        <span class="text-[#d4af37] block text-[14px] tracking-widest mt-2">RENDIMIENTO</span>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-12">
+                    <p class="text-gray-300 text-[15px] leading-relaxed">
+                        Visualización detallada del rendimiento predictivo de los modelos para <strong>DBO</strong> y <strong>pH</strong>, 
+                        incluyendo métricas de evaluación, importancia de variables, curvas de aprendizaje y análisis SHAP.
+                    </p>
+                </div>
+
+                <!-- Grid de Botones -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mx-auto">
+                    
+                    <!-- Botón DBO -->
+                    <button id="btnResultadosDBO" class="group relative p-10 rounded-3xl border-2 border-[rgba(212,175,55,0.3)] bg-gradient-to-br from-black/60 to-black/40 hover:from-[rgba(212,175,55,0.15)] hover:to-black/50 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl">
+                        <div class="text-[#d4af37] mb-6 flex justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white group-hover:text-[#d4af37] transition-colors mb-3">Análisis Detallado DBO</h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed">
+                            Métricas de rendimiento, importancia de variables, curvas de aprendizaje y análisis SHAP para DBO
+                        </p>
+                    </button>
+
+                    <!-- Botón pH -->
+                    <button id="btnResultadosPH" class="group relative p-10 rounded-3xl border-2 border-[rgba(212,175,55,0.3)] bg-gradient-to-br from-black/60 to-black/40 hover:from-[rgba(212,175,55,0.15)] hover:to-black/50 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl">
+                        <div class="text-[#d4af37] mb-6 flex justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:stroke-white transition-colors">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="16"></line>
+                                <line x1="8" y1="12" x2="16" y2="12"></line>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white group-hover:text-[#d4af37] transition-colors mb-3">Análisis Detallado pH</h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed">
+                            Métricas de rendimiento, importancia de variables, curvas de aprendizaje y análisis SHAP para pH
+                        </p>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 13: CIERRE - CONCLUSIONES -->
+        <div id="slide-9" class="slide-container w-full">
+            <div class="slide-width mx-auto w-full glass-card min-h-[680px] p-10 md:p-12 text-left transform transition-all duration-700 hover-target">
+
+                <!-- Cabecera de la Diapositiva -->
+                <div class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-[#d4af37] border-opacity-30 pb-6">
+                    <div>
+                        <span class="text-[#d4af37] tracking-[0.4em] uppercase text-[14px] mb-3 block font-black">Cierre</span>
+                        <h2 class="text-4xl md:text-5xl font-bold gold-text">Conclusiones</h2>
+                    </div>
+                    <div class="text-right mt-6 md:mt-0">
+                        <span class="gold-border-text text-5xl font-bold opacity-30">END</span>
+                        <span class="text-[#d4af37] block text-[14px] tracking-widest mt-2">pH & DBO – Río Cauca</span>
+                    </div>
+                </div>
+
+                <!-- Introducción -->
+                <div class="mb-8">
+                    <p class="text-white text-[15px] leading-relaxed">
+                        El proyecto consolidó un flujo de análisis reproducible que integra control de calidad, selección robusta de variables, 
+                        comparación de modelos y optimización, permitiendo vincular el desempeño predictivo con la interpretación ambiental del sistema hídrico.
+                    </p>
+                </div>
+
+                <!-- Grid de conclusiones en 3 columnas -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Columna 1: Datos & calidad -->
+                    <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                        <h3 class="text-[#d4af37] text-lg font-bold mb-4 tracking-wider">Datos & calidad</h3>
+                        <ul class="space-y-3 text-gray-300 text-[14px] leading-relaxed">
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>La calidad, estructura y coherencia de los datos fue el factor más determinante del desempeño predictivo.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>La depuración redujo el conjunto de variables de 56 a 27, usando un umbral de completitud ≥ 80 %.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Cerca del 48 % de los registros presentaron vacíos o inconsistencias, evidenciando debilidades en la captura.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>El conjunto depurado permitió construir un flujo analítico coherente, reproducible y transparente.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna 2: Selección & calibración -->
+                    <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                        <h3 class="text-[#d4af37] text-lg font-bold mb-4 tracking-wider">Selección & calibración</h3>
+                        <ul class="space-y-3 text-gray-300 text-[14px] leading-relaxed">
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Spearman, VIF y RFE redujeron el conjunto a 5–21 predictores según objetivo y escenario.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>La selección eliminó redundancia y ruido, mejorando eficiencia computacional e interpretabilidad.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Grid Search garantizó exploración sistemática y comparabilidad entre modelos.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Optuna (XGBoost) permitió búsquedas más eficientes en espacios de alta complejidad.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna 3: Modelado predictivo -->
+                    <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                        <h3 class="text-[#d4af37] text-lg font-bold mb-4 tracking-wider">Modelado predictivo</h3>
+                        <ul class="space-y-3 text-gray-300 text-[14px] leading-relaxed">
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Se evaluaron enfoques lineales, basados en árboles y aprendizaje profundo.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>El desempeño dependió más del tratamiento del dato que del algoritmo utilizado.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>La optimización equilibró precisión, estabilidad estadística y costo computacional.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>El pipeline evidenció la importancia de la coherencia metodológica en contextos ambientales.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 14: CIERRE - INTERPRETACIÓN COMPARATIVA -->
+        <div id="slide-10" class="slide-container w-full">
+            <div class="slide-width mx-auto w-full glass-card min-h-[680px] p-10 md:p-12 text-left transform transition-all duration-700 hover-target">
+
+                <!-- Cabecera de la Diapositiva -->
+                <div class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-[#d4af37] border-opacity-30 pb-6">
+                    <div>
+                        <span class="text-[#d4af37] tracking-[0.4em] uppercase text-[14px] mb-3 block font-black">Cierre</span>
+                        <h2 class="text-4xl md:text-5xl font-bold gold-text">Conclusiones</h2>
+                    </div>
+                    <div class="text-right mt-6 md:mt-0">
+                        <span class="gold-border-text text-5xl font-bold opacity-30">END</span>
+                        <span class="text-[#d4af37] block text-[14px] tracking-widest mt-2">pH & DBO – Río Cauca</span>
+                    </div>
+                </div>
+
+                <!-- Introducción -->
+                <div class="mb-4">
+                    <p class="text-white text-[15px] leading-relaxed">
+                        El análisis comparativo permitió distinguir dos dimensiones complementarias del sistema hídrico: la contaminación orgánica (DBO) 
+                        y la estabilidad química (pH), revelando patrones ambientales coherentes con la dinámica del río Cauca.
+                    </p>
+                </div>
+
+                <!-- Grid de conclusiones en 3 columnas -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+                    
+                    <!-- Columna 1: DBO · Contaminación orgánica -->
+                    <div class="bg-black bg-opacity-40 px-5 py-4 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                        <h3 class="text-[#d4af37] text-lg font-bold mb-2.5 tracking-wider">DBO · Contaminación orgánica</h3>
+                        <ul class="space-y-1.5 text-gray-300 text-[14px] leading-relaxed">
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Mejor desempeño en modelos no lineales (Random Forest).</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Variables dominantes: sulfatos, bicarbonatos y conductividad eléctrica.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Asociación con procesos de mineralización y presión antrópica.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Temperatura y potasio total actuaron como moduladores secundarios.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna 2: pH · Estabilidad química -->
+                    <div class="bg-black bg-opacity-40 px-5 py-4 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                        <h3 class="text-[#d4af37] text-lg font-bold mb-2.5 tracking-wider">pH · Estabilidad química</h3>
+                        <ul class="space-y-1.5 text-gray-300 text-[14px] leading-relaxed">
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Menor capacidad predictiva, coherente con su estabilidad natural.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Regulación dominada por el equilibrio carbonatado.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Baja sensibilidad frente a cargas orgánicas o sales.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Variabilidad asociada a procesos físico-químicos naturales.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna 3: Interpretabilidad & aporte -->
+                    <div class="bg-black bg-opacity-40 px-5 py-4 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                        <h3 class="text-[#d4af37] text-lg font-bold mb-2.5 tracking-wider">Interpretabilidad & aporte</h3>
+                        <ul class="space-y-1.5 text-gray-300 text-[14px] leading-relaxed">
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Permutation Importance y SHAP facilitaron lectura ambiental del modelo.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Se identificaron interacciones multivariables clave.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>ML como herramienta explicativa, no solo predictiva.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-[#d4af37] mr-2">•</span>
+                                <span>Metodología replicable para otros sistemas fluviales.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <!-- Conclusión final -->
+                <div class="bg-gradient-to-r from-[rgba(212,175,55,0.15)] to-[rgba(212,175,55,0.05)] px-5 py-4 rounded-xl border border-[rgba(212,175,55,0.25)]">
+                    <p class="text-white text-[14px] leading-relaxed italic text-center">
+                        La ciencia de datos aplicada permitió transformar información ambiental dispersa en conocimiento interpretable y útil, 
+                        fortaleciendo el vínculo entre modelación predictiva, comprensión ecológica y toma de decisiones ambientales.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Modal Resultados DBO -->
+<div id="modalResultadosDBO" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 1400px;">
+        <button class="modal-close" id="closeModalDBO">&times;</button>
+        <h2 class="modal-title">Análisis Detallado: DBO</h2>
+        <p class="modal-intro">
+            Evaluación completa del modelo predictivo para Demanda Bioquímica de Oxígeno, incluyendo 
+            métricas de rendimiento, importancia de variables y análisis de aprendizaje.
+        </p>
+
+        <!-- Sección 1: Evaluación del Desempeño -->
+        <div class="mb-8">
+            <h3 class="text-[#d4af37] text-xl font-bold mb-4 tracking-wider uppercase">01. Evaluación del Desempeño Predictivo</h3>
+            
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+                
+                <!-- Gráfica Top 5 R² -->
+                <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-white font-semibold text-lg">Top 5 modelos por R² (DBO)</h4>
+                        <span class="text-gray-400 text-xs italic">Escala 0–1</span>
+                    </div>
+                    <svg viewBox="0 0 1100 360" class="w-full h-auto">
+                        <g transform="translate(70,30)">
+                            <g stroke="rgba(255,255,255,0.12)">
+                                <line x1="0" y1="235" x2="1000" y2="235"/>
+                                <line x1="0" y1="188" x2="1000" y2="188"/>
+                                <line x1="0" y1="141" x2="1000" y2="141"/>
+                                <line x1="0" y1="94"  x2="1000" y2="94"/>
+                                <line x1="0" y1="47"  x2="1000" y2="47"/>
+                                <line x1="0" y1="0"   x2="1000" y2="0"/>
+                            </g>
+                            <line x1="0" y1="235" x2="1000" y2="235" stroke="rgba(255,255,255,0.25)"/>
+                            <line x1="0" y1="0" x2="0" y2="235" stroke="rgba(255,255,255,0.25)"/>
+                            <g fill="rgba(212,175,55,0.75)">
+                                <rect x="40"  y="22" width="130" height="213"/>
+                                <rect x="240" y="25" width="130" height="210"/>
+                                <rect x="440" y="30" width="130" height="205"/>
+                                <rect x="640" y="31" width="130" height="204"/>
+                                <rect x="840" y="39" width="130" height="196"/>
+                            </g>
+                            <g fill="white" font-size="24" font-weight="700" text-anchor="middle">
+                                <text x="105" y="16">0.904</text>
+                                <text x="305" y="16">0.892</text>
+                                <text x="505" y="16">0.872</text>
+                                <text x="705" y="16">0.867</text>
+                                <text x="905" y="16">0.833</text>
+                            </g>
+                            <g fill="rgba(255,255,255,0.85)" font-size="24" text-anchor="middle">
+                                <text x="105" y="270">MLPRegressor</text>
+                                <text x="105" y="300" fill="rgba(255,255,255,0.6)">DBO (RFE)</text>
+                                <text x="305" y="270">MLPRegressor</text>
+                                <text x="305" y="300" fill="rgba(255,255,255,0.6)">Unión RFE</text>
+                                <text x="505" y="270">XGBoost</text>
+                                <text x="505" y="300" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+                                <text x="705" y="270">RandomForest</text>
+                                <text x="705" y="300" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+                                <text x="905" y="270">MLPRegressor</text>
+                                <text x="905" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Gráfica RMSE/MAE -->
+                <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-white font-semibold text-lg">RMSE y MAE – Top 5 (DBO)</h4>
+                        <div class="flex gap-4 text-xs text-gray-300">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-block w-2 h-2 rounded-sm bg-[rgba(212,175,55,0.75)]"></span>
+                                RMSE
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="inline-block w-2 h-2 rounded-sm bg-[rgba(255,255,255,0.55)]"></span>
+                                MAE
+                            </span>
+                        </div>
+                    </div>
+                    <svg viewBox="0 0 1100 380" class="w-full h-auto">
+                        <g transform="translate(70,30)">
+                            <g stroke="rgba(255,255,255,0.12)">
+                                <line x1="0" y1="240" x2="1000" y2="240"/>
+                                <line x1="0" y1="192" x2="1000" y2="192"/>
+                                <line x1="0" y1="144" x2="1000" y2="144"/>
+                                <line x1="0" y1="96"  x2="1000" y2="96"/>
+                                <line x1="0" y1="48"  x2="1000" y2="48"/>
+                                <line x1="0" y1="0"   x2="1000" y2="0"/>
+                            </g>
+                            <line x1="0" y1="240" x2="1000" y2="240" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
+                            <line x1="0" y1="0"   x2="0"    y2="240" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
+                            <g fill="rgba(255,255,255,0.75)" font-size="14" text-anchor="end">
+                                <text x="-12" y="244">0</text>
+                                <text x="-12" y="196">1</text>
+                                <text x="-12" y="148">2</text>
+                                <text x="-12" y="100">3</text>
+                                <text x="-12" y="52">4</text>
+                                <text x="-12" y="4">5</text>
+                            </g>
+                            <g>
+                                <rect x="65"  y="82" width="45" height="158" fill="rgba(212,175,55,0.75)"/>
+                                <rect x="124" y="147" width="45" height="93" fill="rgba(255,255,255,0.55)"/>
+                                <rect x="265" y="73" width="45" height="167" fill="rgba(212,175,55,0.75)"/>
+                                <rect x="324" y="138" width="45" height="102" fill="rgba(255,255,255,0.55)"/>
+                                <rect x="465" y="58" width="45" height="182" fill="rgba(212,175,55,0.75)"/>
+                                <rect x="524" y="142" width="45" height="98" fill="rgba(255,255,255,0.55)"/>
+                                <rect x="665" y="55" width="45" height="185" fill="rgba(212,175,55,0.75)"/>
+                                <rect x="724" y="148" width="45" height="92" fill="rgba(255,255,255,0.55)"/>
+                                <rect x="865" y="32" width="45" height="208" fill="rgba(212,175,55,0.75)"/>
+                                <rect x="924" y="144" width="45" height="96" fill="rgba(255,255,255,0.55)"/>
+                            </g>
+                            <g fill="rgba(255,255,255,0.95)" font-size="24" font-weight="700" text-anchor="middle">
+                                <text x="87.5"  y="72">3.28</text>
+                                <text x="146.5" y="137">1.93</text>
+                                <text x="287.5" y="63">3.48</text>
+                                <text x="346.5" y="128">2.12</text>
+                                <text x="487.5" y="48">3.79</text>
+                                <text x="546.5" y="132">2.02</text>
+                                <text x="687.5" y="45">3.86</text>
+                                <text x="746.5" y="138">1.91</text>
+                                <text x="887.5" y="22">4.33</text>
+                                <text x="946.5" y="134">1.99</text>
+                            </g>
+                            <g fill="rgba(255,255,255,0.85)" font-size="24" text-anchor="middle">
+                                <text x="117" y="275">MLPRegressor</text>
+                                <text x="117" y="305" fill="rgba(255,255,255,0.6)">DBO (RFE)</text>
+                                <text x="317" y="275">MLPRegressor</text>
+                                <text x="317" y="305" fill="rgba(255,255,255,0.6)">Unión RFE</text>
+                                <text x="517" y="275">XGBoost</text>
+                                <text x="517" y="305" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+                                <text x="717" y="275">RandomForest</text>
+                                <text x="717" y="305" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+                                <text x="917" y="275">MLPRegressor</text>
+                                <text x="917" y="305" fill="rgba(255,255,255,0.6)">VIF</text>
+                            </g>
+                            <text x="-55" y="120" transform="rotate(-90 -55 120)" fill="rgba(255,255,255,0.75)" font-size="16">Error</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 2: Modelos Optimizados -->
+        <div class="mb-8">
+            <h3 class="text-[#d4af37] text-xl font-bold mb-4 tracking-wider uppercase">02. Modelos Optimizados (Grid Search · Optuna)</h3>
+            
+            <!-- ========================= -->
+            <!-- SEGUNDA MODELACIÓN – DBO -->
+            <!-- ========================= -->
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+              <!-- ========================= -->
+              <!-- GRÁFICA 1: TOP 5 POR R² (DBO) -->
+              <!-- ========================= -->
+              <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-white font-semibold text-lg">
+                    Top 5 modelos por R² (DBO)
+                  </h4>
+                  <span class="text-gray-400 text-xs italic">Escala 0–1</span>
+                </div>
+
+                <svg viewBox="0 0 1100 360" class="w-full h-auto">
+                  <g transform="translate(70,30)">
+
+                    <!-- Grid -->
+                    <g stroke="rgba(255,255,255,0.12)">
+                      <line x1="0" y1="235" x2="1000" y2="235"/>
+                      <line x1="0" y1="188" x2="1000" y2="188"/>
+                      <line x1="0" y1="141" x2="1000" y2="141"/>
+                      <line x1="0" y1="94"  x2="1000" y2="94"/>
+                      <line x1="0" y1="47"  x2="1000" y2="47"/>
+                      <line x1="0" y1="0"   x2="1000" y2="0"/>
+                    </g>
+
+                    <!-- Ejes -->
+                    <line x1="0" y1="235" x2="1000" y2="235" stroke="rgba(255,255,255,0.25)"/>
+                    <line x1="0" y1="0" x2="0" y2="235" stroke="rgba(255,255,255,0.25)"/>
+
+                    <!-- Barras -->
+                    <g fill="rgba(212,175,55,0.75)">
+                      <rect x="40"  y="22" width="130" height="213"/>
+                      <rect x="240" y="25" width="130" height="210"/>
+                      <rect x="440" y="30" width="130" height="205"/>
+                      <rect x="640" y="31" width="130" height="204"/>
+                      <rect x="840" y="39" width="130" height="196"/>
+                    </g>
+
+                    <!-- Valores -->
+                    <g fill="white" font-size="24" font-weight="700" text-anchor="middle">
+                      <text x="105" y="16">0.908</text>
+                      <text x="305" y="16">0.898</text>
+                      <text x="505" y="16">0.886</text>
+                      <text x="705" y="16">0.884</text>
+                      <text x="905" y="16">0.874</text>
+                    </g>
+
+                    <!-- Etiquetas X -->
+                    <g fill="rgba(255,255,255,0.85)" font-size="24" text-anchor="middle">
+
+                      <text x="105" y="270">RandomForest</text>
+                      <text x="105" y="300" fill="rgba(255,255,255,0.6)">RFE</text>
+                      <text x="105" y="330" fill="rgba(255,255,255,0.6)">Grid</text>
+
+                      <text x="305" y="270">XGBoost</text>
+                      <text x="305" y="300" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+                      <text x="305" y="330" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+                      <text x="505" y="270">XGBoost</text>
+                      <text x="505" y="300" fill="rgba(255,255,255,0.6)">RFE</text>
+                      <text x="505" y="330" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+                      <text x="705" y="270">MLPRegressor</text>
+                      <text x="705" y="300" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+                      <text x="705" y="330" fill="rgba(255,255,255,0.6)">Grid</text>
+
+                      <text x="905" y="270">MLPRegressor</text>
+                      <text x="905" y="300" fill="rgba(255,255,255,0.6)">RFE</text>
+                      <text x="905" y="330" fill="rgba(255,255,255,0.6)">Grid</text>
+
+                    </g>
+                  </g>
+                </svg>
+              </div>
+
+              <!-- ========================= -->
+              <!-- GRÁFICA 2: RMSE Y MAE (DBO) -->
+              <!-- ========================= -->
+              <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-white font-semibold text-lg">
+                    RMSE y MAE – Top 5 (DBO)
+                  </h4>
+                  <div class="flex gap-4 text-xs text-gray-300">
+                    <span>■ RMSE</span>
+                    <span>■ MAE</span>
+                  </div>
+                </div>
+
+                <svg viewBox="0 0 1100 380" class="w-full h-auto">
+                  <g transform="translate(70,30)">
+
+                    <!-- Grid -->
+                    <g stroke="rgba(255,255,255,0.12)">
+                      <line x1="0" y1="240" x2="1000" y2="240"/>
+                      <line x1="0" y1="192" x2="1000" y2="192"/>
+                      <line x1="0" y1="144" x2="1000" y2="144"/>
+                      <line x1="0" y1="96"  x2="1000" y2="96"/>
+                      <line x1="0" y1="48"  x2="1000" y2="48"/>
+                      <line x1="0" y1="0"   x2="1000" y2="0"/>
+                    </g>
+
+                    <!-- Ejes -->
+                    <line x1="0" y1="240" x2="1000" y2="240" stroke="rgba(255,255,255,0.25)"/>
+                    <line x1="0" y1="0" x2="0" y2="240" stroke="rgba(255,255,255,0.25)"/>
+
+                    <!-- Barras -->
+                    <g>
+                      <rect x="65"  y="86" width="45" height="154" fill="rgba(212,175,55,0.75)"/>
+                      <rect x="124" y="153" width="45" height="87" fill="rgba(255,255,255,0.55)"/>
+
+                      <rect x="265" y="78" width="45" height="162" fill="rgba(212,175,55,0.75)"/>
+                      <rect x="324" y="153" width="45" height="87" fill="rgba(255,255,255,0.55)"/>
+
+                      <rect x="465" y="69" width="45" height="171" fill="rgba(212,175,55,0.75)"/>
+                      <rect x="524" y="149" width="45" height="91" fill="rgba(255,255,255,0.55)"/>
+
+                      <rect x="665" y="67" width="45" height="173" fill="rgba(212,175,55,0.75)"/>
+                      <rect x="724" y="141" width="45" height="99" fill="rgba(255,255,255,0.55)"/>
+
+                      <rect x="865" y="60" width="45" height="180" fill="rgba(212,175,55,0.75)"/>
+                      <rect x="924" y="140" width="45" height="100" fill="rgba(255,255,255,0.55)"/>
+                    </g>
+
+                    <!-- Valores -->
+                    <g fill="rgba(255,255,255,0.95)" font-size="24" font-weight="700" text-anchor="middle">
+                      <text x="87.5"  y="76">3.21</text>
+                      <text x="146.5" y="143">1.81</text>
+
+                      <text x="287.5" y="68">3.38</text>
+                      <text x="346.5" y="143">1.81</text>
+
+                      <text x="487.5" y="59">3.57</text>
+                      <text x="546.5" y="139">1.89</text>
+
+                      <text x="687.5" y="57">3.60</text>
+                      <text x="746.5" y="131">2.07</text>
+
+                      <text x="887.5" y="50">3.76</text>
+                      <text x="946.5" y="130">2.08</text>
+                    </g>
+
+                    <!-- Etiquetas X -->
+                    <g fill="rgba(255,255,255,0.85)" font-size="24" text-anchor="middle">
+                      <text x="117" y="275">RandomForest</text>
+                      <text x="117" y="305" fill="rgba(255,255,255,0.6)">RFE</text>
+                      <text x="117" y="335" fill="rgba(255,255,255,0.6)">Grid</text>
+
+                      <text x="317" y="275">XGBoost</text>
+                      <text x="317" y="305" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+                      <text x="317" y="335" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+                      <text x="517" y="275">XGBoost</text>
+                      <text x="517" y="305" fill="rgba(255,255,255,0.6)">RFE</text>
+                      <text x="517" y="335" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+                      <text x="717" y="275">MLPRegressor</text>
+                      <text x="717" y="305" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+                      <text x="717" y="335" fill="rgba(255,255,255,0.6)">Grid</text>
+
+                      <text x="917" y="275">MLPRegressor</text>
+                      <text x="917" y="305" fill="rgba(255,255,255,0.6)">RFE</text>
+                      <text x="917" y="335" fill="rgba(255,255,255,0.6)">Grid</text>
+                    </g>
+
+                    <!-- Label eje Y -->
+                    <text x="-55" y="120" transform="rotate(-90 -55 120)"
+                          fill="rgba(255,255,255,0.75)" font-size="16">
+                      Error
+                    </text>
+
+                  </g>
+                </svg>
+              </div>
+
+            </div>
+        </div>
+
+        <!-- Sección 3: Modelo Seleccionado -->
+        <div class="mb-8">
+            <h3 class="text-[#d4af37] text-xl font-bold mb-4 tracking-wider uppercase">03. Modelo Seleccionado</h3>
+            
+            <!-- ========================= -->
+            <!-- TABLA: MODELOS SELECCIONADOS -->
+            <!-- ========================= -->
+
+            <div class="overflow-x-auto mt-6">
+              <table class="w-full border border-[rgba(212,175,55,0.25)] text-sm text-white">
+
+                <!-- Encabezado -->
+                <thead class="bg-black bg-opacity-60">
+                  <tr>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">OBJETIVO</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">ESCENARIO</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MODELO</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">R²</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">RMSE</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MAE</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">N° VARS</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">TÉCNICA</th>
+                  </tr>
+                </thead>
+
+                <!-- Cuerpo -->
+                <tbody class="bg-black bg-opacity-40 text-center">
+                  <tr>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+                      Demanda bioquímica de oxígeno (mg O₂/L)
+                    </td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+                      pH-RFE
+                    </td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+                      RandomForest
+                    </td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+                      0,91
+                    </td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+                      3,21
+                    </td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+                      1,81
+                    </td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+                      5
+                    </td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+                      Grid
+                    </td>
+                  </tr>
+                </tbody>
+
+              </table>
+            </div>
+        </div>
+
+        <!-- Sección 4: Importancia de Variables -->
+        <div class="mb-8">
+            <h3 class="text-[#d4af37] text-xl font-bold mb-4 tracking-wider uppercase">04. Importancia de Variables (DBO)</h3>
+            
+            <!-- ========================= -->
+            <!-- BLOQUE: PERMUTATION (media+std) + SHAP (mean|SHAP|) — DBO -->
+            <!-- ========================= -->
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+              <!-- ===================================================== -->
+              <!-- GRÁFICA 1: Permuted Importance (Importancia + Std) -->
+              <!-- ===================================================== -->
+              <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-white font-semibold text-lg">
+                    Permuted Importance — DBO
+                  </h4>
+                  <span class="text-gray-400 text-xs italic">Media ± desviación estándar</span>
+                </div>
+
+                <svg viewBox="0 0 1400 360" class="w-full h-auto">
+                  <g transform="translate(190,30)">
+
+                    <!-- Config -->
+                    <!-- max(mean+std) = 1.64+0.09 = 1.73; chartW=760; x0=300; y0=30; barH=34; gap=18 -->
+                    <!-- scale: width = value/1.73*760 -->
+
+                    <!-- Grid vertical (0 a 1.73) -->
+                    <g stroke="rgba(255,255,255,0.10)">
+                      <line x1="300" y1="10" x2="300" y2="290"/>
+                      <line x1="452" y1="10" x2="452" y2="290"/>
+                      <line x1="604" y1="10" x2="604" y2="290"/>
+                      <line x1="756" y1="10" x2="756" y2="290"/>
+                      <line x1="908" y1="10" x2="908" y2="290"/>
+                      <line x1="1060" y1="10" x2="1060" y2="290"/>
+                    </g>
+
+                    <!-- Ejes -->
+                    <line x1="300" y1="290" x2="1060" y2="290" stroke="rgba(255,255,255,0.25)"/>
+                    <line x1="300" y1="10"  x2="300"  y2="290" stroke="rgba(255,255,255,0.25)"/>
+
+                    <!-- Etiquetas eje X -->
+                    <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+                       font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                      <text x="300" y="315">0.00</text>
+                      <text x="452" y="315">0.35</text>
+                      <text x="604" y="315">0.69</text>
+                      <text x="756" y="315">1.04</text>
+                      <text x="908" y="315">1.38</text>
+                      <text x="1060" y="315">1.73</text>
+                    </g>
+
+                    <text x="680" y="345" text-anchor="middle"
+                          fill="rgba(255,255,255,0.75)" font-size="16"
+                          font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                      Importancia media (± DE)
+                    </text>
+
+                    <!-- Barras (media) + error bar (± std) -->
+                    <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+                      <!-- Helper widths -->
+                      <!-- Sulfatos mean=1.64 -> 720 ; std=0.09 -> 39 -->
+                      <!-- Conductividad mean=0.02 -> 9 ; std=0.01 -> 4 -->
+                      <!-- Bicarbonatos mean=0.02 -> 9 ; std=0.01 -> 4 -->
+                      <!-- Potasio mean=0.01 -> 4 ; std=0.01 -> 4 -->
+                      <!-- Temperatura mean=0.00 -> 0 ; std=0.01 -> 4 -->
+
+                      <!-- 1) SULFATOS -->
+                      <text x="290" y="50" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        SULFATOS (mg SO4/L)
+                      </text>
+                      <rect x="300" y="30" width="720" height="34" fill="rgba(212,175,55,0.75)"/>
+                      <!-- error bar -->
+                      <line x1="981" y1="47" x2="1059" y2="47" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="981" y1="39" x2="981" y2="55" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="1059" y1="39" x2="1059" y2="55" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="1078" y="53" fill="rgba(255,255,255,0.90)" font-size="24">1.64 ± 0.09</text>
+
+                      <!-- 2) CONDUCTIVIDAD -->
+                      <text x="290" y="102" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        CONDUCTIVIDAD ELÉCTRICA (µS/cm)
+                      </text>
+                      <rect x="300" y="82" width="9" height="34" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="305" y1="99" x2="313" y2="99" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="305" y1="91" x2="305" y2="107" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="313" y1="91" x2="313" y2="107" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="335" y="105" fill="rgba(255,255,255,0.90)" font-size="24">0.02 ± 0.01</text>
+
+                      <!-- 3) BICARBONATOS -->
+                      <text x="290" y="154" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        BICARBONATOS (mg CaCO3/L)
+                      </text>
+                      <rect x="300" y="134" width="9" height="34" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="305" y1="151" x2="313" y2="151" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="305" y1="143" x2="305" y2="159" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="313" y1="143" x2="313" y2="159" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="335" y="157" fill="rgba(255,255,255,0.90)" font-size="24">0.02 ± 0.01</text>
+
+                      <!-- 4) POTASIO -->
+                      <text x="290" y="206" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        POTASIO TOTAL (mg K/L)
+                      </text>
+                      <rect x="300" y="186" width="4" height="34" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="300" y1="203" x2="308" y2="203" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="300" y1="195" x2="300" y2="211" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="308" y1="195" x2="308" y2="211" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="335" y="209" fill="rgba(255,255,255,0.90)" font-size="24">0.01 ± 0.01</text>
+
+                      <!-- 5) TEMPERATURA -->
+                      <text x="290" y="258" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        TEMPERATURA (°C)
+                      </text>
+                      <rect x="300" y="238" width="0" height="34" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="296" y1="255" x2="304" y2="255" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="296" y1="247" x2="296" y2="263" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="304" y1="247" x2="304" y2="263" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="335" y="261" fill="rgba(255,255,255,0.90)" font-size="24">0.00 ± 0.01</text>
+
+                    </g>
+                  </g>
+                </svg>
+              </div>
+
+              <!-- ===================================== -->
+              <!-- GRÁFICA 2: SHAP Global (mean |SHAP|) -->
+              <!-- ===================================== -->
+              <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-white font-semibold text-lg">
+                    SHAP — Importancia global (DBO)
+                  </h4>
+                  <span class="text-gray-400 text-xs italic">mean(|SHAP|)</span>
+                </div>
+
+                <svg viewBox="0 0 1400 360" class="w-full h-auto">
+                  <g transform="translate(190,30)">
+
+                    <!-- Config -->
+                    <!-- max = 2.32; chartW=760; x0=300; y0=30; barH=34; gap=18 -->
+
+                    <!-- Grid vertical -->
+                    <g stroke="rgba(255,255,255,0.10)">
+                      <line x1="300" y1="10" x2="300" y2="290"/>
+                      <line x1="452" y1="10" x2="452" y2="290"/>
+                      <line x1="604" y1="10" x2="604" y2="290"/>
+                      <line x1="756" y1="10" x2="756" y2="290"/>
+                      <line x1="908" y1="10" x2="908" y2="290"/>
+                      <line x1="1060" y1="10" x2="1060" y2="290"/>
+                    </g>
+
+                    <!-- Ejes -->
+                    <line x1="300" y1="290" x2="1060" y2="290" stroke="rgba(255,255,255,0.25)"/>
+                    <line x1="300" y1="10"  x2="300"  y2="290" stroke="rgba(255,255,255,0.25)"/>
+
+                    <!-- Etiquetas eje X (0 a 2.32) -->
+                    <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+                       font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                      <text x="300" y="315">0.00</text>
+                      <text x="452" y="315">0.46</text>
+                      <text x="604" y="315">0.93</text>
+                      <text x="756" y="315">1.39</text>
+                      <text x="908" y="315">1.86</text>
+                      <text x="1060" y="315">2.32</text>
+                    </g>
+
+                    <text x="680" y="345" text-anchor="middle"
+                          fill="rgba(255,255,255,0.75)" font-size="16"
+                          font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                      mean(|SHAP|)
+                    </text>
+
+                    <!-- Barras (orden como tu tabla) -->
+                    <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+                      <!-- widths: 2.32->760 ; 0.93->304 ; 0.91->298 ; 0.54->177 ; 0.27->88 -->
+
+                      <!-- 1) SULFATOS -->
+                      <text x="290" y="50" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        SULFATOS (mg SO4/L)
+                      </text>
+                      <rect x="300" y="30" width="760" height="34" fill="rgba(212,175,55,0.75)"/>
+                      <text x="1075" y="53" fill="rgba(255,255,255,0.90)" font-size="24">2.32</text>
+
+                      <!-- 2) CONDUCTIVIDAD -->
+                      <text x="290" y="102" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        CONDUCTIVIDAD ELÉCTRICA (µS/cm)
+                      </text>
+                      <rect x="300" y="82" width="304" height="34" fill="rgba(212,175,55,0.75)"/>
+                      <text x="616" y="105" fill="rgba(255,255,255,0.90)" font-size="24">0.93</text>
+
+                      <!-- 3) BICARBONATOS -->
+                      <text x="290" y="154" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        BICARBONATOS (mg CaCO3/L)
+                      </text>
+                      <rect x="300" y="134" width="298" height="34" fill="rgba(212,175,55,0.75)"/>
+                      <text x="610" y="157" fill="rgba(255,255,255,0.90)" font-size="24">0.91</text>
+
+                      <!-- 4) TEMPERATURA -->
+                      <text x="290" y="206" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        TEMPERATURA (°C)
+                      </text>
+                      <rect x="300" y="186" width="177" height="34" fill="rgba(212,175,55,0.75)"/>
+                      <text x="489" y="209" fill="rgba(255,255,255,0.90)" font-size="24">0.54</text>
+
+                      <!-- 5) POTASIO -->
+                      <text x="290" y="258" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        POTASIO TOTAL (mg K/L)
+                      </text>
+                      <rect x="300" y="238" width="88" height="34" fill="rgba(212,175,55,0.75)"/>
+                      <text x="400" y="261" fill="rgba(255,255,255,0.90)" font-size="24">0.27</text>
+
+                    </g>
+                  </g>
+                </svg>
+              </div>
+
+            </div>
+
+            <div class="mt-6 bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <h4 class="text-white font-semibold text-lg mb-4">SHAP Beeswarm Plot</h4>
+                <img src="shap_beeswarm_dbo_tuning.png" alt="SHAP Beeswarm DBO" class="w-full h-auto rounded-lg">
+            </div>
+        </div>
+
+        <!-- Sección 5: Curvas de Aprendizaje -->
+        <div class="mb-8">
+            <h3 class="text-[#d4af37] text-xl font-bold mb-4 tracking-wider uppercase">05. Curvas de Aprendizaje (DBO)</h3>
+            
+            <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <h4 class="text-white font-semibold text-lg mb-4">Curva de Aprendizaje</h4>
+                <img src="curva_aprendizaje_dbo_tuning.png" alt="Curva de Aprendizaje DBO" class="w-full h-auto rounded-lg">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Resultados pH -->
+<div id="modalResultadosPH" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 1400px;">
+        <button class="modal-close" id="closeModalPH">&times;</button>
+        <h2 class="modal-title">Análisis Detallado: pH</h2>
+        <p class="modal-intro">
+            Evaluación completa del modelo predictivo para pH, incluyendo 
+            métricas de rendimiento, importancia de variables y análisis de aprendizaje.
+        </p>
+
+        <!-- Sección 1: Evaluación del Desempeño -->
+        <div class="mb-8">
+            <h3 class="text-[#d4af37] text-xl font-bold mb-4 tracking-wider uppercase">01. Evaluación del Desempeño Predictivo</h3>
+            
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+                
+                <!-- Gráfica Top 5 R² -->
+                <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-white font-semibold text-lg">Top 5 modelos por R² (pH)</h4>
+                        <span class="text-gray-400 text-xs italic">Escala 0–1</span>
+                    </div>
+                    <svg viewBox="0 0 1100 360" class="w-full h-auto">
+                        <g transform="translate(70,30)">
+                            <g stroke="rgba(255,255,255,0.12)">
+                                <line x1="0" y1="235" x2="1000" y2="235"/>
+                                <line x1="0" y1="188" x2="1000" y2="188"/>
+                                <line x1="0" y1="141" x2="1000" y2="141"/>
+                                <line x1="0" y1="94"  x2="1000" y2="94"/>
+                                <line x1="0" y1="47"  x2="1000" y2="47"/>
+                                <line x1="0" y1="0"   x2="1000" y2="0"/>
+                            </g>
+                            <line x1="0" y1="235" x2="1000" y2="235" stroke="rgba(255,255,255,0.25)"/>
+                            <line x1="0" y1="0" x2="0" y2="235" stroke="rgba(255,255,255,0.25)"/>
+                            <g fill="rgba(212,175,55,0.75)">
+                                <rect x="40"  y="11" width="130" height="224"/>
+                                <rect x="240" y="41" width="130" height="194"/>
+                                <rect x="440" y="55" width="130" height="180"/>
+                                <rect x="640" y="60" width="130" height="175"/>
+                                <rect x="840" y="89" width="130" height="146"/>
+                            </g>
+                            <g fill="white" font-size="24" font-weight="700" text-anchor="middle">
+                                <text x="105" y="6">0.408</text>
+                                <text x="305" y="36">0.335</text>
+                                <text x="505" y="50">0.312</text>
+                                <text x="705" y="55">0.305</text>
+                                <text x="905" y="84">0.253</text>
+                            </g>
+                            <g fill="rgba(255,255,255,0.85)" font-size="24" text-anchor="middle">
+                                <text x="105" y="270">XGBoost</text>
+                                <text x="105" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+                                <text x="305" y="270">RandomForest</text>
+                                <text x="305" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+                                <text x="505" y="270">XGBoost</text>
+                                <text x="505" y="300" fill="rgba(255,255,255,0.6)">Unión</text>
+                                <text x="705" y="270">RandomForest</text>
+                                <text x="705" y="300" fill="rgba(255,255,255,0.6)">Unión RFE</text>
+                                <text x="905" y="270">RandomForest</text>
+                                <text x="905" y="300" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Gráfica RMSE/MAE -->
+                <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-white font-semibold text-lg">RMSE y MAE – Top 5 (pH)</h4>
+                        <div class="flex gap-4 text-xs text-gray-300">
+                            <span class="flex items-center gap-2">
+                                <span class="inline-block w-2 h-2 rounded-sm bg-[rgba(212,175,55,0.75)]"></span>
+                                RMSE
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <span class="inline-block w-2 h-2 rounded-sm bg-[rgba(255,255,255,0.55)]"></span>
+                                MAE
+                            </span>
+                        </div>
+                    </div>
+                    <svg viewBox="0 0 1100 380" class="w-full h-auto">
+                        <g transform="translate(70,30)">
+                            <g stroke="rgba(255,255,255,0.12)">
+                                <line x1="0" y1="240" x2="1000" y2="240"/>
+                                <line x1="0" y1="192" x2="1000" y2="192"/>
+                                <line x1="0" y1="144" x2="1000" y2="144"/>
+                                <line x1="0" y1="96"  x2="1000" y2="96"/>
+                                <line x1="0" y1="48"  x2="1000" y2="48"/>
+                                <line x1="0" y1="0"   x2="1000" y2="0"/>
+                            </g>
+                            <line x1="0" y1="240" x2="1000" y2="240" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
+                            <line x1="0" y1="0"   x2="0"    y2="240" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
+                            <g fill="rgba(255,255,255,0.75)" font-size="14" text-anchor="end">
+                                <text x="-12" y="244">0.0</text>
+                                <text x="-12" y="196">0.2</text>
+                                <text x="-12" y="148">0.4</text>
+                                <text x="-12" y="100">0.6</text>
+                                <text x="-12" y="52">0.8</text>
+                                <text x="-12" y="4">1.0</text>
+                            </g>
+                            <g>
+                                <rect x="65"  y="66" width="45" height="174" fill="rgba(212,175,55,0.75)"/>
+                                <rect x="124" y="110" width="45" height="130" fill="rgba(255,255,255,0.55)"/>
+                                <rect x="265" y="55" width="45" height="185" fill="rgba(212,175,55,0.75)"/>
+                                <rect x="324" y="106" width="45" height="134" fill="rgba(255,255,255,0.55)"/>
+                                <rect x="465" y="50" width="45" height="190" fill="rgba(212,175,55,0.75)"/>
+                                <rect x="524" y="102" width="45" height="138" fill="rgba(255,255,255,0.55)"/>
+                                <rect x="665" y="48" width="45" height="192" fill="rgba(212,175,55,0.75)"/>
+                                <rect x="724" y="110" width="45" height="130" fill="rgba(255,255,255,0.55)"/>
+                                <rect x="865" y="38" width="45" height="202" fill="rgba(212,175,55,0.75)"/>
+                                <rect x="924" y="106" width="45" height="134" fill="rgba(255,255,255,0.55)"/>
+                            </g>
+                            <g fill="rgba(255,255,255,0.95)" font-size="24" font-weight="700" text-anchor="middle">
+                                <text x="87.5"  y="56">0.72</text>
+                                <text x="146.5" y="100">0.54</text>
+                                <text x="287.5" y="45">0.77</text>
+                                <text x="346.5" y="96">0.56</text>
+                                <text x="487.5" y="40">0.79</text>
+                                <text x="546.5" y="92">0.57</text>
+                                <text x="687.5" y="38">0.80</text>
+                                <text x="746.5" y="100">0.54</text>
+                                <text x="887.5" y="28">0.84</text>
+                                <text x="946.5" y="96">0.56</text>
+                            </g>
+                            <g fill="rgba(255,255,255,0.85)" font-size="24" text-anchor="middle">
+                                <text x="117" y="275">XGBoost</text>
+                                <text x="117" y="305" fill="rgba(255,255,255,0.6)">VIF</text>
+                                <text x="317" y="275">RandomForest</text>
+                                <text x="317" y="305" fill="rgba(255,255,255,0.6)">VIF</text>
+                                <text x="517" y="275">XGBoost</text>
+                                <text x="517" y="305" fill="rgba(255,255,255,0.6)">Unión</text>
+                                <text x="717" y="275">RandomForest</text>
+                                <text x="717" y="305" fill="rgba(255,255,255,0.6)">Unión RFE</text>
+                                <text x="917" y="275">RandomForest</text>
+                                <text x="917" y="305" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+                            </g>
+                            <text x="-55" y="120" transform="rotate(-90 -55 120)" fill="rgba(255,255,255,0.75)" font-size="16">Error</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 2: Modelos Optimizados -->
+        <div class="mb-8">
+            <h3 class="text-[#d4af37] text-xl font-bold mb-4 tracking-wider uppercase">02. Modelos Optimizados (Grid Search · Optuna)</h3>
+            
+            <!-- ========================= -->
+            <!-- BLOQUE 2: Modelos optimizados — pH -->
+            <!-- ========================= -->
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+              <!-- ===================================== -->
+              <!-- GRÁFICA 1: Top 5 modelos por R² (pH) - OPTIMIZADOS -->
+              <!-- ===================================== -->
+              <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-white font-semibold text-lg">
+                    Top 5 modelos por R² (pH) — Optimizados
+                  </h4>
+                  <span class="text-gray-400 text-xs italic">Escala 0–1</span>
+                </div>
+
+                <svg viewBox="0 0 1100 360" class="w-full h-auto">
+                  <g transform="translate(70,30)">
+
+                    <!-- Grid -->
+                    <g stroke="rgba(255,255,255,0.12)">
+                      <line x1="0" y1="235" x2="1000" y2="235"/>
+                      <line x1="0" y1="188" x2="1000" y2="188"/>
+                      <line x1="0" y1="141" x2="1000" y2="141"/>
+                      <line x1="0" y1="94"  x2="1000" y2="94"/>
+                      <line x1="0" y1="47"  x2="1000" y2="47"/>
+                      <line x1="0" y1="0"   x2="1000" y2="0"/>
+                    </g>
+
+                    <!-- Ejes -->
+                    <line x1="0" y1="235" x2="1000" y2="235" stroke="rgba(255,255,255,0.25)"/>
+                    <line x1="0" y1="0" x2="0" y2="235" stroke="rgba(255,255,255,0.25)"/>
+
+                    <!-- Barras (R²) -->
+                    <g fill="rgba(212,175,55,0.75)">
+                      <!-- max = 0.398  |  y = 235 - (value/max)*235  -->
+                      <rect x="40"  y="0"  width="130" height="235"/>  <!-- 0.398 -->
+                      <rect x="240" y="36" width="130" height="199"/>  <!-- 0.337 -->
+                      <rect x="440" y="48" width="130" height="187"/>  <!-- 0.316 -->
+                      <rect x="640" y="60" width="130" height="175"/>  <!-- 0.297 -->
+                      <rect x="840" y="76" width="130" height="159"/>  <!-- 0.269 -->
+                    </g>
+
+                    <!-- Valores -->
+                    <g fill="white" font-size="24" font-weight="700" text-anchor="middle">
+                      <text x="105" y="-6">0.398</text>
+                      <text x="305" y="30">0.337</text>
+                      <text x="505" y="42">0.316</text>
+                      <text x="705" y="54">0.297</text>
+                      <text x="905" y="70">0.269</text>
+                    </g>
+
+                    <!-- Etiquetas X -->
+                    <g fill="rgba(255,255,255,0.85)" font-size="24" text-anchor="middle">
+                      <text x="105" y="270">XGBoost</text>
+                      <text x="105" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+                      <text x="105" y="330" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+                      <text x="305" y="270">RandomForest</text>
+                      <text x="305" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+                      <text x="305" y="330" fill="rgba(255,255,255,0.6)">Grid</text>
+
+                      <text x="505" y="270">RandomForest</text>
+                      <text x="505" y="300" fill="rgba(255,255,255,0.6)">RFE DBOupH</text>
+                      <text x="505" y="330" fill="rgba(255,255,255,0.6)">Grid</text>
+
+                      <text x="705" y="270">XGBoost</text>
+                      <text x="705" y="300" fill="rgba(255,255,255,0.6)">RFE DBOupH</text>
+                      <text x="705" y="330" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+                      <text x="905" y="270">SVR (RBF)</text>
+                      <text x="905" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+                      <text x="905" y="330" fill="rgba(255,255,255,0.6)">Grid</text>
+                    </g>
+
+                  </g>
+                </svg>
+              </div>
+
+              <!-- ===================================== -->
+              <!-- GRÁFICA 2: RMSE y MAE (pH) - OPTIMIZADOS -->
+              <!-- ===================================== -->
+              <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-white font-semibold text-lg">
+                    RMSE y MAE – Top 5 (pH) — Optimizados
+                  </h4>
+                  <div class="flex gap-4 text-xs text-gray-300">
+                    <span>■ RMSE</span>
+                    <span>■ MAE</span>
+                  </div>
+                </div>
+
+                <svg viewBox="0 0 1100 380" class="w-full h-auto">
+                  <g transform="translate(70,30)">
+
+                    <!-- Grid -->
+                    <g stroke="rgba(255,255,255,0.12)">
+                      <line x1="0" y1="240" x2="1000" y2="240"/>
+                      <line x1="0" y1="192" x2="1000" y2="192"/>
+                      <line x1="0" y1="144" x2="1000" y2="144"/>
+                      <line x1="0" y1="96"  x2="1000" y2="96"/>
+                      <line x1="0" y1="48"  x2="1000" y2="48"/>
+                      <line x1="0" y1="0"   x2="1000" y2="0"/>
+                    </g>
+
+                    <!-- Ejes -->
+                    <line x1="0" y1="240" x2="1000" y2="240" stroke="rgba(255,255,255,0.25)"/>
+                    <line x1="0" y1="0" x2="0" y2="240" stroke="rgba(255,255,255,0.25)"/>
+
+                    <!-- Barras -->
+                    <g>
+                      <!-- Escala max = 0.33 (para RMSE); y = 240 - (value/0.33)*240 -->
+                      <!-- Grupo 1: RMSE 0.30 | MAE 0.21 -->
+                      <rect x="65"  y="22"  width="45" height="218" fill="rgba(212,175,55,0.75)"/>
+                      <rect x="124" y="87"  width="45" height="153" fill="rgba(255,255,255,0.55)"/>
+
+                      <!-- Grupo 2: RMSE 0.32 | MAE 0.23 -->
+                      <rect x="265" y="7"   width="45" height="233" fill="rgba(212,175,55,0.75)"/>
+                      <rect x="324" y="73"  width="45" height="167" fill="rgba(255,255,255,0.55)"/>
+
+                      <!-- Grupo 3: RMSE 0.32 | MAE 0.23 -->
+                      <rect x="465" y="7"   width="45" height="233" fill="rgba(212,175,55,0.75)"/>
+                      <rect x="524" y="73"  width="45" height="167" fill="rgba(255,255,255,0.55)"/>
+
+                      <!-- Grupo 4: RMSE 0.32 | MAE 0.24 -->
+                      <rect x="665" y="7"   width="45" height="233" fill="rgba(212,175,55,0.75)"/>
+                      <rect x="724" y="65"  width="45" height="175" fill="rgba(255,255,255,0.55)"/>
+
+                      <!-- Grupo 5: RMSE 0.33 | MAE 0.25 -->
+                      <rect x="865" y="0"   width="45" height="240" fill="rgba(212,175,55,0.75)"/>
+                      <rect x="924" y="58"  width="45" height="182" fill="rgba(255,255,255,0.55)"/>
+                    </g>
+
+                    <!-- Valores -->
+                    <g fill="rgba(255,255,255,0.95)" font-size="24" font-weight="700" text-anchor="middle">
+                      <text x="87.5"  y="15">0.30</text>
+                      <text x="146.5" y="80">0.21</text>
+
+                      <text x="287.5" y="0">0.32</text>
+                      <text x="346.5" y="66">0.23</text>
+
+                      <text x="487.5" y="0">0.32</text>
+                      <text x="546.5" y="66">0.23</text>
+
+                      <text x="687.5" y="0">0.32</text>
+                      <text x="746.5" y="58">0.24</text>
+
+                      <text x="887.5" y="-7">0.33</text>
+                      <text x="946.5" y="51">0.25</text>
+                    </g>
+
+                    <!-- Etiquetas X -->
+                    <g fill="rgba(255,255,255,0.85)" font-size="24" text-anchor="middle">
+                      <text x="117" y="275">XGBoost</text>
+                      <text x="117" y="305" fill="rgba(255,255,255,0.6)">VIF</text>
+                      <text x="117" y="335" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+                      <text x="317" y="275">RandomForest</text>
+                      <text x="317" y="305" fill="rgba(255,255,255,0.6)">VIF</text>
+                      <text x="317" y="335" fill="rgba(255,255,255,0.6)">Grid</text>
+
+                      <text x="517" y="275">RandomForest</text>
+                      <text x="517" y="305" fill="rgba(255,255,255,0.6)">RFE DBOupH</text>
+                      <text x="517" y="335" fill="rgba(255,255,255,0.6)">Grid</text>
+
+                      <text x="717" y="275">XGBoost</text>
+                      <text x="717" y="305" fill="rgba(255,255,255,0.6)">RFE DBOupH</text>
+                      <text x="717" y="335" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+                      <text x="917" y="275">SVR (RBF)</text>
+                      <text x="917" y="305" fill="rgba(255,255,255,0.6)">VIF</text>
+                      <text x="917" y="335" fill="rgba(255,255,255,0.6)">Grid</text>
+                    </g>
+
+                    <!-- Label eje Y -->
+                    <text x="-55" y="120" transform="rotate(-90 -55 120)"
+                          fill="rgba(255,255,255,0.75)" font-size="16">
+                      Error
+                    </text>
+
+                  </g>
+                </svg>
+              </div>
+
+            </div>
+        </div>
+
+        <!-- Sección 3: Modelo Seleccionado -->
+        <div class="mb-8">
+            <h3 class="text-[#d4af37] text-xl font-bold mb-4 tracking-wider uppercase">03. Modelo Seleccionado</h3>
+            
+            <!-- ========================= -->
+            <!-- TABLA 27: MODELOS SELECCIONADOS (pH) -->
+            <!-- ========================= -->
+            <div class="overflow-x-auto mt-6">
+              <table class="w-full border border-[rgba(212,175,55,0.25)] text-sm text-white">
+
+                <!-- Encabezado -->
+                <thead class="bg-black bg-opacity-60">
+                  <tr>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">OBJETIVO</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">ESCENARIO</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MODELO</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">R²</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">RMSE</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MAE</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">N_VARS</th>
+                    <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">TÉCNICA</th>
+                  </tr>
+                </thead>
+
+                <!-- Cuerpo -->
+                <tbody class="bg-black bg-opacity-40 text-center">
+                  <tr>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">pH</td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">VIF</td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">XGBoost</td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">0,40</td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">0,30</td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">0,22</td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">20</td>
+                    <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">Optuna</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+        </div>
+
+        <!-- Sección 4: Importancia de Variables -->
+        <div class="mb-8">
+            <h3 class="text-[#d4af37] text-xl font-bold mb-4 tracking-wider uppercase">04. Importancia de Variables (pH)</h3>
+            
+            <!-- ========================= -->
+            <!-- BLOQUE: PERMUTATION (media+std) + SHAP (mean|SHAP|) — pH -->
+            <!-- ========================= -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+              <!-- ===================================================== -->
+              <!-- GRÁFICA 1: Permuted Importance (Importancia + Std) pH -->
+              <!-- ===================================================== -->
+              <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-white font-semibold text-lg">Permuted Importance — pH</h4>
+                  <span class="text-gray-400 text-xs italic">Media ± desviación estándar</span>
+                </div>
+
+                <!-- max(mean+std) = 0.29+0.04 = 0.33 ; chartW=760 ; x0=300 -->
+                <svg viewBox="0 0 1400 520" class="w-full h-auto">
+                  <g transform="translate(190,30)">
+                    <!-- Grid vertical (0 a 0.33) -->
+                    <g stroke="rgba(255,255,255,0.10)">
+                      <line x1="300" y1="10" x2="300" y2="330"/>
+                      <line x1="452" y1="10" x2="452" y2="330"/>
+                      <line x1="604" y1="10" x2="604" y2="330"/>
+                      <line x1="756" y1="10" x2="756" y2="330"/>
+                      <line x1="908" y1="10" x2="908" y2="330"/>
+                      <line x1="1060" y1="10" x2="1060" y2="330"/>
+                    </g>
+
+                    <!-- Ejes -->
+                    <line x1="300" y1="330" x2="1060" y2="330" stroke="rgba(255,255,255,0.25)"/>
+                    <line x1="300" y1="10"  x2="300"  y2="330" stroke="rgba(255,255,255,0.25)"/>
+
+                    <!-- Etiquetas eje X -->
+                    <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+                       font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                      <text x="300" y="355">0,00</text>
+                      <text x="452" y="355">0,07</text>
+                      <text x="604" y="355">0,13</text>
+                      <text x="756" y="355">0,20</text>
+                      <text x="908" y="355">0,26</text>
+                      <text x="1060" y="355">0,33</text>
+                    </g>
+
+                    <text x="680" y="385" text-anchor="middle"
+                          fill="rgba(255,255,255,0.75)" font-size="16"
+                          font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                      Importancia media (± DE)
+                    </text>
+
+                    <!-- Barras (media) + error bar (± std) -->
+                    <!-- barH=20 ; gap=10 ; startY=24 ; centerY = y + 10 -->
+                    <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+                      <!-- 1) BICARBONATOS mean=0.29 -> 668 ; std=0.04 -> 92 -->
+                      <text x="290" y="44" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        BICARBONATOS (mg CaCO3/l)
+                      </text>
+                      <rect x="300" y="24" width="668" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="876" y1="34" x2="1060" y2="34" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="876" y1="27" x2="876"  y2="41" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="1060" y1="27" x2="1060" y2="41" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="1076" y="39" fill="rgba(255,255,255,0.90)" font-size="24">0,29 ± 0,04</text>
+
+                      <!-- 2) NITRATOS mean=0.12 -> 276 ; std=0.03 -> 69 -->
+                      <text x="290" y="74" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        NITRATOS (mg N-NO3/l)
+                      </text>
+                      <rect x="300" y="54" width="276" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="507" y1="64" x2="645" y2="64" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="507" y1="57" x2="507" y2="71" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="645" y1="57" x2="645" y2="71" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="665" y="69" fill="rgba(255,255,255,0.90)" font-size="24">0,12 ± 0,03</text>
+
+                      <!-- 3) POTASIO mean=0.09 -> 207 ; std=0.02 -> 46 -->
+                      <text x="290" y="104" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        POTASIO TOTAL (mg K/l)
+                      </text>
+                      <rect x="300" y="84" width="207" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="461" y1="94" x2="553" y2="94" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="461" y1="87" x2="461" y2="101" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="553" y1="87" x2="553" y2="101" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="573" y="99" fill="rgba(255,255,255,0.90)" font-size="24">0,09 ± 0,02</text>
+
+                      <!-- 4) CLORUROS mean=0.06 -> 138 ; std=0.01 -> 23 -->
+                      <text x="290" y="134" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        CLORUROS (mg Cl/l)
+                      </text>
+                      <rect x="300" y="114" width="138" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="415" y1="124" x2="461" y2="124" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="415" y1="117" x2="415" y2="131" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="461" y1="117" x2="461" y2="131" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="481" y="129" fill="rgba(255,255,255,0.90)" font-size="24">0,06 ± 0,01</text>
+
+                      <!-- 5) OXIGENO DISUELTO mean=0.06 -> 138 ; std=0.01 -> 23 -->
+                      <text x="290" y="164" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        OXIGENO DISUELTO (mg O2/l)
+                      </text>
+                      <rect x="300" y="144" width="138" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="415" y1="154" x2="461" y2="154" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="415" y1="147" x2="415" y2="161" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="461" y1="147" x2="461" y2="161" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="481" y="159" fill="rgba(255,255,255,0.90)" font-size="24">0,06 ± 0,01</text>
+
+                      <!-- 6) TEMPERATURA mean=0.05 -> 115 ; std=0.01 -> 23 -->
+                      <text x="290" y="194" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        TEMPERATURA (°C)
+                      </text>
+                      <rect x="300" y="174" width="115" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="392" y1="184" x2="438" y2="184" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="392" y1="177" x2="392" y2="191" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="438" y1="177" x2="438" y2="191" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="458" y="189" fill="rgba(255,255,255,0.90)" font-size="24">0,05 ± 0,01</text>
+
+                      <!-- 7) SULFATOS mean=0.05 -> 115 ; std=0.01 -> 23 -->
+                      <text x="290" y="224" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        SULFATOS (mg SO4/l)
+                      </text>
+                      <rect x="300" y="204" width="115" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="392" y1="214" x2="438" y2="214" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="392" y1="207" x2="392" y2="221" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="438" y1="207" x2="438" y2="221" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="458" y="219" fill="rgba(255,255,255,0.90)" font-size="24">0,05 ± 0,01</text>
+
+                      <!-- 8) COLIFORMES FECALES mean=0.04 -> 92 ; std=0.01 -> 23 -->
+                      <text x="290" y="254" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        COLIFORMES FECALES (NMP/100 ml)
+                      </text>
+                      <rect x="300" y="234" width="92" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="369" y1="244" x2="415" y2="244" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="369" y1="237" x2="369" y2="251" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="415" y1="237" x2="415" y2="251" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="435" y="249" fill="rgba(255,255,255,0.90)" font-size="24">0,04 ± 0,01</text>
+
+                      <!-- 9) TURBIEDAD mean=0.04 -> 92 ; std=0.01 -> 23 -->
+                      <text x="290" y="284" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        TURBIEDAD (UNT)
+                      </text>
+                      <rect x="300" y="264" width="92" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="369" y1="274" x2="415" y2="274" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="369" y1="267" x2="369" y2="281" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="415" y1="267" x2="415" y2="281" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="435" y="279" fill="rgba(255,255,255,0.90)" font-size="24">0,04 ± 0,01</text>
+
+                      <!-- 10) DUREZA TOTAL mean=0.04 -> 92 ; std=0.01 -> 23 -->
+                      <text x="290" y="314" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        DUREZA TOTAL (mg CaCO3/l)
+                      </text>
+                      <rect x="300" y="294" width="92" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <line x1="369" y1="304" x2="415" y2="304" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="369" y1="297" x2="369" y2="311" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <line x1="415" y1="297" x2="415" y2="311" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+                      <text x="435" y="309" fill="rgba(255,255,255,0.90)" font-size="24">0,04 ± 0,01</text>
+
+                    </g>
+                  </g>
+                </svg>
+              </div>
+
+              <!-- ===================================== -->
+              <!-- GRÁFICA 2: SHAP Global (mean |SHAP|) pH -->
+              <!-- ===================================== -->
+              <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-white font-semibold text-lg">SHAP — Importancia global (pH)</h4>
+                  <span class="text-gray-400 text-xs italic">mean(|SHAP|)</span>
+                </div>
+
+                <!-- max = 0.08 ; chartW=760 ; x0=300 -->
+                <svg viewBox="0 0 1400 520" class="w-full h-auto">
+                  <g transform="translate(190,30)">
+
+                    <!-- Grid vertical (0 a 0.08) -->
+                    <g stroke="rgba(255,255,255,0.10)">
+                      <line x1="300" y1="10" x2="300" y2="330"/>
+                      <line x1="452" y1="10" x2="452" y2="330"/>
+                      <line x1="604" y1="10" x2="604" y2="330"/>
+                      <line x1="756" y1="10" x2="756" y2="330"/>
+                      <line x1="908" y1="10" x2="908" y2="330"/>
+                      <line x1="1060" y1="10" x2="1060" y2="330"/>
+                    </g>
+
+                    <!-- Ejes -->
+                    <line x1="300" y1="330" x2="1060" y2="330" stroke="rgba(255,255,255,0.25)"/>
+                    <line x1="300" y1="10"  x2="300"  y2="330" stroke="rgba(255,255,255,0.25)"/>
+
+                    <!-- Etiquetas eje X -->
+                    <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+                       font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                      <text x="300" y="355">0,00</text>
+                      <text x="452" y="355">0,02</text>
+                      <text x="604" y="355">0,03</text>
+                      <text x="756" y="355">0,05</text>
+                      <text x="908" y="355">0,06</text>
+                      <text x="1060" y="355">0,08</text>
+                    </g>
+
+                    <text x="680" y="385" text-anchor="middle"
+                          fill="rgba(255,255,255,0.75)" font-size="16"
+                          font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                      mean(|SHAP|)
+                    </text>
+
+                    <!-- Barras (orden como tu tabla) -->
+                    <!-- widths: value/max*760 -> 0.08=760 ; 0.05=475 ; 0.03=285 ; 0.02=190 -->
+                    <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+                      <!-- 1) NITRATOS 0.08 -->
+                      <text x="290" y="44" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        NITRATOS (mg N-NO3/l)
+                      </text>
+                      <rect x="300" y="24" width="760" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <text x="1076" y="39" fill="rgba(255,255,255,0.90)" font-size="24">0,08</text>
+
+                      <!-- 2) BICARBONATOS 0.08 -->
+                      <text x="290" y="74" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        BICARBONATOS (mg CaCO3/l)
+                      </text>
+                      <rect x="300" y="54" width="760" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <text x="1076" y="69" fill="rgba(255,255,255,0.90)" font-size="24">0,08</text>
+
+                      <!-- 3) POTASIO TOTAL 0.05 -->
+                      <text x="290" y="104" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        POTASIO TOTAL (mg K/l)
+                      </text>
+                      <rect x="300" y="84" width="475" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <text x="790" y="99" fill="rgba(255,255,255,0.90)" font-size="24">0,05</text>
+
+                      <!-- 4) OXIGENO DISUELTO 0.03 -->
+                      <text x="290" y="134" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        OXIGENO DISUELTO (mg O2/l)
+                      </text>
+                      <rect x="300" y="114" width="285" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <text x="600" y="129" fill="rgba(255,255,255,0.90)" font-size="24">0,03</text>
+
+                      <!-- 5) DEMANDA BIOQUIMICA DE OXIGENO 0.03 -->
+                      <text x="290" y="164" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        DEMANDA BIOQUIMICA DE OXIGENO (mg O2/l)
+                      </text>
+                      <rect x="300" y="144" width="285" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <text x="600" y="159" fill="rgba(255,255,255,0.90)" font-size="24">0,03</text>
+
+                      <!-- 6) TEMPERATURA 0.03 -->
+                      <text x="290" y="194" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        TEMPERATURA (°C)
+                      </text>
+                      <rect x="300" y="174" width="285" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <text x="600" y="189" fill="rgba(255,255,255,0.90)" font-size="24">0,03</text>
+
+                      <!-- 7) CALCIO 0.03 -->
+                      <text x="290" y="224" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        CALCIO (mg Ca/l)
+                      </text>
+                      <rect x="300" y="204" width="285" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <text x="600" y="219" fill="rgba(255,255,255,0.90)" font-size="24">0,03</text>
+
+                      <!-- 8) SULFATOS 0.03 -->
+                      <text x="290" y="254" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        SULFATOS (mg SO4/l)
+                      </text>
+                      <rect x="300" y="234" width="285" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <text x="600" y="249" fill="rgba(255,255,255,0.90)" font-size="24">0,03</text>
+
+                      <!-- 9) CLORUROS 0.02 -->
+                      <text x="290" y="284" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        CLORUROS (mg Cl/l)
+                      </text>
+                      <rect x="300" y="264" width="190" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <text x="505" y="279" fill="rgba(255,255,255,0.90)" font-size="24">0,02</text>
+
+                      <!-- 10) SOLIDOS DISUELTOS 0.02 -->
+                      <text x="290" y="314" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="24">
+                        SOLIDOS DISUELTOS (mg SD/l)
+                      </text>
+                      <rect x="300" y="294" width="190" height="20" fill="rgba(212,175,55,0.75)"/>
+                      <text x="505" y="309" fill="rgba(255,255,255,0.90)" font-size="24">0,02</text>
+
+                    </g>
+                  </g>
+                </svg>
+              </div>
+
+            </div>
+
+            <div class="mt-6 bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <h4 class="text-white font-semibold text-lg mb-4">SHAP Beeswarm Plot</h4>
+                <img src="shap_beeswarm_ph_tuning.png" alt="SHAP Beeswarm pH" class="w-full h-auto rounded-lg">
+            </div>
+        </div>
+
+        <!-- Sección 5: Curvas de Aprendizaje -->
+        <div class="mb-8">
+            <h3 class="text-[#d4af37] text-xl font-bold mb-4 tracking-wider uppercase">05. Curvas de Aprendizaje (pH)</h3>
+            
+            <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                <h4 class="text-white font-semibold text-lg mb-4">Curva de Aprendizaje</h4>
+                <img src="curva_aprendizaje_ph_tuning.png" alt="Curva de Aprendizaje pH" class="w-full h-auto rounded-lg">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal Pipeline -->
+<div id="modalPipeline" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 1200px;">
+        <button class="modal-close" id="closeModalPipeline">&times;</button>
+        <h2 class="modal-title">Pipeline de Modelado Predictivo ML</h2>
+        <p class="modal-intro">
+            Pipeline secuencial: control de calidad, selección robusta, comparación de modelos, optimización e interpretabilidad.
+        </p>
+        
+        <div class="pipeline-container">
+            <!-- Fase 1 -->
+            <div class="pipeline-phase">
+                <div class="phase-header">
+                    <span class="phase-number">01</span>
+                    <h3 class="phase-title">Datos & Preprocesamiento</h3>
+                </div>
+                <div class="phase-content">
+                    <ul class="phase-list">
+                        <li>Limpieza y conversión numérica</li>
+                        <li>Filtro por completitud ≥ 80 %</li>
+                        <li>Imputación KNN (k = 5)</li>
+                        <li>Escalado y control de nulos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Fase 2 -->
+            <div class="pipeline-phase">
+                <div class="phase-header">
+                    <span class="phase-number">02</span>
+                    <h3 class="phase-title">Selección de Variables</h3>
+                </div>
+                <div class="phase-content">
+                    <ul class="phase-list">
+                        <li>
+                            <strong>Spearman |ρ| ≥ 0.85</strong>
+                            <span class="text-gray-400 text-xs block ml-4">Correlación de rangos para detectar colinealidad</span>
+                        </li>
+                        <li>
+                            <strong>VIF iterativo (≤ 10)</strong>
+                            <span class="text-gray-400 text-xs block ml-4">Factor de inflación de varianza — mide multicolinealidad</span>
+                        </li>
+                        <li>
+                            <strong>RFE por objetivo (pH / DBO)</strong>
+                            <span class="text-gray-400 text-xs block ml-4">Eliminación recursiva de características</span>
+                        </li>
+                        <li>
+                            <strong>Conjunto común (∩ / ∪)</strong>
+                            <span class="text-gray-400 text-xs block ml-4">Intersección y unión de variables óptimas</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Fase 3 -->
+            <div class="pipeline-phase">
+                <div class="phase-header">
+                    <span class="phase-number">03</span>
+                    <h3 class="phase-title">Modelado & Optimización</h3>
+                </div>
+                <div class="phase-content">
+                    <ul class="phase-list">
+                        <li>4 escenarios de variables</li>
+                        <li>Regresión, RF, SVR, MLP, XGBoost</li>
+                        <li>Holdout 80 / 20</li>
+                        <li>GridSearchCV y Optuna</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Fase 4 -->
+            <div class="pipeline-phase">
+                <div class="phase-header">
+                    <span class="phase-number">04</span>
+                    <h3 class="phase-title">Evaluación & Explicabilidad</h3>
+                </div>
+                <div class="phase-content">
+                    <ul class="phase-list">
+                        <li>RMSE, MAE, R² (criterio secundario)</li>
+                        <li>Selección del mejor modelo por objetivo</li>
+                        <li>Permutation Importance</li>
+                        <li>SHAP (modelos basados en árboles)</li>
+                        <li>Curvas de aprendizaje</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Referencias Español -->
+<div id="modalReferencesES" class="modal-overlay hidden">
+    <div class="modal-content">
+        <button class="modal-close" id="closeModalES">&times;</button>
+        <h2 class="modal-title">Revisión de Literatura: Estudios en Español</h2>
+        <p class="modal-intro">
+            Selección mínima para trazabilidad bibliográfica. Se incluyen estudios alineados con las variables objetivo
+            (pH / DBO / OD / WQI), el uso de modelos de aprendizaje automático (RF, GB, XGBoost, Stacking, ANN) y enfoques
+            de interpretabilidad (SHAP).
+        </p>
+        <div class="modal-table-container">
+            <table class="modal-table">
+                <thead>
+                    <tr>
+                        <th>DOC</th>
+                        <th>DOCUMENTO</th>
+                        <th>AUTORES (Año)</th>
+                        <th>VARIABLES OBJETIVO</th>
+                        <th>MODELOS</th>
+                        <th>MÉTRICAS / MEJOR RENDIMIENTO</th>
+                        <th>APORTE PARA EL PRESENTE ESTUDIO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="doc-ref">[30]</td>
+                        <td>Aprendizaje automático para la predicción de calidad de agua potable</td>
+                        <td>Aguilar Aguilar, A. C. & Obando-Díaz, F. F. (2020)</td>
+                        <td>pH, DBO, OD</td>
+                        <td>Regresión lineal; Random Forest; SVR</td>
+                        <td>Random Forest (R²=0.93; RMSE bajo)</td>
+                        <td>Alta capacidad predictiva de modelos ensemble y necesidad de combinar métricas para evaluar desempeño.</td>
+                    </tr>
+                    <tr>
+                        <td class="doc-ref">[38]</td>
+                        <td>Monitoreo y medición del ajuste del pH del agua tratada del Río Cauca mediante índices de estabilización</td>
+                        <td>Bueno-Zabala, K. A.; Torres-Lozada, P. & Delgado-Cabrera, L. G. (2014)</td>
+                        <td>pH</td>
+                        <td>Regresión lineal</td>
+                        <td>Regresión lineal (R²=0.86; RMSE=0.09)</td>
+                        <td>Evidencia empírica en contexto local (Río Cauca), útil para sustentar aplicabilidad del enfoque.</td>
+                    </tr>
+                    <tr>
+                        <td class="doc-ref">[39]</td>
+                        <td>Un mapeo sistemático sobre predicción de calidad del agua mediante técnicas de inteligencia computacional</td>
+                        <td>López, I. D.; Figueroa, A. & Corrales, J. C. (2016)</td>
+                        <td>DBO, OD, pH (según el mapeo)</td>
+                        <td>Regresión; KNN; Random Forest; SVM</td>
+                        <td>Random Forest (R²=0.91; RMSE=0.12)</td>
+                        <td>Síntesis comparativa: los modelos ensemble presentan mejor desempeño en múltiples escenarios.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="modal-note">Nota: Las referencias completas se presentan en el apartado de Referencias.</p>
+    </div>
+</div>
+
+<!-- Modal Referencias English -->
+<div id="modalReferencesEN" class="modal-overlay hidden">
+    <div class="modal-content">
+        <button class="modal-close" id="closeModalEN">&times;</button>
+        <h2 class="modal-title">Literature Review: Studies in English</h2>
+        <p class="modal-intro">
+            Minimum selection for bibliographic traceability. Includes studies aligned with target variables
+            (pH / BOD / DO / WQI), machine learning models (RF, GB, XGBoost, Stacking, ANN), and interpretability
+            approaches (SHAP).
+        </p>
+        <div class="modal-table-container">
+            <table class="modal-table">
+                <thead>
+                    <tr>
+                        <th>DOC</th>
+                        <th>DOCUMENT</th>
+                        <th>AUTHORS (Year)</th>
+                        <th>TARGET VARIABLES</th>
+                        <th>MODELS</th>
+                        <th>METRICS / BEST PERFORMANCE</th>
+                        <th>CONTRIBUTION TO THE STUDY</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="doc-ref">[40]</td>
+                        <td>Machine Learning-Driven Water Quality Index Prediction: Enhancing Accuracy with Gradient Boosting and Explainable AI for Sustainable Water Monitoring</td>
+                        <td>Islam, Md. J. et al. (2024)</td>
+                        <td>WQI</td>
+                        <td>Gradient Boosting; Random Forest; XGBoost</td>
+                        <td>Gradient Boosting (R²=0.94; RMSE=0.06)</td>
+                        <td>Supports high-performance boosting for WQI prediction; aligns with sustainable monitoring.</td>
+                    </tr>
+                    <tr>
+                        <td class="doc-ref">[42]</td>
+                        <td>Predicting water quality index using stacked ensemble regression and SHAP based explainable artificial intelligence</td>
+                        <td>Choudhary, R. et al. (2025)</td>
+                        <td>WQI</td>
+                        <td>XGBoost; CatBoost; GBM; Extra Trees; AdaBoost; Stacking; SHAP</td>
+                        <td>Stacking (R²≈0.99)</td>
+                        <td>Integrates meta-learning (Stacking) and interpretability (SHAP) to support influential variables.</td>
+                    </tr>
+                    <tr>
+                        <td class="doc-ref">[37]</td>
+                        <td>Artificial Neural Network Assessment of Groundwater Quality for Agricultural Use in Babylon City: An Evaluation of Salinity and Ionic Composition</td>
+                        <td>Al-Sulttani, A. O. et al. (2024)</td>
+                        <td>TDS, SAR, MAR, Na%</td>
+                        <td>ANN</td>
+                        <td>ANN (R² up to 98%)</td>
+                        <td>Methodological reference: neural networks with high precision for nonlinear physicochemical variables.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="modal-note">Note: Complete references are presented in the References section.</p>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- MODALES DEL MARCO TEÓRICO -->
+<!-- ============================================ -->
+
+<!-- MODAL MÓDULO 1: CALIDAD DEL AGUA -->
+<div id="modalModulo1" class="modal-overlay hidden">
+    <div class="modal-box max-w-5xl">
+        <button id="closeModalModulo1" class="modal-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        
+        <h2 class="modal-title">Calidad del Agua: pH & DBO</h2>
+        
+        <!-- Introducción Breve -->
+        <p class="text-gray-300 text-lg mb-8 font-light border-l-4 border-[#d4af37] pl-6 italic">
+            El río Cauca es la segunda arteria fluvial más importante de Colombia, cuya cuenca alta es vital para el desarrollo socioeconómico de los departamentos de Cauca, Valle del Cauca y Risaralda.
+        </p>
+
+        <!-- Tres pilares técnicos -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            
+            <!-- Columna 1: El Río -->
+            <div class="p-6 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-black/20">
+                <h3 class="text-[#d4af37] text-xs uppercase tracking-[0.2em] font-black mb-4">Contexto Fluvial</h3>
+                <h4 class="text-white text-xl font-bold mb-3">Segunda Arteria del País</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Su calidad se define mediante parámetros fisicoquímicos y biológicos que indican la aptitud del agua para diversos usos y la salud del ecosistema.
+                </p>
+            </div>
+            
+            <!-- Columna 2: pH -->
+            <div class="p-6 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-[rgba(212,175,55,0.04)]">
+                <h3 class="text-[#d4af37] text-xs uppercase tracking-[0.2em] font-black mb-4">Parámetro 01</h3>
+                <h4 class="text-white text-xl font-bold mb-3">Potencial de Hidrógeno (pH)</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Medida de acidez o alcalinidad. Es crítico para la supervivencia acuática; variaciones extremas afectan la solubilidad de nutrientes y la toxicidad de metales.
+                </p>
+            </div>
+            
+            <!-- Columna 3: DBO -->
+            <div class="p-6 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-black/20">
+                <h3 class="text-[#d4af37] text-xs uppercase tracking-[0.2em] font-black mb-4">Parámetro 02</h3>
+                <h4 class="text-white text-xl font-bold mb-3">Demanda Bioquímica (DBO)</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Indica la cantidad de oxígeno consumido por microorganismos para degradar materia orgánica. Niveles altos sugieren una fuerte contaminación orgánica.
+                </p>
+            </div>
+        </div>
+
+        <!-- Nota técnica -->
+        <div class="mt-8 text-center opacity-50">
+            <span class="text-xs uppercase tracking-widest text-gray-400">Valores de referencia: pH [6.5 - 8.5]</span>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL MÓDULO 2: ALGORITMOS ML -->
+<div id="modalModulo2" class="modal-overlay hidden">
+    <div class="modal-box max-w-6xl">
+        <button id="closeModalModulo2" class="modal-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        
+        <h2 class="modal-title">Algoritmos Evaluados</h2>
+        
+        <!-- Subtítulos apilados -->
+        <div class="text-center mb-8">
+            <p class="text-[#d4af37] text-sm uppercase tracking-[0.4em] font-black mb-1">Modelos Predictivos</p>
+            <p class="text-gray-400 text-xs uppercase tracking-[0.3em] mb-1">Regresión</p>
+            <p class="text-gray-500 text-xs uppercase tracking-[0.2em]">SISTEMAS AMBIENTALES</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 01. Baseline -->
+            <div class="p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-black/20">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-[#d4af37] text-xs font-black">01.</span>
+                    <span class="text-[#d4af37] text-xs uppercase tracking-[0.3em] font-black">Baseline</span>
+                </div>
+                <h3 class="text-white text-lg font-bold mb-2">Regresión Lineal</h3>
+                <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">
+                    Modelo paramétrico que asume relación lineal entre predictores y variable objetivo mediante mínimos cuadrados ordinarios.
+                </p>
+                <div class="space-y-2 text-sm">
+                    <p class="text-green-400 leading-relaxed">✓ Alta interpretabilidad.</p>
+                    <p class="text-red-400 leading-relaxed">✗ No captura no linealidades.</p>
+                </div>
+            </div>
+
+            <!-- 02. Árbol -->
+            <div class="p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-[rgba(212,175,55,0.04)]">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-[#d4af37] text-xs font-black">02.</span>
+                    <span class="text-[#d4af37] text-xs uppercase tracking-[0.3em] font-black">Árbol</span>
+                </div>
+                <h3 class="text-white text-lg font-bold mb-2">Árbol de Decisión</h3>
+                <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">
+                    Particiona recursivamente el espacio de características mediante nodos de decisión basados en umbrales óptimos (Gini/MSE).
+                </p>
+                <div class="space-y-2 text-sm">
+                    <p class="text-green-400 leading-relaxed">✓ Fácil de explicar/mapear.</p>
+                    <p class="text-red-400 leading-relaxed">✗ Tendencia al sobreajuste.</p>
+                </div>
+            </div>
+
+            <!-- 03. Ensemble -->
+            <div class="p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-black/20">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-[#d4af37] text-xs font-black">03.</span>
+                    <span class="text-[#d4af37] text-xs uppercase tracking-[0.3em] font-black">Ensemble</span>
+                </div>
+                <h3 class="text-white text-lg font-bold mb-2">Random Forest</h3>
+                <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">
+                    Ensemble de árboles mediante bootstrap aggregating (bagging) con selección aleatoria de variables en cada nodo para reducir varianza.
+                </p>
+                <div class="space-y-2 text-sm">
+                    <p class="text-green-400 leading-relaxed">✓ Precisión + Estabilidad.</p>
+                    <p class="text-red-400 leading-relaxed">✗ Menor interpretabilidad.</p>
+                </div>
+            </div>
+
+            <!-- 04. Kernel -->
+            <div class="p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-[rgba(212,175,55,0.04)]">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-[#d4af37] text-xs font-black">04.</span>
+                    <span class="text-[#d4af37] text-xs uppercase tracking-[0.3em] font-black">Kernel</span>
+                </div>
+                <h3 class="text-white text-lg font-bold mb-2">SVR (Support Vector)</h3>
+                <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">
+                    Mapea datos a espacio de mayor dimensión mediante funciones kernel (RBF, polinomial) para encontrar hiperplano óptimo de regresión.
+                </p>
+                <div class="space-y-2 text-sm">
+                    <p class="text-green-400 leading-relaxed">✓ Capta alta dimensionalidad.</p>
+                    <p class="text-red-400 leading-relaxed">✗ Tuning de Kernel delicado.</p>
+                </div>
+            </div>
+
+            <!-- 05. Red Neuronal -->
+            <div class="p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-black/20">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-[#d4af37] text-xs font-black">05.</span>
+                    <span class="text-[#d4af37] text-xs uppercase tracking-[0.3em] font-black">Red Neuronal</span>
+                </div>
+                <h3 class="text-white text-lg font-bold mb-2">MLP (Perceptrón)</h3>
+                <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">
+                    Red feedforward multicapa con funciones de activación no lineales (ReLU, tanh) entrenada mediante backpropagation y optimización Adam/SGD.
+                </p>
+                <div class="space-y-2 text-sm">
+                    <p class="text-green-400 leading-relaxed">✓ Máxima flexibilidad.</p>
+                    <p class="text-red-400 leading-relaxed">✗ Requiere alto volumen de datos.</p>
+                </div>
+            </div>
+
+            <!-- 06. Boosting -->
+            <div class="p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-[rgba(212,175,55,0.04)]">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-[#d4af37] text-xs font-black">06.</span>
+                    <span class="text-[#d4af37] text-xs uppercase tracking-[0.3em] font-black">Boosting</span>
+                </div>
+                <h3 class="text-white text-lg font-bold mb-2">XGBoost</h3>
+                <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">
+                    Gradient boosting secuencial que minimiza residuos iterativamente con regularización L1/L2, control de profundidad y técnicas de poda.
+                </p>
+                <div class="space-y-2 text-sm">
+                    <p class="text-green-400 leading-relaxed">✓ Rendimiento tabular líder.</p>
+                    <p class="text-red-400 leading-relaxed">✗ Propenso a ruido si no se ajusta.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL MÓDULO 3: OPTIMIZACIÓN -->
+<div id="modalModulo3" class="modal-overlay hidden">
+    <div class="modal-box max-w-5xl">
+        <button id="closeModalModulo3" class="modal-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        
+        <h2 class="modal-title">Optimización de Hiperparámetros</h2>
+        
+        <div class="bg-[rgba(212,175,55,0.06)] p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] mb-8">
+            <p class="text-gray-300 text-base leading-relaxed">
+                El objetivo es encontrar la combinación óptima que maximice el desempeño del modelo
+                (p. ej., minimizar RMSE/MAE o maximizar R²), bajo validación cruzada para evitar el sobreajuste.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Grid Search -->
+            <div class="p-6 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-black/20">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-[#d4af37] text-sm uppercase tracking-[0.3em] font-black">Grid Search</span>
+                    <span class="text-[#d4af37] font-serif italic text-2xl">Exhaustiva</span>
+                </div>
+                <h3 class="text-white text-2xl font-bold mb-4">Búsqueda Exhaustiva</h3>
+                <p class="text-gray-300 leading-relaxed mb-4">
+                    Evalúa todas las combinaciones posibles de un conjunto discreto de valores (parrilla).
+                    Ideal para espacios de búsqueda pequeños y reproducibilidad simple.
+                </p>
+                <ul class="text-gray-300 text-sm leading-relaxed list-disc pl-5 space-y-2">
+                    <li><span class="text-[#d4af37] font-semibold">param_grid:</span> Diccionario de valores</li>
+                    <li><span class="text-[#d4af37] font-semibold">cv:</span> Particiones de validación</li>
+                    <li><span class="text-[#d4af37] font-semibold">refit:</span> Reentrenamiento final</li>
+                </ul>
+            </div>
+
+            <!-- Optuna -->
+            <div class="p-6 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-[rgba(212,175,55,0.04)]">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-[#d4af37] text-sm uppercase tracking-[0.3em] font-black">Optuna</span>
+                    <span class="text-[#d4af37] font-serif italic text-2xl">Adaptativa</span>
+                </div>
+                <h3 class="text-white text-2xl font-bold mb-4">Búsqueda Bayesiana</h3>
+                <p class="text-gray-300 leading-relaxed mb-4">
+                    Usa samplers y pruners para explorar eficientemente espacios grandes.
+                    Conviene en modelos costosos y ajustes finos.
+                </p>
+                <ul class="text-gray-300 text-sm leading-relaxed list-disc pl-5 space-y-2">
+                    <li><span class="text-[#d4af37] font-semibold">sampler:</span> Estrategia (p. ej. TPE)</li>
+                    <li><span class="text-[#d4af37] font-semibold">pruner:</span> Poda temprana de ensayos</li>
+                    <li><span class="text-[#d4af37] font-semibold">n_trials:</span> Número de iteraciones</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL MÓDULO 4: VALIDACIÓN -->
+<div id="modalModulo4" class="modal-overlay hidden">
+    <div class="modal-box max-w-6xl">
+        <button id="closeModalModulo4" class="modal-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        
+        <h2 class="modal-title">Métricas de Validación Estadística</h2>
+        
+        <div class="bg-[rgba(212,175,55,0.06)] p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] mb-8">
+            <p class="text-gray-300 text-base leading-relaxed">
+                La calidad predictiva se determina comparando los valores observados y<sub>i</sub> con las predicciones ŷ<sub>i</sub>.
+                Al tratar con pH y DBO, evaluamos la capacidad del modelo para estimar variables continuas.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- RMSE -->
+            <div class="p-6 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-black/20">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[#d4af37] text-sm uppercase tracking-[0.3em] font-black">RMSE</span>
+                    <span class="text-[#d4af37] font-serif italic text-2xl">√MSE</span>
+                </div>
+                <h3 class="text-white text-xl font-bold mb-3">Raíz del Error Cuadrático</h3>
+                <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
+                    <p class="text-gray-200 text-base font-mono">
+                        RMSE = √(1/n Σ(y<sub>i</sub> - ŷ<sub>i</sub>)<sup>2</sup>)
+                    </p>
+                </div>
+                <p class="text-gray-300 leading-relaxed text-sm">
+                    Expresa el error en las mismas unidades de la variable (pH/DBO), facilitando la interpretación práctica.
+                </p>
+            </div>
+
+            <!-- R² -->
+            <div class="p-6 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-[rgba(212,175,55,0.04)]">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[#d4af37] text-sm uppercase tracking-[0.3em] font-black">R²</span>
+                    <span class="text-[#d4af37] font-serif italic text-2xl">Ajuste</span>
+                </div>
+                <h3 class="text-white text-xl font-bold mb-3">Coeficiente de Determinación</h3>
+                <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
+                    <p class="text-gray-200 text-base font-mono">
+                        R² = 1 - Σ(y<sub>i</sub> - ŷ<sub>i</sub>)<sup>2</sup> / Σ(y<sub>i</sub> - ȳ)<sup>2</sup>
+                    </p>
+                </div>
+                <p class="text-gray-300 leading-relaxed text-sm">
+                    Indica la proporción de varianza explicada. Valores cercanos a 1 reflejan un ajuste global óptimo.
+                </p>
+            </div>
+
+            <!-- MAE -->
+            <div class="p-6 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-black/20">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-[#d4af37] text-sm uppercase tracking-[0.3em] font-black">MAE</span>
+                    <span class="text-[#d4af37] font-serif italic text-2xl">|Error|</span>
+                </div>
+                <h3 class="text-white text-xl font-bold mb-3">Error Absoluto Medio</h3>
+                <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
+                    <p class="text-gray-200 text-base font-mono">
+                        MAE = 1/n Σ|y<sub>i</sub> - ŷ<sub>i</sub>|
+                    </p>
+                </div>
+                <p class="text-gray-300 leading-relaxed text-sm">
+                    Promedio de errores absolutos. Más robusto ante outliers que RMSE, manteniendo la misma escala.
+                </p>
+            </div>
+        </div>
+        
+        <p class="text-gray-300 text-sm leading-relaxed italic text-center">
+            En este estudio, las métricas se analizan de forma conjunta para evitar conclusiones sesgadas y detectar
+            posibles problemas de sobreajuste (overfitting) o subajuste.
+        </p>
+    </div>
+</div>
+
+<!-- MODAL MÓDULO 5: EXPLICABILIDAD XAI -->
+<div id="modalModulo5" class="modal-overlay hidden">
+    <div class="modal-box max-w-6xl">
+        <button id="closeModalModulo5" class="modal-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        
+        <h2 class="modal-title">Explicabilidad e Interpretabilidad (XAI)</h2>
+        
+        <div class="bg-[rgba(212,175,55,0.06)] p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] mb-8">
+            <p class="text-gray-300 text-base leading-relaxed">
+                La interpretabilidad transforma los modelos de "caja negra" en herramientas explicables, permitiendo
+                entender no solo qué predice el modelo, sino por qué lo predice.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Permutation Importance -->
+            <div class="p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-black/20">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="uppercase tracking-[0.3em] font-black text-sm text-[#d4af37]">Permutation Importance</span>
+                    <span class="text-[#d4af37] font-serif italic text-2xl">PI</span>
+                </div>
+                <h3 class="text-white text-xl font-bold mb-3">Enfoque Global</h3>
+                <div class="bg-black/30 p-2 rounded-xl mb-3 text-center">
+                    <p class="text-gray-200 text-base font-mono">
+                        PI(X<sub>j</sub>) = Perf(D) - Perf(D<sub>perm(j)</sub>)
+                    </p>
+                </div>
+                <ul class="text-gray-300 leading-snug list-disc pl-5 space-y-1 text-sm">
+                    <li>Evalúa la importancia global de las variables.</li>
+                    <li>Método <em>Model-agnostic</em> (independiente del algoritmo).</li>
+                    <li>Basada en la degradación de la métrica (RMSE / R²).</li>
+                </ul>
+            </div>
+
+            <!-- SHAP -->
+            <div class="p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-[rgba(212,175,55,0.04)]">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="uppercase tracking-[0.3em] font-black text-sm text-[#d4af37]">SHAP</span>
+                    <span class="text-[#d4af37] font-serif italic text-2xl">Shapley</span>
+                </div>
+                <h3 class="text-white text-xl font-bold mb-3">Teoría de Juegos</h3>
+                <div class="bg-black/30 p-2 rounded-xl mb-3 text-center">
+                    <p class="text-gray-200 text-base font-mono">
+                        f(x) = φ₀ + Σ<sub>j=1</sub><sup>M</sup> φ<sub>j</sub>
+                    </p>
+                </div>
+                <ul class="text-gray-300 leading-snug list-disc pl-5 space-y-1 text-sm">
+                    <li>Explicación local (instancia) y global.</li>
+                    <li>Asigna contribuciones aditivas a cada predictor.</li>
+                    <li>Alta consistencia y solidez teórica matemática.</li>
+                </ul>
+            </div>
+
+            <!-- Curvas de Aprendizaje -->
+            <div class="p-5 rounded-3xl border border-[rgba(212,175,55,0.2)] bg-black/20">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="uppercase tracking-[0.3em] font-black text-sm text-[#d4af37]">Curvas de Aprendizaje</span>
+                    <span class="text-[#d4af37] font-serif italic text-2xl">LC</span>
+                </div>
+                <h3 class="text-white text-xl font-bold mb-3">Diagnóstico de Ajuste</h3>
+                <div class="bg-black/30 p-2 rounded-xl mb-3 text-center">
+                    <p class="text-gray-200 text-base font-mono">
+                        Score<sub>train</sub> vs Score<sub>val</sub>
+                    </p>
+                </div>
+                <ul class="text-gray-300 leading-snug list-disc pl-5 space-y-1 text-sm">
+                    <li>Detecta sobreajuste (<em>overfitting</em>) o subajuste.</li>
+                    <li>Evalúa convergencia con el tamaño de muestra.</li>
+                    <li>Determina si se necesitan más datos o regularización.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-[rgba(212,175,55,0.1)] to-transparent p-5 rounded-3xl border-l-4 border-[#d4af37]">
+            <p class="text-white italic font-serif leading-snug text-base">
+                "La combinación de métricas predictivas con técnicas de interpretabilidad transforma el modelo
+                en una herramienta confiable y útil para la toma de decisiones ambientales fundamentadas en el Río Cauca."
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Navegación -->
+<nav class="fixed bottom-12 left-0 right-0 z-20 px-6">
+    <div class="max-w-xs mx-auto flex justify-between items-center text-gray-500">
+        
+        <!-- Botón Anterior -->
+        <button id="prevBtn" class="nav-btn p-3 rounded-full flex items-center justify-center" 
+                title="Anterior" aria-label="Ir a la diapositiva anterior">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18L9 12L15 6" />
+            </svg>
+        </button>
+
+        <!-- Número de página -->
+        <div class="flex flex-col items-center">
+            <span class="text-[10px] tracking-widest uppercase mb-1 font-black text-[#8a6d3b]">Página</span>
+            <span id="pageNumber" class="text-white font-serif italic text-3xl">01</span>
+        </div>
+
+        <!-- Botón Siguiente -->
+        <button id="nextBtn" class="nav-btn p-3 rounded-full flex items-center justify-center" 
+                title="Siguiente" aria-label="Ir a la siguiente diapositiva">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18L15 12L9 6" />
+            </svg>
+        </button>
+
+    </div>
+</nav>
+
+<!-- JavaScript para navegación -->
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide-container');
+    const pageNumber = document.getElementById('pageNumber');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    function showSlide(n) {
+        // Ocultar todas
+        slides.forEach(slide => {
+            slide.style.display = 'none';
+            slide.style.opacity = '0';
+            slide.classList.remove('active');
+        });
+        
+        // Mostrar la seleccionada
+        slides[n].style.display = 'block';
+        slides[n].style.opacity = '1';
+        slides[n].classList.add('active');
+        
+        // Actualizar número
+        pageNumber.textContent = String(n + 1).padStart(2, '0');
+        
+        // Actualizar botones
+        prevBtn.disabled = n === 0;
+        nextBtn.disabled = n >= slides.length - 1;
+        prevBtn.classList.toggle('opacity-30', n === 0);
+        nextBtn.classList.toggle('opacity-30', n >= slides.length - 1);
+    }
+
+    // Event listeners
+    nextBtn.addEventListener('click', () => {
+        if (currentSlide < slides.length - 1) {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentSlide > 0) {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+    });
+
+    // Inicializar
+    showSlide(0);
+
+    // JavaScript para Modales
+    const btnReferencesES = document.getElementById('btnReferencesES');
+    const btnReferencesEN = document.getElementById('btnReferencesEN');
+    const modalReferencesES = document.getElementById('modalReferencesES');
+    const modalReferencesEN = document.getElementById('modalReferencesEN');
+    const closeModalES = document.getElementById('closeModalES');
+    const closeModalEN = document.getElementById('closeModalEN');
+    const btnPipeline = document.getElementById('btnPipeline');
+    const modalPipeline = document.getElementById('modalPipeline');
+    const closeModalPipeline = document.getElementById('closeModalPipeline');
+    
+    // Modales de Resultados
+    const btnResultadosDBO = document.getElementById('btnResultadosDBO');
+    const btnResultadosPH = document.getElementById('btnResultadosPH');
+    const modalResultadosDBO = document.getElementById('modalResultadosDBO');
+    const modalResultadosPH = document.getElementById('modalResultadosPH');
+    const closeModalDBO = document.getElementById('closeModalDBO');
+    const closeModalPH = document.getElementById('closeModalPH');
+
+    // Abrir modal español
+    if (btnReferencesES) {
+        btnReferencesES.addEventListener('click', () => {
+            modalReferencesES.classList.remove('hidden');
+        });
+    }
+
+    // Abrir modal inglés
+    if (btnReferencesEN) {
+        btnReferencesEN.addEventListener('click', () => {
+            modalReferencesEN.classList.remove('hidden');
+        });
+    }
+
+    // Cerrar modal español
+    if (closeModalES) {
+        closeModalES.addEventListener('click', () => {
+            modalReferencesES.classList.add('hidden');
+        });
+    }
+
+    // Cerrar modal inglés
+    if (closeModalEN) {
+        closeModalEN.addEventListener('click', () => {
+            modalReferencesEN.classList.add('hidden');
+        });
+    }
+
+    // Cerrar modal al hacer clic fuera
+    if (modalReferencesES) {
+        modalReferencesES.addEventListener('click', (e) => {
+            if (e.target === modalReferencesES) {
+                modalReferencesES.classList.add('hidden');
+            }
+        });
+    }
+
+    if (modalReferencesEN) {
+        modalReferencesEN.addEventListener('click', (e) => {
+            if (e.target === modalReferencesEN) {
+                modalReferencesEN.classList.add('hidden');
+            }
+        });
+    }
+
+    // Abrir modal pipeline
+    if (btnPipeline) {
+        btnPipeline.addEventListener('click', () => {
+            modalPipeline.classList.remove('hidden');
+        });
+    }
+
+    // Cerrar modal pipeline
+    if (closeModalPipeline) {
+        closeModalPipeline.addEventListener('click', () => {
+            modalPipeline.classList.add('hidden');
+        });
+    }
+
+    // Cerrar modal pipeline al hacer clic fuera
+    if (modalPipeline) {
+        modalPipeline.addEventListener('click', (e) => {
+            if (e.target === modalPipeline) {
+                modalPipeline.classList.add('hidden');
+            }
+        });
+    }
+
+    // Abrir modal Resultados DBO
+    if (btnResultadosDBO) {
+        btnResultadosDBO.addEventListener('click', () => {
+            modalResultadosDBO.classList.remove('hidden');
+        });
+    }
+
+    // Cerrar modal Resultados DBO
+    if (closeModalDBO) {
+        closeModalDBO.addEventListener('click', () => {
+            modalResultadosDBO.classList.add('hidden');
+        });
+    }
+
+    // Cerrar modal DBO al hacer clic fuera
+    if (modalResultadosDBO) {
+        modalResultadosDBO.addEventListener('click', (e) => {
+            if (e.target === modalResultadosDBO) {
+                modalResultadosDBO.classList.add('hidden');
+            }
+        });
+    }
+
+    // Abrir modal Resultados pH
+    if (btnResultadosPH) {
+        btnResultadosPH.addEventListener('click', () => {
+            modalResultadosPH.classList.remove('hidden');
+        });
+    }
+
+    // Cerrar modal Resultados pH
+    if (closeModalPH) {
+        closeModalPH.addEventListener('click', () => {
+            modalResultadosPH.classList.add('hidden');
+        });
+    }
+
+    // Cerrar modal pH al hacer clic fuera
+    if (modalResultadosPH) {
+        modalResultadosPH.addEventListener('click', (e) => {
+            if (e.target === modalResultadosPH) {
+                modalResultadosPH.classList.add('hidden');
+            }
+        });
+    }
+
+    // ============================================
+    // MODALES DEL MARCO TEÓRICO (5 MÓDULOS)
+    // ============================================
+    
+    // Módulo 1: Calidad del Agua
+    const btnModulo1 = document.getElementById('btnModulo1');
+    const modalModulo1 = document.getElementById('modalModulo1');
+    const closeModalModulo1 = document.getElementById('closeModalModulo1');
+
+    if (btnModulo1) {
+        btnModulo1.addEventListener('click', () => {
+            modalModulo1.classList.remove('hidden');
+        });
+    }
+
+    if (closeModalModulo1) {
+        closeModalModulo1.addEventListener('click', () => {
+            modalModulo1.classList.add('hidden');
+        });
+    }
+
+    if (modalModulo1) {
+        modalModulo1.addEventListener('click', (e) => {
+            if (e.target === modalModulo1) {
+                modalModulo1.classList.add('hidden');
+            }
+        });
+    }
+
+    // Módulo 2: Algoritmos ML
+    const btnModulo2 = document.getElementById('btnModulo2');
+    const modalModulo2 = document.getElementById('modalModulo2');
+    const closeModalModulo2 = document.getElementById('closeModalModulo2');
+
+    if (btnModulo2) {
+        btnModulo2.addEventListener('click', () => {
+            modalModulo2.classList.remove('hidden');
+        });
+    }
+
+    if (closeModalModulo2) {
+        closeModalModulo2.addEventListener('click', () => {
+            modalModulo2.classList.add('hidden');
+        });
+    }
+
+    if (modalModulo2) {
+        modalModulo2.addEventListener('click', (e) => {
+            if (e.target === modalModulo2) {
+                modalModulo2.classList.add('hidden');
+            }
+        });
+    }
+
+    // Módulo 3: Optimización
+    const btnModulo3 = document.getElementById('btnModulo3');
+    const modalModulo3 = document.getElementById('modalModulo3');
+    const closeModalModulo3 = document.getElementById('closeModalModulo3');
+
+    if (btnModulo3) {
+        btnModulo3.addEventListener('click', () => {
+            modalModulo3.classList.remove('hidden');
+        });
+    }
+
+    if (closeModalModulo3) {
+        closeModalModulo3.addEventListener('click', () => {
+            modalModulo3.classList.add('hidden');
+        });
+    }
+
+    if (modalModulo3) {
+        modalModulo3.addEventListener('click', (e) => {
+            if (e.target === modalModulo3) {
+                modalModulo3.classList.add('hidden');
+            }
+        });
+    }
+
+    // Módulo 4: Validación
+    const btnModulo4 = document.getElementById('btnModulo4');
+    const modalModulo4 = document.getElementById('modalModulo4');
+    const closeModalModulo4 = document.getElementById('closeModalModulo4');
+
+    if (btnModulo4) {
+        btnModulo4.addEventListener('click', () => {
+            modalModulo4.classList.remove('hidden');
+        });
+    }
+
+    if (closeModalModulo4) {
+        closeModalModulo4.addEventListener('click', () => {
+            modalModulo4.classList.add('hidden');
+        });
+    }
+
+    if (modalModulo4) {
+        modalModulo4.addEventListener('click', (e) => {
+            if (e.target === modalModulo4) {
+                modalModulo4.classList.add('hidden');
+            }
+        });
+    }
+
+    // Módulo 5: Explicabilidad XAI
+    const btnModulo5 = document.getElementById('btnModulo5');
+    const modalModulo5 = document.getElementById('modalModulo5');
+    const closeModalModulo5 = document.getElementById('closeModalModulo5');
+
+    if (btnModulo5) {
+        btnModulo5.addEventListener('click', () => {
+            modalModulo5.classList.remove('hidden');
+        });
+    }
+
+    if (closeModalModulo5) {
+        closeModalModulo5.addEventListener('click', () => {
+            modalModulo5.classList.add('hidden');
+        });
+    }
+
+    if (modalModulo5) {
+        modalModulo5.addEventListener('click', (e) => {
+            if (e.target === modalModulo5) {
+                modalModulo5.classList.add('hidden');
+            }
+        });
+    }
+
+    // Cerrar todos los modales con tecla ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (modalReferencesES) modalReferencesES.classList.add('hidden');
+            if (modalReferencesEN) modalReferencesEN.classList.add('hidden');
+            if (modalPipeline) modalPipeline.classList.add('hidden');
+            if (modalResultadosDBO) modalResultadosDBO.classList.add('hidden');
+            if (modalResultadosPH) modalResultadosPH.classList.add('hidden');
+            if (modalModulo1) modalModulo1.classList.add('hidden');
+            if (modalModulo2) modalModulo2.classList.add('hidden');
+            if (modalModulo3) modalModulo3.classList.add('hidden');
+            if (modalModulo4) modalModulo4.classList.add('hidden');
+            if (modalModulo5) modalModulo5.classList.add('hidden');
+        }
+    });
+
+</script>
+
+</body>
+</html>
