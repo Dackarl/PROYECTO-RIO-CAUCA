@@ -2348,19 +2348,19 @@
                 <div class="phase-content">
                     <ul class="phase-list">
                         <li>
-                            <strong>Spearman |ρ| ≥ 0.85</strong>
+                            <strong>Spearman |ρ| ≥ 0.85 (Eliminación)</strong>
                             <span class="text-gray-400 text-xs block ml-4">Correlación de rangos para detectar colinealidad</span>
                         </li>
                         <li>
-                            <strong>VIF iterativo (≤ 10)</strong>
+                            <strong>VIF iterativo (≤ 10) (Eliminación y selección)</strong>
                             <span class="text-gray-400 text-xs block ml-4">Factor de inflación de varianza — mide multicolinealidad</span>
                         </li>
                         <li>
-                            <strong>RFE por objetivo (pH / DBO)</strong>
+                            <strong>RFE por objetivo (pH / DBO) (Eliminación y selección)</strong>
                             <span class="text-gray-400 text-xs block ml-4">Eliminación recursiva de características</span>
                         </li>
                         <li>
-                            <strong>Conjunto común (∩ / ∪)</strong>
+                            <strong>Conjunto común (∪) (Unión RFE)</strong>
                             <span class="text-gray-400 text-xs block ml-4">Intersección y unión de variables óptimas</span>
                         </li>
                     </ul>
@@ -2375,8 +2375,8 @@
                 </div>
                 <div class="phase-content">
                     <ul class="phase-list">
-                        <li>4 escenarios de variables</li>
-                        <li>Regresión, RF, SVR, MLP, XGBoost</li>
+                        <li>4 escenarios de variables (VIF - RFE (DBO) - RFE (pH) - Conjunto común)</li>
+                        <li>Regresión, Árbol de Decisión, RF, SVR, MLP, XGBoost</li>
                         <li>Holdout 80 / 20</li>
                         <li>GridSearchCV y Optuna</li>
                     </ul>
@@ -2391,7 +2391,7 @@
                 </div>
                 <div class="phase-content">
                     <ul class="phase-list">
-                        <li>RMSE, MAE, R² (criterio secundario)</li>
+                        <li>RMSE, MAE, R²</li>
                         <li>Selección del mejor modelo por objetivo</li>
                         <li>Permutation Importance</li>
                         <li>SHAP (modelos basados en árboles)</li>
@@ -2525,7 +2525,7 @@
 
 <!-- MODAL MÓDULO 1: CALIDAD DEL AGUA -->
 <div id="modalModulo1" class="modal-overlay hidden">
-    <div class="modal-box max-w-5xl">
+    <div class="modal-content" style="max-width: 1200px;">
         <button id="closeModalModulo1" class="modal-close">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
@@ -2577,7 +2577,7 @@
 
 <!-- MODAL MÓDULO 2: ALGORITMOS ML -->
 <div id="modalModulo2" class="modal-overlay hidden">
-    <div class="modal-box max-w-6xl">
+    <div class="modal-content" style="max-width: 1200px;">
         <button id="closeModalModulo2" class="modal-close">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
@@ -2693,7 +2693,7 @@
 
 <!-- MODAL MÓDULO 3: OPTIMIZACIÓN -->
 <div id="modalModulo3" class="modal-overlay hidden">
-    <div class="modal-box max-w-5xl">
+    <div class="modal-content" style="max-width: 1200px;">
         <button id="closeModalModulo3" class="modal-close">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
@@ -2749,7 +2749,7 @@
 
 <!-- MODAL MÓDULO 4: VALIDACIÓN -->
 <div id="modalModulo4" class="modal-overlay hidden">
-    <div class="modal-box max-w-6xl">
+    <div class="modal-content" style="max-width: 1200px;">
         <button id="closeModalModulo4" class="modal-close">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
@@ -2773,7 +2773,7 @@
                 <h3 class="text-white text-xl font-bold mb-3">Raíz del Error Cuadrático</h3>
                 <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
                     <p class="text-gray-200 text-base font-mono">
-                        RMSE = √(1/n Σ(y<sub>i</sub> - ŷ<sub>i</sub>)<sup>2</sup>)
+                        RMSE = √(1/n Σ(y<sub>i</sub>-ŷ<sub>i</sub>)<sup>2</sup>)
                     </p>
                 </div>
                 <p class="text-gray-300 leading-relaxed text-sm">
@@ -2790,7 +2790,7 @@
                 <h3 class="text-white text-xl font-bold mb-3">Coeficiente de Determinación</h3>
                 <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
                     <p class="text-gray-200 text-base font-mono">
-                        R² = 1 - Σ(y<sub>i</sub> - ŷ<sub>i</sub>)<sup>2</sup> / Σ(y<sub>i</sub> - ȳ)<sup>2</sup>
+                        R² = 1 - Σ(y<sub>i</sub>-ŷ<sub>i</sub>)<sup>2</sup> / Σ(y<sub>i</sub>-ȳ)<sup>2</sup>
                     </p>
                 </div>
                 <p class="text-gray-300 leading-relaxed text-sm">
@@ -2807,7 +2807,7 @@
                 <h3 class="text-white text-xl font-bold mb-3">Error Absoluto Medio</h3>
                 <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
                     <p class="text-gray-200 text-base font-mono">
-                        MAE = 1/n Σ|y<sub>i</sub> - ŷ<sub>i</sub>|
+                        MAE = 1/n Σ|y<sub>i</sub>-ŷ<sub>i</sub>|
                     </p>
                 </div>
                 <p class="text-gray-300 leading-relaxed text-sm">
@@ -2825,7 +2825,7 @@
 
 <!-- MODAL MÓDULO 5: EXPLICABILIDAD XAI -->
 <div id="modalModulo5" class="modal-overlay hidden">
-    <div class="modal-box max-w-6xl">
+    <div class="modal-content" style="max-width: 1200px;">
         <button id="closeModalModulo5" class="modal-close">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
