@@ -1056,6 +1056,8 @@
                     <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Modelos Optimizados</button>
                     <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Modelo Seleccionado</button>
                     <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Importancia de Variables</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">SHAP</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Curvas de Aprendizaje</button>
                 </nav>
             </div>
 
@@ -1105,7 +1107,7 @@
                               <text x="105" y="16">0.904</text>
                               <text x="305" y="16">0.892</text>
                               <text x="505" y="16">0.872</text>
-                              <text x="705" y="16">0.867</text>
+                              <text x="705" y="16" fill="red">0.867</text>
                               <text x="905" y="16">0.833</text>
                             </g>
 
@@ -1217,8 +1219,8 @@
                               <text x="546.5" y="132">2.02</text>
 
                               <!-- Grupo 4 -->
-                              <text x="687.5" y="45">3.86</text>
-                              <text x="746.5" y="138">1.91</text>
+                              <text x="687.5" y="45" fill="red">3.86</text>
+                              <text x="746.5" y="138" fill="red">1.91</text>
 
                               <!-- Grupo 5 -->
                               <text x="887.5" y="22">4.33</text>
@@ -1300,7 +1302,7 @@
 
         <!-- Valores -->
         <g fill="white" font-size="20" font-weight="700" text-anchor="middle">
-          <text x="105" y="16">0.908</text>
+          <text x="105" y="16" fill="red">0.908</text>
           <text x="305" y="16">0.898</text>
           <text x="505" y="16">0.886</text>
           <text x="705" y="16">0.884</text>
@@ -1311,19 +1313,26 @@
         <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
 
           <text x="105" y="270">RandomForest</text>
-          <text x="105" y="300" fill="rgba(255,255,255,0.6)">pH RFE grid</text>
+          <text x="105" y="300" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="105" y="330" fill="rgba(255,255,255,0.6)">Grid Search</text>
 
           <text x="305" y="270">XGBoost</text>
-          <text x="305" y="300" fill="rgba(255,255,255,0.6)">RFE DBOUpH optuna</text>
+          <text x="305" y="300" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+          <text x="305" y="330" fill="rgba(255,255,255,0.6)">Optuna</text>
 
           <text x="505" y="270">XGBoost</text>
-          <text x="505" y="300" fill="rgba(255,255,255,0.6)">pH RFE optuna</text>
+          <text x="505" y="300" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="505" y="330" fill="rgba(255,255,255,0.6)">Optuna</text>
+
 
           <text x="705" y="270">MLPRegressor</text>
-          <text x="705" y="300" fill="rgba(255,255,255,0.6)">RFE DBOUpH grid</text>
+          <text x="705" y="300" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+          <text x="705" y="330" fill="rgba(255,255,255,0.6)">Grid Search</text>
+
 
           <text x="905" y="270">MLPRegressor</text>
-          <text x="905" y="300" fill="rgba(255,255,255,0.6)">pH RFE grid</text>
+          <text x="905" y="300" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="905" y="330" fill="rgba(255,255,255,0.6)">Grid Search</text>
 
         </g>
       </g>
@@ -1387,8 +1396,8 @@
 
         <!-- Valores -->
         <g fill="rgba(255,255,255,0.95)" font-size="20" font-weight="700" text-anchor="middle">
-          <text x="87.5"  y="76">3.21</text>
-          <text x="146.5" y="143">1.81</text>
+          <text x="87.5"  y="76" fill="red">3.21</text>
+          <text x="146.5" y="143" fill="red">1.81</text>
 
           <text x="287.5" y="68">3.38</text>
           <text x="346.5" y="143">1.81</text>
@@ -1406,19 +1415,24 @@
         <!-- Etiquetas X -->
         <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
           <text x="117" y="275">RandomForest</text>
-          <text x="117" y="305" fill="rgba(255,255,255,0.6)">pH RFE grid</text>
+          <text x="117" y="305" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="117" y="335" fill="rgba(255,255,255,0.6)">Grid Search</text>
 
           <text x="317" y="275">XGBoost</text>
-          <text x="317" y="305" fill="rgba(255,255,255,0.6)">RFE DBOUpH optuna</text>
+          <text x="317" y="305" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+          <text x="317" y="335" fill="rgba(255,255,255,0.6)">Optuna</text>
 
           <text x="517" y="275">XGBoost</text>
-          <text x="517" y="305" fill="rgba(255,255,255,0.6)">pH RFE optuna</text>
+          <text x="517" y="305" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="517" y="335" fill="rgba(255,255,255,0.6)">Optuna</text>
 
           <text x="717" y="275">MLPRegressor</text>
-          <text x="717" y="305" fill="rgba(255,255,255,0.6)">RFE DBOUpH grid</text>
+          <text x="717" y="305" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+          <text x="717" y="335" fill="rgba(255,255,255,0.6)">Grid Search</text>
 
           <text x="917" y="275">MLPRegressor</text>
-          <text x="917" y="305" fill="rgba(255,255,255,0.6)">pH RFE grid</text>
+          <text x="917" y="305" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="917" y="335" fill="rgba(255,255,255,0.6)">Grid Search</text>
         </g>
 
         <!-- Label eje Y -->
@@ -1552,7 +1566,7 @@
           <!-- Temperatura mean=0.00 -> 0 ; std=0.01 -> 4 -->
 
           <!-- 1) SULFATOS -->
-          <text x="290" y="50" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+          <text x="290" y="50" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
             SULFATOS (mg SO4/L)
           </text>
           <rect x="300" y="30" width="720" height="34" fill="#7c3aed"/>
@@ -1560,47 +1574,47 @@
           <line x1="981" y1="47" x2="1059" y2="47" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
           <line x1="981" y1="39" x2="981" y2="55" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
           <line x1="1059" y1="39" x2="1059" y2="55" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
-          <text x="1078" y="53" fill="rgba(255,255,255,0.90)" font-size="14">1.64 ± 0.09</text>
+          <text x="1078" y="53" fill="rgba(255,255,255,0.90)" font-size="20">1.64 ± 0.09</text>
 
           <!-- 2) CONDUCTIVIDAD -->
-          <text x="290" y="102" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+          <text x="290" y="102" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
             CONDUCTIVIDAD ELÉCTRICA (µS/cm)
           </text>
           <rect x="300" y="82" width="9" height="34" fill="#7c3aed"/>
           <line x1="305" y1="99" x2="313" y2="99" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
           <line x1="305" y1="91" x2="305" y2="107" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
           <line x1="313" y1="91" x2="313" y2="107" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
-          <text x="335" y="105" fill="rgba(255,255,255,0.90)" font-size="14">0.02 ± 0.01</text>
+          <text x="335" y="105" fill="rgba(255,255,255,0.90)" font-size="20">0.02 ± 0.01</text>
 
           <!-- 3) BICARBONATOS -->
-          <text x="290" y="154" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+          <text x="290" y="154" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
             BICARBONATOS (mg CaCO3/L)
           </text>
           <rect x="300" y="134" width="9" height="34" fill="#7c3aed"/>
           <line x1="305" y1="151" x2="313" y2="151" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
           <line x1="305" y1="143" x2="305" y2="159" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
           <line x1="313" y1="143" x2="313" y2="159" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
-          <text x="335" y="157" fill="rgba(255,255,255,0.90)" font-size="14">0.02 ± 0.01</text>
+          <text x="335" y="157" fill="rgba(255,255,255,0.90)" font-size="20">0.02 ± 0.01</text>
 
           <!-- 4) POTASIO -->
-          <text x="290" y="206" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+          <text x="290" y="206" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
             POTASIO TOTAL (mg K/L)
           </text>
           <rect x="300" y="186" width="4" height="34" fill="#7c3aed"/>
           <line x1="300" y1="203" x2="308" y2="203" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
           <line x1="300" y1="195" x2="300" y2="211" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
           <line x1="308" y1="195" x2="308" y2="211" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
-          <text x="335" y="209" fill="rgba(255,255,255,0.90)" font-size="14">0.01 ± 0.01</text>
+          <text x="335" y="209" fill="rgba(255,255,255,0.90)" font-size="20">0.01 ± 0.01</text>
 
           <!-- 5) TEMPERATURA -->
-          <text x="290" y="258" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+          <text x="290" y="258" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
             TEMPERATURA (°C)
           </text>
           <rect x="300" y="238" width="0" height="34" fill="#7c3aed"/>
           <line x1="296" y1="255" x2="304" y2="255" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
           <line x1="296" y1="247" x2="296" y2="263" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
           <line x1="304" y1="247" x2="304" y2="263" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
-          <text x="335" y="261" fill="rgba(255,255,255,0.90)" font-size="14">0.00 ± 0.01</text>
+          <text x="335" y="261" fill="rgba(255,255,255,0.90)" font-size="20">0.00 ± 0.01</text>
 
         </g>
       </g>
@@ -1661,39 +1675,39 @@
           <!-- widths: 2.32->760 ; 0.93->304 ; 0.91->298 ; 0.54->177 ; 0.27->88 -->
 
           <!-- 1) SULFATOS -->
-          <text x="290" y="50" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+          <text x="290" y="50" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
             SULFATOS (mg SO4/L)
           </text>
           <rect x="300" y="30" width="760" height="34" fill="#7c3aed"/>
-          <text x="1075" y="53" fill="rgba(255,255,255,0.90)" font-size="14">2.32</text>
+          <text x="1075" y="53" fill="rgba(255,255,255,0.90)" font-size="20">2.32</text>
 
           <!-- 2) CONDUCTIVIDAD -->
-          <text x="290" y="102" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+          <text x="290" y="102" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
             CONDUCTIVIDAD ELÉCTRICA (µS/cm)
           </text>
           <rect x="300" y="82" width="304" height="34" fill="#7c3aed"/>
-          <text x="616" y="105" fill="rgba(255,255,255,0.90)" font-size="14">0.93</text>
+          <text x="616" y="105" fill="rgba(255,255,255,0.90)" font-size="20">0.93</text>
 
           <!-- 3) BICARBONATOS -->
-          <text x="290" y="154" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+          <text x="290" y="154" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
             BICARBONATOS (mg CaCO3/L)
           </text>
           <rect x="300" y="134" width="298" height="34" fill="#7c3aed"/>
-          <text x="610" y="157" fill="rgba(255,255,255,0.90)" font-size="14">0.91</text>
+          <text x="610" y="157" fill="rgba(255,255,255,0.90)" font-size="20">0.91</text>
 
           <!-- 4) TEMPERATURA -->
-          <text x="290" y="206" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+          <text x="290" y="206" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
             TEMPERATURA (°C)
           </text>
           <rect x="300" y="186" width="177" height="34" fill="#7c3aed"/>
-          <text x="489" y="209" fill="rgba(255,255,255,0.90)" font-size="14">0.54</text>
+          <text x="489" y="209" fill="rgba(255,255,255,0.90)" font-size="20">0.54</text>
 
           <!-- 5) POTASIO -->
-          <text x="290" y="258" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+          <text x="290" y="258" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
             POTASIO TOTAL (mg K/L)
           </text>
           <rect x="300" y="238" width="88" height="34" fill="#7c3aed"/>
-          <text x="400" y="261" fill="rgba(255,255,255,0.90)" font-size="14">0.27</text>
+          <text x="400" y="261" fill="rgba(255,255,255,0.90)" font-size="20">0.27</text>
 
         </g>
       </g>
@@ -1718,6 +1732,9 @@
                     <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Modelos Optimizados</button>
                     <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Modelo Seleccionado</button>
                     <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Importancia de Variables</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">SHAP</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Curvas de Aprendizaje</button>
+ 
                 </nav>
             </div>
 
