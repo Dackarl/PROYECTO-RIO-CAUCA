@@ -1,0 +1,66 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+*.tmp
+
+# Modelos entrenados y artefactos
+artifacts/
+artifacts_compare_diccionario/
+models/
+_backup_run_*/
+*.pkl
+*.joblib
+*.sav
+*.h5
+*.pt
+*.pth
+
+# Data files (grandes)
+*.parquet
+Copia de Calidad_del_agua_del_Rio_Cauca.csv
+
+# HTML generados
+presentacion.html
+mapa_estaciones.html
+
+# Archivos temporales
+*.bak
+*.swp
+*.swo
+*:Zone.Identifier
+
+# Workspace específico
+*.code-workspace
+
+# Presentación (archivos generados)
+presentacion_graficas/
+
+# Figuras exportadas del notebook (fig21 a fig27)
+fig2[1-7]*.png
+
+# Prompts internos de trabajo (no van al repositorio)
+PROMPT*.md

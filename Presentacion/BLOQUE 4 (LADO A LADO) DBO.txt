@@ -1,0 +1,215 @@
+<!-- ========================= -->
+<!-- BLOQUE: PERMUTATION (media+std) + SHAP (mean|SHAP|) — DBO -->
+<!-- ========================= -->
+
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+  <!-- ===================================================== -->
+  <!-- GRÁFICA 1: Permuted Importance (Importancia + Std) -->
+  <!-- ===================================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        Permuted Importance — DBO
+      </h4>
+      <span class="text-gray-400 text-xs italic">Media ± desviación estándar</span>
+    </div>
+
+    <svg viewBox="0 0 1100 360" class="w-full h-auto">
+      <g transform="translate(40,30)">
+
+        <!-- Config -->
+        <!-- max(mean+std) = 1.64+0.09 = 1.73; chartW=760; x0=300; y0=30; barH=34; gap=18 -->
+        <!-- scale: width = value/1.73*760 -->
+
+        <!-- Grid vertical (0 a 1.73) -->
+        <g stroke="rgba(255,255,255,0.10)">
+          <line x1="300" y1="10" x2="300" y2="290"/>
+          <line x1="452" y1="10" x2="452" y2="290"/>
+          <line x1="604" y1="10" x2="604" y2="290"/>
+          <line x1="756" y1="10" x2="756" y2="290"/>
+          <line x1="908" y1="10" x2="908" y2="290"/>
+          <line x1="1060" y1="10" x2="1060" y2="290"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="300" y1="290" x2="1060" y2="290" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="300" y1="10"  x2="300"  y2="290" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Etiquetas eje X -->
+        <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          <text x="300" y="315">0.00</text>
+          <text x="452" y="315">0.35</text>
+          <text x="604" y="315">0.69</text>
+          <text x="756" y="315">1.04</text>
+          <text x="908" y="315">1.38</text>
+          <text x="1060" y="315">1.73</text>
+        </g>
+
+        <text x="680" y="345" text-anchor="middle"
+              fill="rgba(255,255,255,0.75)" font-size="16"
+              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          Importancia media (± DE)
+        </text>
+
+        <!-- Barras (media) + error bar (± std) -->
+        <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+          <!-- Helper widths -->
+          <!-- Sulfatos mean=1.64 -> 720 ; std=0.09 -> 39 -->
+          <!-- Conductividad mean=0.02 -> 9 ; std=0.01 -> 4 -->
+          <!-- Bicarbonatos mean=0.02 -> 9 ; std=0.01 -> 4 -->
+          <!-- Potasio mean=0.01 -> 4 ; std=0.01 -> 4 -->
+          <!-- Temperatura mean=0.00 -> 0 ; std=0.01 -> 4 -->
+
+          <!-- 1) SULFATOS -->
+          <text x="290" y="50" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+            SULFATOS (mg SO4/L)
+          </text>
+          <rect x="300" y="30" width="720" height="34" fill="rgba(212,175,55,0.75)"/>
+          <!-- error bar -->
+          <line x1="981" y1="47" x2="1059" y2="47" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="981" y1="39" x2="981" y2="55" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="1059" y1="39" x2="1059" y2="55" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="1078" y="53" fill="rgba(255,255,255,0.90)" font-size="14">1.64 ± 0.09</text>
+
+          <!-- 2) CONDUCTIVIDAD -->
+          <text x="290" y="102" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+            CONDUCTIVIDAD ELÉCTRICA (µS/cm)
+          </text>
+          <rect x="300" y="82" width="9" height="34" fill="rgba(212,175,55,0.75)"/>
+          <line x1="305" y1="99" x2="313" y2="99" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="305" y1="91" x2="305" y2="107" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="313" y1="91" x2="313" y2="107" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="335" y="105" fill="rgba(255,255,255,0.90)" font-size="14">0.02 ± 0.01</text>
+
+          <!-- 3) BICARBONATOS -->
+          <text x="290" y="154" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+            BICARBONATOS (mg CaCO3/L)
+          </text>
+          <rect x="300" y="134" width="9" height="34" fill="rgba(212,175,55,0.75)"/>
+          <line x1="305" y1="151" x2="313" y2="151" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="305" y1="143" x2="305" y2="159" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="313" y1="143" x2="313" y2="159" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="335" y="157" fill="rgba(255,255,255,0.90)" font-size="14">0.02 ± 0.01</text>
+
+          <!-- 4) POTASIO -->
+          <text x="290" y="206" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+            POTASIO TOTAL (mg K/L)
+          </text>
+          <rect x="300" y="186" width="4" height="34" fill="rgba(212,175,55,0.75)"/>
+          <line x1="300" y1="203" x2="308" y2="203" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="300" y1="195" x2="300" y2="211" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="308" y1="195" x2="308" y2="211" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="335" y="209" fill="rgba(255,255,255,0.90)" font-size="14">0.01 ± 0.01</text>
+
+          <!-- 5) TEMPERATURA -->
+          <text x="290" y="258" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+            TEMPERATURA (°C)
+          </text>
+          <rect x="300" y="238" width="0" height="34" fill="rgba(212,175,55,0.75)"/>
+          <line x1="296" y1="255" x2="304" y2="255" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="296" y1="247" x2="296" y2="263" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="304" y1="247" x2="304" y2="263" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="335" y="261" fill="rgba(255,255,255,0.90)" font-size="14">0.00 ± 0.01</text>
+
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===================================== -->
+  <!-- GRÁFICA 2: SHAP Global (mean |SHAP|) -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        SHAP — Importancia global (DBO)
+      </h4>
+      <span class="text-gray-400 text-xs italic">mean(|SHAP|)</span>
+    </div>
+
+    <svg viewBox="0 0 1100 360" class="w-full h-auto">
+      <g transform="translate(40,30)">
+
+        <!-- Config -->
+        <!-- max = 2.32; chartW=760; x0=300; y0=30; barH=34; gap=18 -->
+
+        <!-- Grid vertical -->
+        <g stroke="rgba(255,255,255,0.10)">
+          <line x1="300" y1="10" x2="300" y2="290"/>
+          <line x1="452" y1="10" x2="452" y2="290"/>
+          <line x1="604" y1="10" x2="604" y2="290"/>
+          <line x1="756" y1="10" x2="756" y2="290"/>
+          <line x1="908" y1="10" x2="908" y2="290"/>
+          <line x1="1060" y1="10" x2="1060" y2="290"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="300" y1="290" x2="1060" y2="290" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="300" y1="10"  x2="300"  y2="290" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Etiquetas eje X (0 a 2.32) -->
+        <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          <text x="300" y="315">0.00</text>
+          <text x="452" y="315">0.46</text>
+          <text x="604" y="315">0.93</text>
+          <text x="756" y="315">1.39</text>
+          <text x="908" y="315">1.86</text>
+          <text x="1060" y="315">2.32</text>
+        </g>
+
+        <text x="680" y="345" text-anchor="middle"
+              fill="rgba(255,255,255,0.75)" font-size="16"
+              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          mean(|SHAP|)
+        </text>
+
+        <!-- Barras (orden como tu tabla) -->
+        <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+          <!-- widths: 2.32->760 ; 0.93->304 ; 0.91->298 ; 0.54->177 ; 0.27->88 -->
+
+          <!-- 1) SULFATOS -->
+          <text x="290" y="50" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+            SULFATOS (mg SO4/L)
+          </text>
+          <rect x="300" y="30" width="760" height="34" fill="rgba(212,175,55,0.75)"/>
+          <text x="1075" y="53" fill="rgba(255,255,255,0.90)" font-size="14">2.32</text>
+
+          <!-- 2) CONDUCTIVIDAD -->
+          <text x="290" y="102" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+            CONDUCTIVIDAD ELÉCTRICA (µS/cm)
+          </text>
+          <rect x="300" y="82" width="304" height="34" fill="rgba(212,175,55,0.75)"/>
+          <text x="616" y="105" fill="rgba(255,255,255,0.90)" font-size="14">0.93</text>
+
+          <!-- 3) BICARBONATOS -->
+          <text x="290" y="154" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+            BICARBONATOS (mg CaCO3/L)
+          </text>
+          <rect x="300" y="134" width="298" height="34" fill="rgba(212,175,55,0.75)"/>
+          <text x="610" y="157" fill="rgba(255,255,255,0.90)" font-size="14">0.91</text>
+
+          <!-- 4) TEMPERATURA -->
+          <text x="290" y="206" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+            TEMPERATURA (°C)
+          </text>
+          <rect x="300" y="186" width="177" height="34" fill="rgba(212,175,55,0.75)"/>
+          <text x="489" y="209" fill="rgba(255,255,255,0.90)" font-size="14">0.54</text>
+
+          <!-- 5) POTASIO -->
+          <text x="290" y="258" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="16">
+            POTASIO TOTAL (mg K/L)
+          </text>
+          <rect x="300" y="238" width="88" height="34" fill="rgba(212,175,55,0.75)"/>
+          <text x="400" y="261" fill="rgba(255,255,255,0.90)" font-size="14">0.27</text>
+
+        </g>
+      </g>
+    </svg>
+  </div>
+
+</div>

@@ -1,0 +1,3022 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defensa Tesis - Río Cauca (DBO-pH)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --map-blue: #0A192F;
+            --map-stream: #64FFDA;
+            --map-contour: rgba(100, 255, 218, 0.05);
+            --map-text: #CCD6F6;
+            --map-accent: #112240;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--map-blue);
+            overflow: hidden;
+            color: var(--map-text);
+        }
+
+        h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; }
+
+        /* Fondo de Mapa Topográfico */
+        .topo-bg {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 2px 2px, var(--map-contour) 1px, transparent 0);
+            background-size: 40px 40px;
+            z-index: 1;
+        }
+
+        .contour-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background: repeating-radial-gradient(circle at 10% 10%, transparent 0, transparent 50px, var(--map-stream) 51px, transparent 52px);
+            z-index: 1;
+        }
+
+        .slide {
+            display: none;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+            z-index: 10;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .slide.active { display: flex; flex-direction: column; animation: slideFade 1s ease-out; }
+
+        @keyframes slideFade {
+            from { opacity: 0; filter: blur(10px); }
+            to { opacity: 1; filter: blur(0); }
+        }
+
+        /* El Río como Línea de Flujo de Datos */
+        .river-line-container {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .river-path {
+            fill: none;
+            stroke: var(--map-stream);
+            stroke-width: 2;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 10s linear infinite;
+        }
+
+        @keyframes drawLine {
+            to { stroke-dashoffset: -1000; }
+        }
+
+        .nav-btn {
+            position: fixed;
+            bottom: 40px;
+            z-index: 100;
+            background: var(--map-accent);
+            border: 1px solid var(--map-stream);
+            color: var(--map-stream);
+            padding: 12px 24px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+        }
+        
+        .nav-btn:hover { 
+            background: var(--map-stream); 
+            color: var(--map-blue);
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0.4);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--map-stream);
+            z-index: 1000;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px var(--map-stream);
+        }
+
+        .content-box {
+            position: relative;
+            padding: 0 12%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .data-card {
+            background: rgba(17, 34, 64, 0.8);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border-left: 4px solid var(--map-stream);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="progressBar" class="progress-bar" style="width: 8.33%"></div>
+    <div class="topo-bg"></div>
+    <div class="contour-lines"></div>
+
+    <div class="logo-container fixed top-8 right-8 z-30">
+        <img src="logo.png" alt="Logo de la universidad" class="w-auto opacity-90" style="height: 147px;">
+    </div>
+
+    <!-- 1. PORTADA -->
+    <div class="slide active">
+        <div class="content-box text-left">
+            <div class="mb-6 flex items-center space-x-4">
+                <div class="h-[1px] w-20 bg-map-stream"></div>
+                <span class="text-map-stream tracking-widest text-xs uppercase">Facultad de Ingeniería y Ciencias • Maestría en Ciencia de Datos</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold mb-8 tracking-tighter">
+                PREDICCIÓN DEL PH Y EL DBO EN EL RÍO CAUCA UTILIZANDO TÉCNICAS DE MACHINE LEARNING
+            </h1>
+            <p class="text-xl text-gray-400 max-w-2xl mb-8 border-l-2 border-map-stream pl-6">
+                Anticipando cambios críticos de calidad
+            </p>
+            <div class="mb-8">
+                <span class="text-map-stream font-bold text-lg">Autores</span>
+                <ul class="list-none mt-2 mb-4">
+                    <li class="text-white text-lg">DANIEL SOTELO DE LA CRUZ</li>
+                    <li class="text-white text-lg">WEIMAR CORTES MONTIEL</li>
+                </ul>
+                <span class="text-map-stream font-bold text-lg">Director del Proyecto</span>
+                <div class="text-white text-lg mt-2 mb-4">CRISTIAN ALEJANDRO TORRES VALENCIA</div>
+            </div>
+            <div class="text-sm text-gray-400 mb-4">
+                Proyecto Aplicado para optar al título de Magister en Ciencia de Datos
+            </div>
+            <div class="text-sm text-white">
+                SANTIAGO DE CALI, 2026
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. CONTEXTO -->
+    <div class="slide">
+        <div class="content-box">
+            <h2 class="text-4xl font-bold mb-8 flex items-center">
+                <span class="text-map-stream mr-4">02.</span> Contextualización
+            </h2>
+            <div class="mb-6 text-xl font-semibold text-map-stream">Definición del Problema</div>
+            <div class="mb-4 text-lg text-white">pH & DBO <span class="text-map-stream">VARIABLES CRÍTICAS</span></div>
+            <div class="space-y-6 mb-8">
+                <div>
+                    <span class="text-map-stream font-bold text-lg">01.</span>
+                    <span class="text-white font-bold ml-2">Presión Ambiental</span>
+                    <p class="text-base text-gray-300 mt-2 ml-8">Deterioro progresivo en la cuenca alta (Cauca, Valle y Risaralda) por actividades agrícolas, industriales y urbanas. El vertimiento de aguas residuales sin tratamiento altera drásticamente el equilibrio químico del ecosistema fluvial [1].</p>
+                </div>
+                <div>
+                    <span class="text-map-stream font-bold text-lg">02.</span>
+                    <span class="text-white font-bold ml-2">Brecha de Monitoreo</span>
+                    <p class="text-base text-gray-300 mt-2 ml-8">Los sistemas tradicionales poseen una capacidad limitada de cobertura temporal y espacial. Esta limitación técnica impide anticipar cambios críticos, dificultando una respuesta proactiva ante la descomposición de materia orgánica [2].</p>
+                </div>
+                <div>
+                    <span class="text-map-stream font-bold text-lg">03.</span>
+                    <span class="text-white font-bold ml-2">Modelado Predictivo</span>
+                    <p class="text-base text-gray-300 mt-2 ml-8">Surge la necesidad de implementar modelos de Machine Learning. El aprovechamiento de datos fisicoquímicos permite automatizar la detección de patrones y estimar con precisión los indicadores de calidad del agua [3].</p>
+                </div>
+            </div>
+            <div class="mt-8 text-center">
+                <div class="text-map-stream text-lg font-bold mb-2">Pregunta Central de Investigación</div>
+                <div class="italic text-white text-xl font-light">
+                    "¿Cómo predecir los niveles de pH y Demanda Bioquímica de Oxígeno (DBO) en el Río Cauca, a partir del análisis de datos y variables fisicoquímicas utilizando modelos de Machine Learning?"
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. EL PROBLEMA -->
+    <div class="slide">
+        <div class="content-box">
+            <h2 class="text-4xl font-bold mb-8 flex items-center">
+                <span class="text-map-stream mr-4">03.</span> Investigación
+            </h2>
+            <div class="mb-6 text-xl font-semibold text-map-stream">Objetivos • Metas</div>
+            <div class="mb-4 text-lg text-white">PROPÓSITO DEL PROYECTO</div>
+            <div class="mb-6">
+                <span class="text-map-stream font-bold text-lg">Objetivo General</span>
+                <p class="text-base text-white mt-2">Predecir los niveles de pH y DBO en el Río Cauca, mediante el análisis de variables fisicoquímicas utilizando modelos de Machine Learning.</p>
+            </div>
+            <div class="space-y-6 mb-8">
+                <div>
+                    <span class="text-map-stream font-bold text-lg">01.</span>
+                    <span class="text-white font-bold ml-2">Preparación</span>
+                    <p class="text-base text-gray-300 mt-2 ml-8">Preparar los conjuntos de datos de calidad del agua del Río Cauca para el análisis predictivo.</p>
+                </div>
+                <div>
+                    <span class="text-map-stream font-bold text-lg">02.</span>
+                    <span class="text-white font-bold ml-2">Identificación</span>
+                    <p class="text-base text-gray-300 mt-2 ml-8">Identificar las variables fisicoquímicas significativas que influyen en los niveles de pH y DBO.</p>
+                </div>
+                <div>
+                    <span class="text-map-stream font-bold text-lg">03.</span>
+                    <span class="text-white font-bold ml-2">Entrenamiento</span>
+                    <p class="text-base text-gray-300 mt-2 ml-8">Entrenar diferentes modelos de regresión para la predicción de niveles a partir de datos históricos.</p>
+                </div>
+                <div>
+                    <span class="text-map-stream font-bold text-lg">04.</span>
+                    <span class="text-white font-bold ml-2">Evaluación</span>
+                    <p class="text-base text-gray-300 mt-2 ml-8">Evaluar los modelos de regresión mediante métricas de rendimiento para asegurar la fiabilidad.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. PREGUNTA -->
+    <div class="slide">
+        <div class="content-box">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-map-stream border-opacity-30 pb-8">
+                <div>
+                    <span class="text-map-stream tracking-[0.4em] uppercase mb-3 block font-black text-sm">Fundamentación Teórica</span>
+                    <h2 class="text-5xl md:text-6xl font-bold text-white">Marco Teórico</h2>
+                </div>
+                <div class="text-right mt-6 md:mt-0">
+                    <span class="text-map-stream text-6xl font-bold opacity-30">Metodología</span>
+                    <span class="block tracking-widest mt-2 text-map-stream text-sm">5 FUNDAMENTOS CLAVE</span>
+                </div>
+            </div>
+            <div class="bg-map-accent/10 p-6 rounded-3xl border border-map-stream/20 mb-10">
+                <p class="text-map-stream leading-relaxed text-lg">
+                    Haz clic en cada módulo para explorar los fundamentos metodológicos que sustentan el modelado predictivo de calidad del agua.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+                <button class="group p-8 rounded-2xl border-2 border-map-stream bg-gradient-to-r from-map-accent/20 to-map-accent/10 hover:from-map-stream/20 hover:to-map-stream/10 transition-all duration-300 transform hover:scale-105 min-h-[180px] flex flex-col items-center justify-center">
+                    <span class="text-map-stream text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">CALIDAD DEL AGUA</span>
+                    <span class="text-gray-400 text-xs mt-2 text-center">pH & DBO</span>
+                </button>
+                <button class="group p-8 rounded-2xl border-2 border-map-stream bg-gradient-to-r from-map-accent/20 to-map-accent/10 hover:from-map-stream/20 hover:to-map-stream/10 transition-all duration-300 transform hover:scale-105 min-h-[180px] flex flex-col items-center justify-center">
+                    <span class="text-map-stream text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">ALGORITMOS ML</span>
+                    <span class="text-gray-400 text-xs mt-2 text-center">6 Modelos</span>
+                </button>
+                <button class="group p-8 rounded-2xl border-2 border-map-stream bg-gradient-to-r from-map-accent/20 to-map-accent/10 hover:from-map-stream/20 hover:to-map-stream/10 transition-all duration-300 transform hover:scale-105 min-h-[180px] flex flex-col items-center justify-center">
+                    <span class="text-map-stream text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">OPTIMIZACIÓN</span>
+                    <span class="text-gray-400 text-xs mt-2 text-center">Parámetros</span>
+                </button>
+                <button class="group p-8 rounded-2xl border-2 border-map-stream bg-gradient-to-r from-map-accent/20 to-map-accent/10 hover:from-map-stream/20 hover:to-map-stream/10 transition-all duration-300 transform hover:scale-105 min-h-[180px] flex flex-col items-center justify-center">
+                    <span class="text-map-stream text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">VALIDACIÓN</span>
+                    <span class="text-gray-400 text-xs mt-2 text-center">Resultados</span>
+                </button>
+                <button class="group p-8 rounded-2xl border-2 border-map-stream bg-gradient-to-r from-map-accent/20 to-map-accent/10 hover:from-map-stream/20 hover:to-map-stream/10 transition-all duration-300 transform hover:scale-105 min-h-[180px] flex flex-col items-center justify-center">
+                    <span class="text-map-stream text-lg font-bold tracking-wider group-hover:text-white transition-colors text-center">INTERPRETABILIDAD VS. EXPLICABILIDAD (XAI)</span>
+                    <span class="text-gray-400 text-xs mt-2 text-center">PI, SHAP Y LC</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. REVISIÓN DE LITERATURA -->
+    <div class="slide">
+        <div class="content-box">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-map-stream border-opacity-30 pb-8">
+                <div>
+                    <span class="text-map-stream tracking-[0.4em] uppercase mb-3 block font-black text-sm">Estudios Representativos • Referencias</span>
+                    <h2 class="text-5xl md:text-6xl font-bold text-white">Revisión de <span class="text-map-stream">Literatura</span></h2>
+                </div>
+                <div class="text-right mt-6 md:mt-0">
+                    <span class="text-map-stream text-6xl font-bold opacity-30">TRAZABILIDAD</span>
+                    <span class="block tracking-widest mt-2 text-map-stream text-sm">2 IDIOMAS · 6 ESTUDIOS</span>
+                </div>
+            </div>
+            <div class="bg-map-accent/10 p-6 rounded-3xl border border-map-stream/20 mb-10">
+                <p class="text-map-stream leading-relaxed text-lg">
+                    Seleccione el idioma para ver los estudios representativos alineados con las variables objetivo <span class="text-white font-semibold">(pH / DBO / OD / WQI)</span>, modelos de ML y enfoques de interpretabilidad.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <button id="btnLitES" class="group p-10 rounded-2xl border-2 border-map-stream bg-gradient-to-r from-map-accent/20 to-map-accent/10 hover:from-map-stream/20 hover:to-map-stream/10 transition-all duration-300 transform hover:scale-105 min-h-[200px] flex flex-col items-center justify-center">
+                    <span class="text-map-stream text-2xl font-bold tracking-wider group-hover:text-white transition-colors text-center mb-3">REFERENCIAS</span>
+                    <span class="text-white text-4xl font-black mb-3">ES</span>
+                    <span class="text-map-stream text-sm tracking-widest uppercase">EN ESPAÑOL</span>
+                    <span class="text-gray-400 text-xs mt-3">3 estudios representativos</span>
+                </button>
+                <button id="btnLitEN" class="group p-10 rounded-2xl border-2 border-map-stream bg-gradient-to-r from-map-accent/20 to-map-accent/10 hover:from-map-stream/20 hover:to-map-stream/10 transition-all duration-300 transform hover:scale-105 min-h-[200px] flex flex-col items-center justify-center">
+                    <span class="text-map-stream text-2xl font-bold tracking-wider group-hover:text-white transition-colors text-center mb-3">REFERENCIAS</span>
+                    <span class="text-white text-4xl font-black mb-3">EN</span>
+                    <span class="text-map-stream text-sm tracking-widest uppercase">EN INGLÉS</span>
+                    <span class="text-gray-400 text-xs mt-3">3 estudios representativos</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. METODOLOGÍA -->
+    <div class="slide">
+        <div class="content-box">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-map-stream border-opacity-30 pb-8">
+                <div>
+                    <span class="text-map-stream tracking-[0.4em] uppercase mb-3 block font-black text-sm">Enfoque Metodológico • Pipeline ML</span>
+                    <h2 class="text-5xl md:text-6xl font-bold text-white">Metodo<span class="text-map-stream">logía</span></h2>
+                    <span class="text-gray-400 text-lg mt-2 block">ML · pH &amp; DBO · Río Cauca</span>
+                </div>
+                <div class="text-right mt-6 md:mt-0">
+                    <span class="text-map-stream text-6xl font-bold opacity-30">PIPELINE</span>
+                    <span class="block tracking-widest mt-2 text-map-stream text-sm">5 ETAPAS · 1 FLUJO</span>
+                </div>
+            </div>
+            <div class="bg-map-accent/10 p-6 rounded-3xl border border-map-stream/20 mb-10">
+                <p class="text-map-stream leading-relaxed text-lg">
+                    La metodología se estructura como un <span class="text-white font-semibold">pipeline secuencial</span> que integra control de calidad de datos, selección robusta de variables, comparación de modelos, optimización de hiperparámetros e interpretabilidad.
+                </p>
+            </div>
+            <div class="flex justify-center">
+                <button id="btnMetodologia" class="group p-10 rounded-2xl border-2 border-map-stream bg-gradient-to-r from-map-accent/20 to-map-accent/10 hover:from-map-stream/20 hover:to-map-stream/10 transition-all duration-300 transform hover:scale-105 min-h-[160px] flex flex-col items-center justify-center w-full max-w-xl">
+                    <span class="text-map-stream text-2xl font-bold tracking-wider group-hover:text-white transition-colors text-center mb-3">PIPELINE DE MODELADO PREDICTIVO</span>
+                    <span class="text-gray-400 text-sm tracking-widest uppercase">Ver detalle completo</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. ESCENARIOS DE SELECCIÓN DE VARIABLES -->
+    <div class="slide">
+        <div class="content-box">
+
+            <!-- Cabecera -->
+            <div class="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-map-stream border-opacity-30 pb-6">
+                <div>
+                    <span class="text-map-stream tracking-[0.4em] uppercase text-xs mb-2 block font-black">Resultados y Análisis</span>
+                    <h2 class="text-4xl md:text-5xl font-bold text-white leading-tight">Escenarios de <span class="text-map-stream">Selección de Variables</span></h2>
+                </div>
+                <div class="text-right mt-4 md:mt-0">
+                    <span class="text-map-stream text-5xl font-bold opacity-30">Variables</span>
+                    <span class="text-map-stream block text-sm tracking-widest mt-1">SELECCIÓN</span>
+                </div>
+            </div>
+
+            <!-- Intro -->
+            <div class="mb-6">
+                <p class="text-gray-300 text-base leading-relaxed italic border-l-2 border-map-stream/50 pl-5">
+                    Se compararon <span class="text-white font-bold">4 escenarios</span> de variables (VIF y RFE por objetivo) para evaluar su impacto en la predicción de <span class="text-white font-bold">pH</span> y <span class="text-white font-bold">DBO</span>.
+                </p>
+            </div>
+
+            <!-- Contenido: tabla + leyenda -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+
+                <!-- TABLA -->
+                <div class="md:col-span-9 p-5 rounded-2xl border border-map-stream/20" style="background: linear-gradient(180deg, rgba(100,255,218,0.03), rgba(0,0,0,0.20));">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-map-stream text-[10px] uppercase tracking-widest font-black">Matriz completa (variable × escenario)</p>
+                        <p class="text-gray-400 text-[11px] italic">Celdas coloreadas = variable incluida</p>
+                    </div>
+                    <div class="rounded-xl border border-map-stream/10 p-3 overflow-auto" style="max-height: 300px; background: rgba(0,0,0,0.30);">
+                        <table class="w-full border-collapse text-[13px]">
+                            <thead>
+                                <tr class="text-gray-300 border-b border-map-stream/20">
+                                    <th class="text-left py-2 pr-3 font-semibold">Variable</th>
+                                    <th class="text-center py-2 px-2 font-semibold">VIF</th>
+                                    <th class="text-center py-2 px-2 font-semibold">RFE DBO</th>
+                                    <th class="text-center py-2 px-2 font-semibold">RFE pH</th>
+                                    <th class="text-center py-2 px-2 font-semibold">RFE DBO ∪ pH</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-200">
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">CALCIO (mg Ca/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#1d4ed8]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">MAGNESIO (mg Mg/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#1d4ed8]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">SÓLIDOS TOTALES (mg SST/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#1d4ed8]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">TURBIEDAD (UNT)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#1d4ed8]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">HIERRO TOTAL (mg Fe/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#1d4ed8]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">COND. ELÉCTRICA (µS/cm)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#7c3aed]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">SULFATOS (mg SO4/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#7c3aed]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">DEMANDA BIOQUÍMICA DE OXÍGENO (mg O2/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">BICARBONATOS (mg CaCO3/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#7c3aed]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">DUREZA TOTAL (mg CaCO3/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">OXÍGENO DISUELTO (mg O2/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">SÓLIDOS DISUELTOS (mg SD/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">POTASIO TOTAL (mg K/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#7c3aed]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">COLOR (UPC)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">SODIO TOTAL (mg Na/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">DEMANDA QUÍMICA DE OXÍGENO (mg O2/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">TEMPERATURA (°C)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#7c3aed]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#16a34a]"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">CLORUROS (mg Cl/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">COLIFORMES FECALES (NMP/100 ml)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td></tr>
+                                <tr class="border-b border-white/5"><td class="py-2 pr-3">NITRATOS (mg N-NO3/l)</td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td></tr>
+                                <tr><td class="py-2 pr-3"><span class="text-white font-semibold">pH</span> <span class="text-map-stream text-[10px]">(objetivo)</span></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm bg-[#64FFDA]"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td><td class="py-2 px-2"><div class="mx-auto w-4 h-4 rounded-sm border border-white/10"></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-gray-400 text-[11px] italic mt-3">Nota: pH se presenta como variable objetivo; las celdas representan variables predictoras incluidas por escenario.</p>
+                </div>
+
+                <!-- LEYENDA -->
+                <div class="md:col-span-3">
+                    <div class="bg-map-stream/5 p-5 rounded-2xl border border-map-stream/15">
+                        <h3 class="text-map-stream font-black uppercase tracking-widest text-xs mb-4">Escenarios</h3>
+                        <div class="space-y-3 text-gray-200 text-sm">
+                            <div class="flex items-center gap-3"><div class="w-4 h-4 rounded-sm bg-[#64FFDA] flex-none"></div><span>VIF</span></div>
+                            <div class="flex items-center gap-3"><div class="w-4 h-4 rounded-sm bg-[#1d4ed8] flex-none"></div><span>RFE DBO</span></div>
+                            <div class="flex items-center gap-3"><div class="w-4 h-4 rounded-sm bg-[#7c3aed] flex-none"></div><span>RFE pH</span></div>
+                            <div class="flex items-center gap-3"><div class="w-4 h-4 rounded-sm bg-[#16a34a] flex-none"></div><span>RFE DBO ∪ pH</span></div>
+                        </div>
+                        <div class="mt-5 text-gray-400 text-xs leading-relaxed">
+                            <span class="text-white font-semibold">Lectura:</span> cada fila es una variable; cada columna indica si fue incluida en el escenario correspondiente.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. RESULTADOS DE MODELACIÓN -->
+    <div class="slide">
+        <div class="content-box">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-map-stream border-opacity-30 pb-8">
+                <div>
+                    <span class="text-map-stream tracking-[0.4em] uppercase mb-3 block font-black text-sm">Análisis Profundo</span>
+                    <h2 class="text-5xl md:text-6xl font-bold text-white">Resultados de <span class="text-map-stream">Modelación</span></h2>
+                </div>
+                <div class="text-right mt-6 md:mt-0">
+                    <span class="text-map-stream text-6xl font-bold opacity-30">Modelos</span>
+                    <span class="block tracking-widest mt-2 text-map-stream text-sm">RENDIMIENTO</span>
+                </div>
+            </div>
+            <div class="mb-10">
+                <p class="text-gray-300 text-base leading-relaxed">
+                    Visualización detallada del rendimiento predictivo de los modelos para <span class="text-white font-bold">DBO</span> y <span class="text-white font-bold">pH</span>, incluyendo métricas de evaluación, importancia de variables, curvas de aprendizaje y análisis SHAP.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <button id="btnResultadosDBO" class="group p-10 rounded-3xl border-2 border-map-stream bg-gradient-to-br from-map-accent/40 to-map-accent/20 hover:from-map-stream/20 hover:to-map-stream/10 transition-all duration-500 transform hover:-translate-y-2 flex flex-col items-center justify-center min-h-[200px]">
+                    <div class="text-map-stream mb-5 group-hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white group-hover:text-map-stream transition-colors mb-2">Análisis Detallado DBO</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed text-center">Métricas de rendimiento, importancia de variables, curvas de aprendizaje y análisis SHAP para DBO</p>
+                </button>
+                <button id="btnResultadosPH" class="group p-10 rounded-3xl border-2 border-map-stream bg-gradient-to-br from-map-accent/40 to-map-accent/20 hover:from-map-stream/20 hover:to-map-stream/10 transition-all duration-500 transform hover:-translate-y-2 flex flex-col items-center justify-center min-h-[200px]">
+                    <div class="text-map-stream mb-5 group-hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white group-hover:text-map-stream transition-colors mb-2">Análisis Detallado pH</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed text-center">Métricas de rendimiento, importancia de variables, curvas de aprendizaje y análisis SHAP para pH</p>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. CIERRE / CONCLUSIONES -->
+    <div class="slide">
+        <div class="content-box">
+
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row justify-between items-end mb-6 border-b border-map-stream border-opacity-30 pb-5">
+                <div>
+                    <span class="text-map-stream tracking-[0.4em] uppercase mb-2 block font-black text-sm">END</span>
+                    <h2 class="text-5xl font-bold text-white">Cierre — <span class="text-map-stream">Conclusiones</span></h2>
+                </div>
+                <div class="text-right mt-4 md:mt-0 flex flex-col items-end gap-1">
+                    <span class="text-map-stream text-xs tracking-[0.3em] uppercase font-semibold opacity-70">Conclusiones</span>
+                    <span class="text-map-stream text-2xl font-bold tracking-widest">I</span>
+                    <span class="block tracking-widest text-map-stream text-xs opacity-60">pH &amp; DBO – Río Cauca</span>
+                </div>
+            </div>
+
+            <!-- Párrafo intro -->
+            <p class="text-gray-300 text-sm leading-relaxed mb-6 max-w-5xl border-l-4 border-map-stream pl-4">
+                El proyecto consolidó un flujo de análisis reproducible que integra control de calidad, selección robusta de variables, comparación de modelos y optimización, permitiendo vincular el desempeño predictivo con la interpretación ambiental del sistema hídrico.
+            </p>
+
+            <!-- Tres columnas -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                <!-- 1. Datos & calidad -->
+                <div class="data-card p-5 rounded-xl">
+                    <h3 class="text-map-stream font-bold text-base uppercase tracking-widest mb-4">Datos &amp; calidad</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">La calidad, estructura y coherencia de los datos fue el factor más determinante del desempeño predictivo.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">La depuración redujo el conjunto de variables de <span class="text-white font-semibold">56 a 27</span>, usando un umbral de completitud ≥ 80 %.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Cerca del <span class="text-white font-semibold">48 %</span> de los registros presentaron vacíos o inconsistencias, evidenciando debilidades en la captura.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">El conjunto depurado permitió construir un flujo analítico coherente, reproducible y transparente.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 2. Selección & calibración -->
+                <div class="data-card p-5 rounded-xl">
+                    <h3 class="text-map-stream font-bold text-base uppercase tracking-widest mb-4">Selección &amp; calibración</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Spearman, VIF y RFE redujeron el conjunto a <span class="text-white font-semibold">5–21 predictores</span> según objetivo y escenario.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">La selección eliminó redundancia y ruido, mejorando eficiencia computacional e interpretabilidad.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Grid Search garantizó exploración sistemática y comparabilidad entre modelos.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Optuna (XGBoost) permitió búsquedas más eficientes en espacios de alta complejidad.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 3. Modelado predictivo -->
+                <div class="data-card p-5 rounded-xl">
+                    <h3 class="text-map-stream font-bold text-base uppercase tracking-widest mb-4">Modelado predictivo</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Se evaluaron enfoques lineales, basados en árboles y aprendizaje profundo.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">El desempeño dependió más del <span class="text-white font-semibold">tratamiento del dato</span> que del algoritmo utilizado.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">La optimización equilibró precisión, estabilidad estadística y costo computacional.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">El pipeline evidenció la importancia de la <span class="text-white font-semibold">coherencia metodológica</span> en contextos ambientales.</p>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. CIERRE / CONCLUSIONES II -->
+    <div class="slide">
+        <div class="content-box">
+
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row justify-between items-end mb-6 border-b border-map-stream border-opacity-30 pb-5">
+                <div>
+                    <span class="text-map-stream tracking-[0.4em] uppercase mb-2 block font-black text-sm">END</span>
+                    <h2 class="text-5xl font-bold text-white">Cierre — <span class="text-map-stream">Conclusiones</span></h2>
+                </div>
+                <div class="text-right mt-4 md:mt-0 flex flex-col items-end gap-1">
+                    <span class="text-map-stream text-xs tracking-[0.3em] uppercase font-semibold opacity-70">Conclusiones</span>
+                    <span class="text-map-stream text-2xl font-bold tracking-widest">II</span>
+                    <span class="block tracking-widest text-map-stream text-xs opacity-60">pH &amp; DBO – Río Cauca</span>
+                </div>
+            </div>
+
+            <!-- Párrafo intro -->
+            <p class="text-gray-300 text-sm leading-relaxed mb-6 max-w-5xl border-l-4 border-map-stream pl-4">
+                El análisis comparativo permitió distinguir dos dimensiones complementarias del sistema hídrico: la contaminación orgánica (DBO) y la estabilidad química (pH), revelando patrones ambientales coherentes con la dinámica del río Cauca.
+            </p>
+
+            <!-- Tres columnas -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+
+                <!-- 1. DBO -->
+                <div class="data-card p-5 rounded-xl">
+                    <h3 class="text-map-stream font-bold text-base uppercase tracking-widest mb-4">DBO · Contaminación orgánica</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Mejor desempeño en modelos no lineales <span class="text-white font-semibold">(Random Forest)</span>.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Variables dominantes: <span class="text-white font-semibold">sulfatos, bicarbonatos y conductividad eléctrica</span>.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Asociación con procesos de mineralización y presión antrópica.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Temperatura y potasio total actuaron como <span class="text-white font-semibold">moduladores secundarios</span>.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 2. pH -->
+                <div class="data-card p-5 rounded-xl">
+                    <h3 class="text-map-stream font-bold text-base uppercase tracking-widest mb-4">pH · Estabilidad química</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Menor capacidad predictiva, coherente con su <span class="text-white font-semibold">estabilidad natural</span>.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Regulación dominada por el <span class="text-white font-semibold">equilibrio carbonatado</span>.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Baja sensibilidad frente a cargas orgánicas o sales.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Variabilidad asociada a procesos físico-químicos naturales.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 3. Interpretabilidad & aporte -->
+                <div class="data-card p-5 rounded-xl">
+                    <h3 class="text-map-stream font-bold text-base uppercase tracking-widest mb-4">Interpretabilidad &amp; aporte</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Permutation Importance y SHAP facilitaron lectura ambiental del modelo.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Se identificaron <span class="text-white font-semibold">interacciones multivariables</span> clave.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">ML como herramienta <span class="text-white font-semibold">explicativa</span>, no solo predictiva.</p>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-map-stream rotate-45 mt-1.5 flex-shrink-0"></div>
+                            <p class="text-gray-300 text-sm leading-relaxed">Metodología replicable para otros sistemas fluviales.</p>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Párrafo cierre -->
+            <p class="text-gray-400 text-sm leading-relaxed border-l-4 border-map-stream pl-4 italic max-w-5xl">
+                La ciencia de datos aplicada permitió transformar información ambiental dispersa en conocimiento interpretable y útil, fortaleciendo el vínculo entre modelación predictiva, comprensión ecológica y toma de decisiones ambientales.
+            </p>
+
+        </div>
+    </div>
+
+    <!-- 11. BIBLIOGRAFÍA -->
+    <div class="slide">
+        <div class="content-box">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-map-stream border-opacity-30 pb-8">
+                <div>
+                    <span class="text-map-stream tracking-[0.4em] uppercase mb-3 block font-black text-sm">Referencias · IEEE</span>
+                    <h2 class="text-5xl md:text-6xl font-bold text-white">Biblio<span class="text-map-stream">grafía</span></h2>
+                    <span class="text-gray-400 text-lg mt-2 block">23 referencias · formato IEEE</span>
+                </div>
+                <div class="text-right mt-6 md:mt-0">
+                    <span class="text-map-stream text-6xl font-bold opacity-30">REFS</span>
+                    <span class="block tracking-widest mt-2 text-map-stream text-sm">pH &amp; DBO · Río Cauca</span>
+                </div>
+            </div>
+            <div class="bg-map-accent/10 p-6 rounded-3xl border border-map-stream/20 mb-10">
+                <p class="text-map-stream leading-relaxed text-lg">
+                    Marco de referencias que fundamenta el pipeline metodológico, modelos, técnicas de selección de variables e interpretabilidad aplicados al análisis de calidad del agua.
+                </p>
+            </div>
+            <div class="flex justify-center">
+                <button id="btnBibliografia" class="group p-10 rounded-2xl border-2 border-map-stream bg-gradient-to-r from-map-accent/20 to-map-accent/10 hover:from-map-stream/20 hover:to-map-stream/10 transition-all duration-300 transform hover:scale-105 min-h-[160px] flex flex-col items-center justify-center w-full max-w-xl">
+                    <span class="text-map-stream text-2xl font-bold tracking-wider group-hover:text-white transition-colors text-center mb-3">VER REFERENCIAS COMPLETAS</span>
+                    <span class="text-gray-400 text-sm tracking-widest uppercase">23 fuentes · formato IEEE</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. CIERRE -->
+    <div class="slide">
+        <div class="content-box text-center">
+            <h1 class="text-5xl font-bold text-map-stream mb-4 uppercase tracking-[0.3em]">Sesión Finalizada</h1>
+            <p class="text-gray-400 mb-12">Gracias por su atención en este recorrido.</p>
+            <div class="flex justify-center space-x-12 opacity-50 text-[10px] tracking-widest">
+                <span>MAESTRÍA EN CIENCIA DE DATOS</span>
+                <span>•</span>
+                <span>pH &amp; DBO · RÍO CAUCA · 2026</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALES DEL MARCO TEÓRICO (al nivel del body para z-index correcto) -->
+    <!-- MODAL MÓDULO 1: CALIDAD DEL AGUA -->
+    <div id="modalModulo1" class="modal-overlay fixed inset-0 flex items-center justify-center z-[9999] hidden" style="background-color: rgba(10, 25, 47, 0.97);">
+        <div class="modal-content bg-map-accent border border-map-stream rounded-xl p-8 max-w-5xl w-full relative" style="max-width: 80rem;">
+            <button id="closeModalModulo1" class="absolute top-4 right-4 text-map-stream text-xl font-bold">&times;</button>
+            <h2 class="modal-title text-map-stream text-2xl font-bold mb-4">Calidad del Agua: pH & DBO</h2>
+            <p class="text-gray-300 text-lg mb-8 font-light border-l-4 border-map-stream pl-6 italic">
+                El río Cauca es la segunda arteria fluvial más importante de Colombia, cuya cuenca alta es vital para el desarrollo socioeconómico de los departamentos de Cauca, Valle del Cauca y Risaralda.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div class="p-6 rounded-3xl border border-map-stream/20 bg-map-accent">
+                    <h3 class="text-map-stream text-xs uppercase tracking-[0.2em] font-black mb-4">Contexto Fluvial</h3>
+                    <h4 class="text-white text-xl font-bold mb-3">Segunda Arteria del País</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Su calidad se define mediante parámetros fisicoquímicos y biológicos que indican la aptitud del agua para diversos usos y la salud del ecosistema <span class="text-map-stream font-semibold">[4]</span>.
+                    </p>
+                </div>
+                <div class="p-6 rounded-3xl border border-map-stream/20 bg-map-stream">
+                    <h3 class="text-map-stream text-xs uppercase tracking-[0.2em] font-black mb-4">Parámetro 01</h3>
+                    <h4 class="text-white text-xl font-bold mb-3">Potencial de Hidrógeno (pH)</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Medida de acidez o alcalinidad. Es crítico para la supervivencia acuática; variaciones extremas afectan la solubilidad de nutrientes y la toxicidad de metales <span class="text-map-stream font-semibold">[5]</span>.
+                    </p>
+                </div>
+                <div class="p-6 rounded-3xl border border-map-stream/20 bg-map-accent">
+                    <h3 class="text-map-stream text-xs uppercase tracking-[0.2em] font-black mb-4">Parámetro 02</h3>
+                    <h4 class="text-white text-xl font-bold mb-3">Demanda Bioquímica (DBO)</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Indica la cantidad de oxígeno consumido por microorganismos para degradar materia orgánica. Niveles altos sugieren una fuerte contaminación orgánica <span class="text-map-stream font-semibold">[6]</span>.
+                    </p>
+                </div>
+            </div>
+            <div class="mt-8 text-center opacity-50">
+                <span class="text-xs uppercase tracking-widest text-gray-400">Valores de referencia: pH [6.5 - 8.5]</span>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL MÓDULO 2: ALGORITMOS ML -->
+    <div id="modalModulo2" class="modal-overlay fixed inset-0 flex items-center justify-center z-[9999] hidden" style="background-color: rgba(10, 25, 47, 0.97);">
+        <div class="modal-content bg-map-accent border border-map-stream rounded-xl p-8 max-w-5xl w-full relative" style="max-width: 80rem;">
+            <button id="closeModalModulo2" class="absolute top-4 right-4 text-map-stream text-xl font-bold">&times;</button>
+            <h2 class="modal-title text-map-stream text-2xl font-bold mb-4">Algoritmos Evaluados</h2>
+            <div class="text-center mb-8">
+                <p class="text-map-stream text-sm uppercase tracking-[0.4em] font-black mb-1">Modelos Predictivos</p>
+                <p class="text-gray-400 text-xs uppercase tracking-[0.3em] mb-1">Regresión</p>
+                <p class="text-gray-500 text-xs uppercase tracking-[0.2em]">SISTEMAS AMBIENTALES</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="p-5 rounded-3xl border border-map-stream/20 bg-map-accent">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-map-stream text-xs font-black">01.</span>
+                        <span class="text-map-stream text-xs uppercase tracking-[0.3em] font-black">Baseline [7]</span>
+                    </div>
+                    <h3 class="text-white text-lg font-bold mb-2">Regresión Lineal</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">Este modelo busca una relación recta entre los datos. Es simple y fácil de entender, pero no detecta patrones complejos.</p>
+                    <div class="space-y-2 text-sm">
+                        <p class="text-green-400 leading-relaxed">✓ Alta interpretabilidad.</p>
+                        <p class="text-red-400 leading-relaxed">✗ No captura no linealidades.</p>
+                    </div>
+                </div>
+                <div class="p-5 rounded-3xl border border-map-stream/20 bg-map-stream">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-map-stream text-xs font-black">02.</span>
+                        <span class="text-map-stream text-xs uppercase tracking-[0.3em] font-black">Árbol [8]</span>
+                    </div>
+                    <h3 class="text-white text-lg font-bold mb-2">Árbol de Decisión</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">Este modelo divide los datos en ramas, como un árbol, para tomar decisiones. Es claro y visual, pero puede equivocarse si hay demasiadas divisiones.</p>
+                    <div class="space-y-2 text-sm">
+                        <p class="text-green-400 leading-relaxed">✓ Fácil de explicar/mapear.</p>
+                        <p class="text-red-400 leading-relaxed">✗ Tendencia al sobreajuste.</p>
+                    </div>
+                </div>
+                <div class="p-5 rounded-3xl border border-map-stream/20 bg-map-accent">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-map-stream text-xs font-black">03.</span>
+                        <span class="text-map-stream text-xs uppercase tracking-[0.3em] font-black">Ensemble [9]</span>
+                    </div>
+                    <h3 class="text-white text-lg font-bold mb-2">Random Forest</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">Este método combina muchos árboles para tomar una decisión más estable. Es preciso, pero puede ser difícil de entender cómo llega al resultado.</p>
+                    <div class="space-y-2 text-sm">
+                        <p class="text-green-400 leading-relaxed">✓ Precisión + Estabilidad.</p>
+                        <p class="text-red-400 leading-relaxed">✗ Menor interpretabilidad.</p>
+                    </div>
+                </div>
+                <div class="p-5 rounded-3xl border border-map-stream/20 bg-map-stream">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-map-stream text-xs font-black">04.</span>
+                        <span class="text-map-stream text-xs uppercase tracking-[0.3em] font-black">Kernel [10]</span>
+                    </div>
+                    <h3 class="text-white text-lg font-bold mb-2">SVR (Support Vector)</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">Este modelo transforma los datos para encontrar patrones ocultos. Es útil para relaciones complejas, pero requiere ajustes cuidadosos.</p>
+                    <div class="space-y-2 text-sm">
+                        <p class="text-green-400 leading-relaxed">✓ Capta alta dimensionalidad.</p>
+                        <p class="text-red-400 leading-relaxed">✗ Tuning de Kernel delicado.</p>
+                    </div>
+                </div>
+                <div class="p-5 rounded-3xl border border-map-stream/20 bg-map-accent">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-map-stream text-xs font-black">05.</span>
+                        <span class="text-map-stream text-xs uppercase tracking-[0.3em] font-black">Red Neuronal [11]</span>
+                    </div>
+                    <h3 class="text-white text-lg font-bold mb-2">MLP (Perceptrón)</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">Este modelo usa capas de conexiones para aprender patrones complejos. Es flexible y potente, pero necesita muchos datos para funcionar bien.</p>
+                    <div class="space-y-2 text-sm">
+                        <p class="text-green-400 leading-relaxed">✓ Máxima flexibilidad.</p>
+                        <p class="text-red-400 leading-relaxed">✗ Requiere alto volumen de datos.</p>
+                    </div>
+                </div>
+                <div class="p-5 rounded-3xl border border-map-stream/20 bg-map-stream">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-map-stream text-xs font-black">06.</span>
+                        <span class="text-map-stream text-xs uppercase tracking-[0.3em] font-black">Boosting [12]</span>
+                    </div>
+                    <h3 class="text-white text-lg font-bold mb-2">XGBoost</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">Este método mejora el resultado corrigiendo errores paso a paso. Es muy eficiente para datos de tablas, pero puede ser sensible al ruido.</p>
+                    <div class="space-y-2 text-sm">
+                        <p class="text-green-400 leading-relaxed">✓ Rendimiento tabular líder.</p>
+                        <p class="text-red-400 leading-relaxed">✗ Propenso a ruido si no se ajusta.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL MÓDULO 3: OPTIMIZACIÓN -->
+    <div id="modalModulo3" class="modal-overlay fixed inset-0 flex items-center justify-center z-[9999] hidden" style="background-color: rgba(10, 25, 47, 0.97);">
+        <div class="modal-content bg-map-accent border border-map-stream rounded-xl p-8 max-w-5xl w-full relative" style="max-width: 80rem;">
+            <button id="closeModalModulo3" class="absolute top-4 right-4 text-map-stream text-xl font-bold">&times;</button>
+            <h2 class="modal-title text-map-stream text-2xl font-bold mb-4">Optimización de Hiperparámetros</h2>
+            <div class="bg-map-accent p-5 rounded-3xl border border-map-stream/20 mb-8">
+                <p class="text-gray-300 text-base leading-relaxed">
+                    El objetivo es encontrar la combinación óptima que maximice el desempeño del modelo (por ejemplo, minimizar RMSE/MAE o maximizar R²), bajo validación cruzada para evitar el sobreajuste.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="p-6 rounded-3xl border border-map-stream/20 bg-map-accent">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-map-stream text-sm uppercase tracking-[0.3em] font-black">Grid Search [13]</span>
+                        <span class="text-map-stream font-serif italic text-2xl">Exhaustiva</span>
+                    </div>
+                    <h3 class="text-white text-2xl font-bold mb-4">Búsqueda Exhaustiva</h3>
+                    <p class="text-gray-300 leading-relaxed mb-4">
+                        Este método prueba todas las opciones posibles, como si se revisara cada casilla de una lista, para encontrar la mejor combinación. Es útil cuando hay pocas alternativas y se quiere estar seguro del resultado.
+                    </p>
+                    <ul class="text-gray-300 text-sm leading-relaxed list-disc pl-5 space-y-2">
+                        <li><span class="text-map-stream font-semibold">param_grid:</span> Diccionario de valores</li>
+                        <li><span class="text-map-stream font-semibold">cv:</span> Particiones de validación</li>
+                        <li><span class="text-map-stream font-semibold">refit:</span> Reentrenamiento final</li>
+                    </ul>
+                </div>
+                <div class="p-6 rounded-3xl border border-map-stream/20 bg-map-stream">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-map-stream text-sm uppercase tracking-[0.3em] font-black">Optuna [13]</span>
+                        <span class="text-map-stream font-serif italic text-2xl">Adaptativa</span>
+                    </div>
+                    <h3 class="text-white text-2xl font-bold mb-4">Búsqueda Bayesiana</h3>
+                    <p class="text-gray-300 leading-relaxed mb-4">
+                        Este método busca la mejor opción de manera inteligente, probando primero las alternativas más prometedoras y descartando rápido las que no funcionan. Es ideal cuando hay muchas posibilidades y se quiere ahorrar tiempo y recursos.
+                    </p>
+                    <ul class="text-gray-300 text-sm leading-relaxed list-disc pl-5 space-y-2">
+                        <li><span class="text-map-stream font-semibold">sampler:</span> Estrategia (por ejemplo TPE)</li>
+                        <li><span class="text-map-stream font-semibold">pruner:</span> Poda temprana de ensayos</li>
+                        <li><span class="text-map-stream font-semibold">n_trials:</span> Número de iteraciones</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL MÓDULO 4: VALIDACIÓN -->
+    <div id="modalModulo4" class="modal-overlay fixed inset-0 flex items-center justify-center z-[9999] hidden" style="background-color: rgba(10, 25, 47, 0.97);">
+        <div class="modal-content bg-map-accent border border-map-stream rounded-xl p-8 max-w-5xl w-full relative" style="max-width: 80rem;">
+            <button id="closeModalModulo4" class="absolute top-4 right-4 text-map-stream text-xl font-bold">&times;</button>
+            <h2 class="modal-title text-map-stream text-2xl font-bold mb-4">Métricas de Validación Estadística</h2>
+            <div class="bg-map-accent p-5 rounded-3xl border border-map-stream/20 mb-8">
+                <p class="text-gray-300 text-base leading-relaxed">
+                    La calidad predictiva se determina comparando los valores observados con las predicciones. Al tratar con pH y DBO, se evalúa qué tan bien el modelo estima valores continuos.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div class="p-6 rounded-3xl border border-map-stream/20 bg-map-accent">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-map-stream text-sm uppercase tracking-[0.3em] font-black">RMSE [14]</span>
+                        <span class="text-map-stream font-serif italic text-2xl">√MSE</span>
+                    </div>
+                    <h3 class="text-white text-xl font-bold mb-3">Raíz del Error Cuadrático</h3>
+                    <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
+                        <p class="text-gray-200 text-base font-mono">RMSE = √(1/n Σ(yi-ŷi)²)</p>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed text-sm">
+                        Este indicador muestra cuánto se alejan las predicciones del modelo respecto a los valores reales, usando la misma escala que la variable. Un RMSE bajo significa que el modelo se equivoca poco.
+                    </p>
+                </div>
+                <div class="p-6 rounded-3xl border border-map-stream/20 bg-map-stream">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-map-stream text-sm uppercase tracking-[0.3em] font-black">R² [14]</span>
+                        <span class="text-map-stream font-serif italic text-2xl">Ajuste</span>
+                    </div>
+                    <h3 class="text-white text-xl font-bold mb-3">Coeficiente de Determinación</h3>
+                    <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
+                        <p class="text-gray-200 text-base font-mono">R² = 1 - Σ(yi-ŷi)² / Σ(yi-ȳ)²</p>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed text-sm">
+                        Este indicador muestra qué parte de la variación de los datos es explicada por el modelo. Un valor cercano a 1 significa que el modelo representa muy bien los datos.
+                    </p>
+                </div>
+                <div class="p-6 rounded-3xl border border-map-stream/20 bg-map-accent">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-map-stream text-sm uppercase tracking-[0.3em] font-black">MAE [14]</span>
+                        <span class="text-map-stream font-serif italic text-2xl">|Error|</span>
+                    </div>
+                    <h3 class="text-white text-xl font-bold mb-3">Error Absoluto Medio</h3>
+                    <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
+                        <p class="text-gray-200 text-base font-mono">MAE = 1/n Σ|yi-ŷi|</p>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed text-sm">
+                        Este indicador muestra, en promedio, cuánto se desvían las predicciones del modelo respecto a los valores reales, sin importar si el error es hacia arriba o hacia abajo. Es como medir la distancia promedio entre lo que se espera y lo que realmente ocurre, y ayuda a saber si el modelo suele acertar o fallar mucho.
+                    </p>
+                </div>
+            </div>
+            <p class="text-gray-300 text-sm leading-relaxed italic text-center mt-6">
+                En este estudio, las métricas se analizan de forma conjunta para evitar conclusiones sesgadas y detectar posibles problemas de sobreajuste o subajuste.
+            </p>
+        </div>
+    </div>
+    <!-- MODAL MÓDULO 5: EXPLICABILIDAD XAI -->
+    <div id="modalModulo5" class="modal-overlay fixed inset-0 flex items-center justify-center z-[9999] hidden" style="background-color: rgba(10, 25, 47, 0.97);">
+        <div class="modal-content bg-map-accent border border-map-stream rounded-xl p-8 max-w-5xl w-full relative" style="max-width: 80rem;">
+            <button id="closeModalModulo5" class="absolute top-4 right-4 text-map-stream text-xl font-bold">&times;</button>
+            <h2 class="modal-title text-map-stream text-2xl font-bold mb-4">INTERPRETABILIDAD VS. EXPLICABILIDAD (XAI)</h2>
+            <div class="bg-map-accent p-5 rounded-3xl border border-map-stream/20 mb-8">
+                <p class="text-gray-300 text-base leading-relaxed">
+                    La interpretabilidad transforma los modelos de <span class="text-white font-semibold">"caja negra"</span> en herramientas explicables, permitiendo entender no solo <em>qué</em> predice el modelo, sino <em>por qué</em> lo predice.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div class="p-6 rounded-3xl border border-map-stream/20 bg-map-accent">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-map-stream text-sm uppercase tracking-[0.3em] font-black">Permutation Importance [15]</span>
+                        <span class="text-map-stream font-serif italic text-2xl">PI</span>
+                    </div>
+                    <h3 class="text-white text-xl font-bold mb-2">¿Cuál variable importa más?</h3>
+                    <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
+                        <p class="text-gray-200 text-sm font-mono">PI(Xⱼ) = Perf(D) − Perf(D<sub>perm(j)</sub>)</p>
+                    </div>
+                    <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">Como sacar a un jugador del partido y ver cuánto baja el marcador: si el equipo pierde mucho sin él, ese jugador era clave. PI hace lo mismo con cada variable del modelo.</p>
+                    <ul class="text-gray-300 text-xs leading-relaxed space-y-1">
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> <span><span class="text-white font-semibold">Model-agnostic:</span> funciona con cualquier algoritmo.</span></li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Mide la caída del RMSE / R² al desordenar cada variable.</li>
+                    </ul>
+                </div>
+                <div class="p-6 rounded-3xl border border-map-stream/20 bg-map-stream">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-map-stream text-sm uppercase tracking-[0.3em] font-black">SHAP [16]</span>
+                        <span class="text-map-stream font-serif italic text-2xl">Shapley</span>
+                    </div>
+                    <h3 class="text-white text-xl font-bold mb-2">¿Por qué predijo ESO?</h3>
+                    <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
+                        <p class="text-gray-200 text-sm font-mono">f(x) = φ₀ + Σⱼ₌₁ᴹ φⱼ</p>
+                    </div>
+                    <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">Como un árbitro justo que reparte el crédito del resultado entre todos los jugadores del equipo. SHAP le asigna a cada variable su cuota exacta de responsabilidad en cada predicción.</p>
+                    <ul class="text-gray-300 text-xs leading-relaxed space-y-1">
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Explica caso por caso <span class="text-white font-semibold">(local)</span> y en conjunto <span class="text-white font-semibold">(global)</span>.</li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Basado en Teoría de Juegos: matemáticamente sólido.</li>
+                    </ul>
+                </div>
+                <div class="p-6 rounded-3xl border border-map-stream/20 bg-map-accent">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-map-stream text-sm uppercase tracking-[0.3em] font-black">Curvas de Aprendizaje [17]</span>
+                        <span class="text-map-stream font-serif italic text-2xl">LC</span>
+                    </div>
+                    <h3 class="text-white text-xl font-bold mb-2">¿Aprendió bien o memorizó?</h3>
+                    <div class="bg-black/30 p-3 rounded-xl mb-3 text-center">
+                        <p class="text-gray-200 text-sm font-mono">Score<sub>train</sub> vs Score<sub>val</sub></p>
+                    </div>
+                    <p class="text-gray-400 text-xs leading-relaxed mb-3 italic">Como comparar las notas de un estudiante en clase con las del examen final: si en clase saca 10 pero en el examen saca 3, memorizó sin entender. El modelo puede hacer lo mismo.</p>
+                    <ul class="text-gray-300 text-xs leading-relaxed space-y-1">
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> <span class="text-white font-semibold">Overfitting:</span> aprende de memoria, falla con datos nuevos.</li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Indica si se necesitan más datos o ajuste del modelo.</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="text-gray-300 text-sm leading-relaxed italic text-center mt-6 border-t border-map-stream/20 pt-6">
+                "La combinación de métricas predictivas con técnicas de interpretabilidad transforma el modelo en una herramienta confiable y útil para la toma de decisiones ambientales fundamentadas en el Río Cauca."
+            </p>
+        </div>
+    </div>
+
+    <!-- MODALES REVISIÓN DE LITERATURA (diapositiva 5) -->
+    <!-- MODAL ESPAÑOL -->
+    <div id="modalLitES" class="modal-overlay fixed inset-0 flex items-center justify-center z-[9999] hidden" style="background-color: rgba(10, 25, 47, 0.97);">
+        <div class="modal-content bg-map-accent border border-map-stream rounded-xl p-8 max-w-5xl w-full relative" style="max-width: 80rem;">
+            <button id="closeModalLitES" class="absolute top-4 right-4 text-map-stream text-xl font-bold">&times;</button>
+            <h2 class="modal-title text-map-stream text-2xl font-bold mb-1">Revisión de Literatura: Estudios en Español</h2>
+            <p class="text-gray-400 text-sm mb-5 border-l-4 border-map-stream pl-4 italic">Selección mínima para trazabilidad bibliográfica. Estudios alineados con las variables objetivo (pH / DBO / OD / WQI), modelos de aprendizaje automático y enfoques de interpretabilidad (SHAP).</p>
+            <div class="overflow-x-auto rounded-xl border border-map-stream/20">
+                <table class="w-full text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-map-stream/10 border-b border-map-stream/30">
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-center w-12">DOC</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-left">DOCUMENTO</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-left">AUTORES (Año)</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-center">VARIABLES OBJETIVO</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-left">MODELOS</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-left">MÉTRICAS / MEJOR RENDIMIENTO</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-left">APORTE PARA EL PRESENTE ESTUDIO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-map-stream/10 hover:bg-map-stream/5 transition-colors">
+                            <td class="px-3 py-4 text-center"><span class="text-map-stream font-bold text-sm">[4]</span></td>
+                            <td class="px-3 py-4 text-white font-medium leading-snug max-w-[180px]">Monitoreo y medición del ajuste del pH del agua tratada del Río Cauca mediante índices de estabilización</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Bueno-Zabala, K. A.; Torres-Lozada, P. &amp; Delgado-Cabrera, L. G. <span class="text-map-stream">(2014)</span></td>
+                            <td class="px-3 py-4 text-center"><span class="text-white font-semibold">pH</span></td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed"><span class="text-map-stream font-semibold">Regresión lineal</span></td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed"><span class="text-map-stream font-bold">Reg. lineal</span><br>R²=0.86; RMSE=0.09</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Evidencia empírica en contexto local (Río Cauca), útil para sustentar aplicabilidad del enfoque.</td>
+                        </tr>
+                        <tr class="border-b border-map-stream/10 hover:bg-map-stream/5 transition-colors bg-map-stream/5">
+                            <td class="px-3 py-4 text-center"><span class="text-map-stream font-bold text-sm">[14]</span></td>
+                            <td class="px-3 py-4 text-white font-medium leading-snug max-w-[180px]">Aprendizaje automático para la predicción de calidad de agua potable</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Aguilar Aguilar, A. C. &amp; Obando-Díaz, F. F. <span class="text-map-stream">(2020)</span></td>
+                            <td class="px-3 py-4 text-center"><span class="text-white font-semibold">pH · DBO · OD</span></td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Reg. lineal; <span class="text-map-stream font-semibold">Random Forest</span>; SVR</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed"><span class="text-map-stream font-bold">Random Forest</span><br>R²=0.93; RMSE bajo</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Alta capacidad predictiva de modelos ensemble y necesidad de combinar métricas para evaluar desempeño.</td>
+                        </tr>
+                        <tr class="hover:bg-map-stream/5 transition-colors">
+                            <td class="px-3 py-4 text-center"><span class="text-map-stream font-bold text-sm">[18]</span></td>
+                            <td class="px-3 py-4 text-white font-medium leading-snug max-w-[180px]">Un mapeo sistemático sobre predicción de calidad del agua mediante técnicas de inteligencia computacional</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">López, I. D.; Figueroa, A. &amp; Corrales, J. C. <span class="text-map-stream">(2016)</span></td>
+                            <td class="px-3 py-4 text-center"><span class="text-white font-semibold">DBO · OD · pH</span></td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Reg.; KNN; <span class="text-map-stream font-semibold">Random Forest</span>; SVM</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed"><span class="text-map-stream font-bold">Random Forest</span><br>R²=0.91; RMSE=0.12</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Síntesis comparativa: los modelos ensemble presentan mejor desempeño en múltiples escenarios.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- MODAL ENGLISH -->
+    <div id="modalLitEN" class="modal-overlay fixed inset-0 flex items-center justify-center z-[9999] hidden" style="background-color: rgba(10, 25, 47, 0.97);">
+        <div class="modal-content bg-map-accent border border-map-stream rounded-xl p-8 max-w-5xl w-full relative" style="max-width: 80rem;">
+            <button id="closeModalLitEN" class="absolute top-4 right-4 text-map-stream text-xl font-bold">&times;</button>
+            <h2 class="modal-title text-map-stream text-2xl font-bold mb-1">Revisión de Literatura: Estudios en Inglés</h2>
+            <p class="text-gray-400 text-sm mb-5 border-l-4 border-map-stream pl-4 italic">Selección mínima para trazabilidad bibliográfica. Estudios alineados con variables objetivo (pH / DBO / OD / WQI), modelos de aprendizaje automático (RF, GB, XGBoost, Stacking, ANN) y enfoques de interpretabilidad (SHAP).</p>
+            <div class="overflow-x-auto rounded-xl border border-map-stream/20">
+                <table class="w-full text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-map-stream/10 border-b border-map-stream/30">
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-center w-12">DOC</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-left">DOCUMENTO</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-left">AUTORES (Año)</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-center">VARIABLES OBJETIVO</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-left">MODELOS</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-left">MÉTRICAS / MEJOR RENDIMIENTO</th>
+                            <th class="text-map-stream font-black uppercase tracking-wider px-3 py-3 text-left">APORTE PARA EL PRESENTE ESTUDIO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-map-stream/10 hover:bg-map-stream/5 transition-colors">
+                            <td class="px-3 py-4 text-center"><span class="text-map-stream font-bold text-sm">[16]</span></td>
+                            <td class="px-3 py-4 text-white font-medium leading-snug max-w-[180px]">Predicting water quality index using stacked ensemble regression and SHAP based explainable artificial intelligence</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Choudhary, R. et al. <span class="text-map-stream">(2025)</span></td>
+                            <td class="px-3 py-4 text-center"><span class="text-white font-semibold">WQI</span></td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">XGBoost; CatBoost; GBM; Extra Trees; AdaBoost; <span class="text-map-stream font-semibold">Stacking</span>; SHAP</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed"><span class="text-map-stream font-bold">Stacking</span><br>R²≈0.99</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Integra meta-aprendizaje (Stacking) e interpretabilidad (SHAP) para identificar variables influyentes.</td>
+                        </tr>
+                        <tr class="border-b border-map-stream/10 hover:bg-map-stream/5 transition-colors bg-map-stream/5">
+                            <td class="px-3 py-4 text-center"><span class="text-map-stream font-bold text-sm">[19]</span></td>
+                            <td class="px-3 py-4 text-white font-medium leading-snug max-w-[180px]">Machine Learning-Driven Water Quality Index Prediction: Enhancing Accuracy with Gradient Boosting and Explainable AI for Sustainable Water Monitoring</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Islam, Md. J. et al. <span class="text-map-stream">(2024)</span></td>
+                            <td class="px-3 py-4 text-center"><span class="text-white font-semibold">WQI</span></td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed"><span class="text-map-stream font-semibold">Gradient Boosting</span>; Random Forest; XGBoost</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed"><span class="text-map-stream font-bold">Gradient Boosting</span><br>R²=0.94; RMSE=0.06</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Respalda el uso de boosting de alto rendimiento para predicción de WQI; alineado con monitoreo sostenible.</td>
+                        </tr>
+                        <tr class="hover:bg-map-stream/5 transition-colors">
+                            <td class="px-3 py-4 text-center"><span class="text-map-stream font-bold text-sm">[20]</span></td>
+                            <td class="px-3 py-4 text-white font-medium leading-snug max-w-[180px]">Artificial Neural Network Assessment of Groundwater Quality for Agricultural Use in Babylon City: An Evaluation of Salinity and Ionic Composition</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Al-Sulttani, A. O. et al. <span class="text-map-stream">(2024)</span></td>
+                            <td class="px-3 py-4 text-center"><span class="text-white font-semibold">TDS · SAR · MAR · Na%</span></td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed"><span class="text-map-stream font-semibold">ANN</span></td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed"><span class="text-map-stream font-bold">ANN</span><br>R² hasta 98%</td>
+                            <td class="px-3 py-4 text-gray-300 leading-relaxed">Referencia metodológica: redes neuronales con alta precisión para variables fisicoquímicas no lineales.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL METODOLOGÍA (diapositiva 6) -->
+    <div id="modalMetodologia" class="modal-overlay fixed inset-0 flex items-center justify-center z-[9999] hidden" style="background-color: rgba(10, 25, 47, 0.97);">
+        <div class="modal-content bg-map-accent border border-map-stream rounded-xl p-8 max-w-5xl w-full relative" style="max-width: 80rem; max-height: 88vh; overflow-y: auto;">
+            <button id="closeModalMetodologia" class="sticky top-0 float-right text-map-stream text-xl font-bold z-10">&times;</button>
+            <h2 class="modal-title text-map-stream text-2xl font-bold mb-1">Pipeline de Modelado Predictivo ML</h2>
+            <p class="text-gray-400 text-sm mb-5 border-l-4 border-map-stream pl-4 italic">Pipeline secuencial: control de calidad, selección robusta, comparación de modelos, optimización e interpretabilidad.</p>
+
+            <!-- ETAPA 01 -->
+            <div class="flex gap-5 p-5 rounded-2xl border border-map-stream/20 bg-map-blue/20 mb-4">
+                <div class="flex-none flex flex-col items-center justify-start pt-1 w-12">
+                    <span class="text-map-stream font-black text-3xl leading-none">01</span>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-white font-bold text-sm uppercase tracking-wider mb-3">Datos &amp; Preprocesamiento</h3>
+                    <ul class="space-y-1 text-sm text-gray-300">
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Limpieza y conversión numérica</li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Filtro por completitud <span class="text-white font-semibold ml-1">≥ 80 %</span></li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Imputación KNN <span class="text-white font-semibold ml-1">(k = 5)</span></li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Escalado y control de nulos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ETAPA 02 -->
+            <div class="flex gap-5 p-5 rounded-2xl border border-map-stream/30 bg-map-stream/5 mb-4">
+                <div class="flex-none flex flex-col items-center justify-start pt-1 w-12">
+                    <span class="text-map-stream font-black text-3xl leading-none">02</span>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-white font-bold text-sm uppercase tracking-wider mb-3">Selección de Variables</h3>
+                    <div class="space-y-3">
+                        <!-- Spearman -->
+                        <div class="bg-map-blue/40 rounded-xl p-3 border border-map-stream/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-white font-semibold text-sm">Spearman |ρ| ≥ 0.85</span>
+                                <span class="text-xs bg-map-stream/20 text-map-stream px-2 py-0.5 rounded-full font-bold">Eliminación</span>
+                                <span class="text-map-stream text-sm font-bold ml-auto">[21]</span>
+                            </div>
+                            <p class="text-gray-400 text-sm">Correlación de rangos para detectar colinealidad entre predictores.</p>
+                        </div>
+                        <!-- VIF -->
+                        <div class="bg-map-blue/40 rounded-xl p-3 border border-map-stream/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-white font-semibold text-sm">VIF iterativo (≤ 10)</span>
+                                <span class="text-xs bg-map-stream/20 text-map-stream px-2 py-0.5 rounded-full font-bold">Eliminación y selección</span>
+                                <span class="text-map-stream text-sm font-bold ml-auto">[22]</span>
+                            </div>
+                            <p class="text-gray-400 text-sm">Factor de inflación de varianza — mide multicolinealidad entre variables.</p>
+                        </div>
+                        <!-- RFE -->
+                        <div class="bg-map-blue/40 rounded-xl p-3 border border-map-stream/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-white font-semibold text-sm">RFE por objetivo (pH / DBO)</span>
+                                <span class="text-xs bg-map-stream/20 text-map-stream px-2 py-0.5 rounded-full font-bold">Eliminación y selección</span>
+                                <span class="text-map-stream text-sm font-bold ml-auto">[23]</span>
+                            </div>
+                            <p class="text-gray-400 text-sm">Eliminación recursiva de características — optimiza el subconjunto por variable objetivo.</p>
+                        </div>
+                        <!-- Conjunto común -->
+                        <div class="bg-map-blue/40 rounded-xl p-3 border border-map-stream/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-white font-semibold text-sm">Conjunto común (∪)</span>
+                                <span class="text-xs bg-map-stream/20 text-map-stream px-2 py-0.5 rounded-full font-bold">Unión RFE</span>
+                            </div>
+                            <p class="text-gray-400 text-sm">Intersección y unión de variables óptimas seleccionadas por cada enfoque.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ETAPA 03 -->
+            <div class="flex gap-5 p-5 rounded-2xl border border-map-stream/20 bg-map-blue/20 mb-4">
+                <div class="flex-none flex flex-col items-center justify-start pt-1 w-12">
+                    <span class="text-map-stream font-black text-3xl leading-none">03</span>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-white font-bold text-sm uppercase tracking-wider mb-3">Modelado &amp; Optimización</h3>
+                    <ul class="space-y-1 text-sm text-gray-300">
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> 4 escenarios de variables <span class="text-gray-500 ml-1">(VIF · RFE-DBO · RFE-pH · Conjunto común)</span></li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Modelos: <span class="text-white font-semibold ml-1">Regresión · Árbol de Decisión · RF · SVR · MLP · XGBoost</span></li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Holdout <span class="text-white font-semibold ml-1">80 / 20</span></li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Optimización: <span class="text-white font-semibold ml-1">GridSearchCV</span> y <span class="text-white font-semibold ml-1">Optuna</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ETAPA 04 -->
+            <div class="flex gap-5 p-5 rounded-2xl border border-map-stream/30 bg-map-stream/5 mb-2">
+                <div class="flex-none flex flex-col items-center justify-start pt-1 w-12">
+                    <span class="text-map-stream font-black text-3xl leading-none">04</span>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-white font-bold text-sm uppercase tracking-wider mb-3">Evaluación &amp; Explicabilidad</h3>
+                    <ul class="space-y-1 text-sm text-gray-300">
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Métricas: <span class="text-white font-semibold ml-1">RMSE · MAE · R²</span></li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Selección del mejor modelo por objetivo <span class="text-gray-500 ml-1">(pH / DBO)</span></li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Permutation Importance</li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> SHAP <span class="text-gray-500 ml-1">(modelos basados en árboles)</span></li>
+                        <li class="flex items-start gap-2"><span class="text-map-stream mt-0.5">▸</span> Curvas de aprendizaje</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALES RESULTADOS DE MODELACIÓN (diapositiva 8) -->
+    <!-- MODAL RESULTADOS DBO -->
+    <div id="modalResultadosDBO" class="modal-overlay fixed inset-0 flex items-center justify-center z-[9999] hidden" style="background-color: rgba(10, 25, 47, 0.97);">
+        <div class="modal-content bg-map-accent border border-map-stream rounded-xl p-8 max-w-5xl w-full relative" style="max-width: 90vw; max-height: 90vh; overflow: auto;">
+            <button id="closeModalResultadosDBO" class="sticky top-0 float-right text-map-stream text-xl font-bold z-10">&times;</button>
+            <h2 class="modal-title text-map-stream text-2xl font-bold mb-4">Resultados Detallados: DBO</h2>
+            
+            <!-- Tab Navigation -->
+            <div class="border-b border-gray-700 mb-4">
+                <nav class="flex space-x-4" aria-label="Tabs">
+                    <button class="tab-btn text-map-stream py-2 px-4 font-semibold border-b-2 border-map-stream">Evaluación Inicial</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Modelos Optimizados</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Modelo Seleccionado</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Importancia de Variables</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">SHAP</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Curvas de Aprendizaje</button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Grid LADO A LADO -->
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+                      <!-- ========================= -->
+                      <!-- GRÁFICA 1: TOP 5 POR R² -->
+                      <!-- ========================= -->
+                      <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                        <div class="flex items-center justify-between mb-4">
+                          <h4 class="text-white font-semibold text-lg">
+                            Top 5 modelos por R² (DBO)
+                          </h4>
+                          <span class="text-gray-400 text-xs italic">Escala 0–1</span>
+                        </div>
+
+                        <svg viewBox="0 0 1100 360" class="w-full h-auto">
+                          <g transform="translate(70,30)">
+                            <!-- Grid -->
+                            <g stroke="rgba(255,255,255,0.12)">
+                              <line x1="0" y1="235" x2="1000" y2="235"/>
+                              <line x1="0" y1="188" x2="1000" y2="188"/>
+                              <line x1="0" y1="141" x2="1000" y2="141"/>
+                              <line x1="0" y1="94"  x2="1000" y2="94"/>
+                              <line x1="0" y1="47"  x2="1000" y2="47"/>
+                              <line x1="0" y1="0"   x2="1000" y2="0"/>
+                            </g>
+
+                            <!-- Ejes -->
+                            <line x1="0" y1="235" x2="1000" y2="235" stroke="rgba(255,255,255,0.25)"/>
+                            <line x1="0" y1="0" x2="0" y2="235" stroke="rgba(255,255,255,0.25)"/>
+
+                            <!-- Barras -->
+                            <g>
+                              <rect x="40"  y="22" width="130" height="213" fill="#64FFDA"/>
+                              <rect x="240" y="25" width="130" height="210" fill="#64FFDA"/>
+                              <rect x="440" y="30" width="130" height="205" fill="#64FFDA"/>
+                              <rect x="640" y="31" width="130" height="204" fill="#64FFDA"/>
+                              <rect x="840" y="39" width="130" height="196" fill="#64FFDA"/>
+                            </g>
+
+                            <!-- Valores -->
+                            <g fill="white" font-size="20" font-weight="700" text-anchor="middle">
+                              <text x="105" y="16">0.904</text>
+                              <text x="305" y="16">0.892</text>
+                              <text x="505" y="16">0.872</text>
+                              <text x="705" y="16" fill="red">0.867</text>
+                              <text x="905" y="16">0.833</text>
+                            </g>
+
+                            <!-- Etiquetas X -->
+                            <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+
+                              <text x="105" y="270">MLPRegressor</text>
+                              <text x="105" y="300" fill="rgba(255,255,255,0.6)">DBO (RFE)</text>
+
+                              <text x="305" y="270">MLPRegressor</text>
+                              <text x="305" y="300" fill="rgba(255,255,255,0.6)">Unión RFE</text>
+
+                              <text x="505" y="270">XGBoost</text>
+                              <text x="505" y="300" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+
+                              <text x="705" y="270">RandomForest</text>
+                              <text x="705" y="300" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+
+                              <text x="905" y="270">MLPRegressor</text>
+                              <text x="905" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+
+                            </g>
+                          </g>
+                        </svg>
+                      </div>
+
+                      <!-- ========================= -->
+                      <!-- GRÁFICA 2: RMSE / MAE -->
+                      <!-- ========================= -->
+                      <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+                        <div class="flex items-center justify-between mb-4">
+                          <h4 class="text-white font-semibold text-lg">
+                            RMSE y MAE – Top 5 (DBO)
+                          </h4>
+                          <div class="flex gap-4 text-xs text-gray-300">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3" style="background-color: #1d4ed8;"></div>
+                                <span>RMSE</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3" style="background-color: #16a34a;"></div>
+                                <span>MAE</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <svg viewBox="0 0 1100 380" class="w-full h-auto">
+                          <g transform="translate(70,30)">
+                            <!-- Grid -->
+                            <g stroke="rgba(255,255,255,0.12)">
+                              <line x1="0" y1="240" x2="1000" y2="240"/>
+                              <line x1="0" y1="192" x2="1000" y2="192"/>
+                              <line x1="0" y1="144" x2="1000" y2="144"/>
+                              <line x1="0" y1="96"  x2="1000" y2="96"/>
+                              <line x1="0" y1="48"  x2="1000" y2="48"/>
+                              <line x1="0" y1="0"   x2="1000" y2="0"/>
+                            </g>
+
+                            <!-- Ejes -->
+                            <line x1="0" y1="240" x2="1000" y2="240" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
+                            <line x1="0" y1="0"   x2="0"    y2="240" stroke="rgba(255,255,255,0.25)" stroke-width="1.2"/>
+
+                            <!-- Etiquetas eje Y (0 a 5) -->
+                            <g fill="rgba(255,255,255,0.75)" font-size="14" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                              <text x="-12" y="244" text-anchor="end">0</text>
+                              <text x="-12" y="196" text-anchor="end">1</text>
+                              <text x="-12" y="148" text-anchor="end">2</text>
+                              <text x="-12" y="100" text-anchor="end">3</text>
+                              <text x="-12" y="52"  text-anchor="end">4</text>
+                              <text x="-12" y="4"   text-anchor="end">5</text>
+                            </g>
+
+                            <!-- Barras -->
+                            <g>
+                              <!-- Grupo 1 -->
+                              <rect x="65"  y="82" width="45" height="158" fill="#1d4ed8"/>
+                              <rect x="124" y="147" width="45" height="93" fill="#16a34a" fill-opacity="0.8"/>
+
+                              <!-- Grupo 2 -->
+                              <rect x="265" y="73" width="45" height="167" fill="#1d4ed8"/>
+                              <rect x="324" y="138" width="45" height="102" fill="#16a34a" fill-opacity="0.8"/>
+
+                              <!-- Grupo 3 -->
+                              <rect x="465" y="58" width="45" height="182" fill="#1d4ed8"/>
+                              <rect x="524" y="142" width="45" height="98" fill="#16a34a" fill-opacity="0.8"/>
+
+                              <!-- Grupo 4 -->
+                              <rect x="665" y="55" width="45" height="185" fill="#1d4ed8"/>
+                              <rect x="724" y="148" width="45" height="92" fill="#16a34a" fill-opacity="0.8"/>
+
+                              <!-- Grupo 5 -->
+                              <rect x="865" y="32" width="45" height="208" fill="#1d4ed8"/>
+                              <rect x="924" y="144" width="45" height="96" fill="#16a34a" fill-opacity="0.8"/>
+                            </g>
+
+                            <!-- Valores encima de cada barra (RMSE y MAE) -->
+                            <g fill="rgba(255,255,255,0.95)" font-size="20" font-weight="700"
+                              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto" text-anchor="middle">
+                              <!-- Grupo 1 -->
+                              <text x="87.5"  y="72">3.28</text>
+                              <text x="146.5" y="137">1.93</text>
+
+                              <!-- Grupo 2 -->
+                              <text x="287.5" y="63">3.48</text>
+                              <text x="346.5" y="128">2.12</text>
+
+                              <!-- Grupo 3 -->
+                              <text x="487.5" y="48">3.79</text>
+                              <text x="546.5" y="132">2.02</text>
+
+                              <!-- Grupo 4 -->
+                              <text x="687.5" y="45" fill="red">3.86</text>
+                              <text x="746.5" y="138" fill="red">1.91</text>
+
+                              <!-- Grupo 5 -->
+                              <text x="887.5" y="22">4.33</text>
+                              <text x="946.5" y="134">1.99</text>
+                            </g>
+
+                            <!-- Etiquetas X (con separación vertical entre línea 1 y línea 2) -->
+                            <g fill="rgba(255,255,255,0.85)" font-size="20"
+                              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto" text-anchor="middle">
+
+                              <!-- Centros de grupo: (65+124+45)/2 -> mejor usar 117; mantengo la estética como en la 1ra -->
+                              <text x="117" y="275">MLPRegressor</text>
+                              <text x="117" y="305" fill="rgba(255,255,255,0.6)">DBO (RFE)</text>
+
+                              <text x="317" y="275">MLPRegressor</text>
+                              <text x="317" y="305" fill="rgba(255,255,255,0.6)">Unión RFE</text>
+
+                              <text x="517" y="275">XGBoost</text>
+                              <text x="517" y="305" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+
+                              <text x="717" y="275">RandomForest</text>
+                              <text x="717" y="305" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+
+                              <text x="917" y="275">MLPRegressor</text>
+                              <text x="917" y="305" fill="rgba(255,255,255,0.6)">VIF</text>
+                            </g>
+
+                            <!-- Label eje Y -->
+                            <text x="-55" y="120" transform="rotate(-90 -55 120)"
+                                  fill="rgba(255,255,255,0.75)" font-size="16"
+                                  font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+                              Error
+                            </text>
+                          </g>
+                        </svg>
+                      </div>
+
+                    </div>
+            </div>
+            <div class="tab-content hidden">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+  <!-- ========================= -->
+  <!-- GRÁFICA 1: TOP 5 POR R² (DBO) -->
+  <!-- ========================= -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        Top 5 modelos por R² (DBO)
+      </h4>
+      <span class="text-gray-400 text-xs italic">Escala 0–1</span>
+    </div>
+
+    <svg viewBox="0 0 1100 360" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Grid -->
+        <g stroke="rgba(255,255,255,0.12)">
+          <line x1="0" y1="235" x2="1000" y2="235"/>
+          <line x1="0" y1="188" x2="1000" y2="188"/>
+          <line x1="0" y1="141" x2="1000" y2="141"/>
+          <line x1="0" y1="94"  x2="1000" y2="94"/>
+          <line x1="0" y1="47"  x2="1000" y2="47"/>
+          <line x1="0" y1="0"   x2="1000" y2="0"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="0" y1="235" x2="1000" y2="235" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="0" y1="0" x2="0" y2="235" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Barras -->
+        <g>
+          <rect x="40"  y="22" width="130" height="213" fill="#64FFDA"/>
+          <rect x="240" y="25" width="130" height="210" fill="#64FFDA"/>
+          <rect x="440" y="30" width="130" height="205" fill="#64FFDA"/>
+          <rect x="640" y="31" width="130" height="204" fill="#64FFDA"/>
+          <rect x="840" y="39" width="130" height="196" fill="#64FFDA"/>
+        </g>
+
+        <!-- Valores -->
+        <g fill="white" font-size="20" font-weight="700" text-anchor="middle">
+          <text x="105" y="16" fill="red">0.908</text>
+          <text x="305" y="16">0.898</text>
+          <text x="505" y="16">0.886</text>
+          <text x="705" y="16">0.884</text>
+          <text x="905" y="16">0.874</text>
+        </g>
+
+        <!-- Etiquetas X -->
+        <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+
+          <text x="105" y="270">RandomForest</text>
+          <text x="105" y="300" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="105" y="330" fill="rgba(255,255,255,0.6)">Grid Search</text>
+
+          <text x="305" y="270">XGBoost</text>
+          <text x="305" y="300" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+          <text x="305" y="330" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+          <text x="505" y="270">XGBoost</text>
+          <text x="505" y="300" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="505" y="330" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+
+          <text x="705" y="270">MLPRegressor</text>
+          <text x="705" y="300" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+          <text x="705" y="330" fill="rgba(255,255,255,0.6)">Grid Search</text>
+
+
+          <text x="905" y="270">MLPRegressor</text>
+          <text x="905" y="300" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="905" y="330" fill="rgba(255,255,255,0.6)">Grid Search</text>
+
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ========================= -->
+  <!-- GRÁFICA 2: RMSE Y MAE (DBO) -->
+  <!-- ========================= -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        RMSE y MAE – Top 5 (DBO)
+      </h4>
+      <div class="flex gap-4 text-xs text-gray-300">
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3" style="background-color: #1d4ed8;"></div>
+            <span>RMSE</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3" style="background-color: #16a34a;"></div>
+            <span>MAE</span>
+        </div>
+      </div>
+    </div>
+
+    <svg viewBox="0 0 1100 380" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Grid -->
+        <g stroke="rgba(255,255,255,0.12)">
+          <line x1="0" y1="240" x2="1000" y2="240"/>
+          <line x1="0" y1="192" x2="1000" y2="192"/>
+          <line x1="0" y1="144" x2="1000" y2="144"/>
+          <line x1="0" y1="96"  x2="1000" y2="96"/>
+          <line x1="0" y1="48"  x2="1000" y2="48"/>
+          <line x1="0" y1="0"   x2="1000" y2="0"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="0" y1="240" x2="1000" y2="240" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="0" y1="0" x2="0" y2="240" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Barras -->
+        <g>
+          <rect x="65"  y="86" width="45" height="154" fill="#1d4ed8"/>
+          <rect x="124" y="153" width="45" height="87" fill="#16a34a" fill-opacity="0.8"/>
+
+          <rect x="265" y="78" width="45" height="162" fill="#1d4ed8"/>
+          <rect x="324" y="153" width="45" height="87" fill="#16a34a" fill-opacity="0.8"/>
+
+          <rect x="465" y="69" width="45" height="171" fill="#1d4ed8"/>
+          <rect x="524" y="149" width="45" height="91" fill="#16a34a" fill-opacity="0.8"/>
+
+          <rect x="665" y="67" width="45" height="173" fill="#1d4ed8"/>
+          <rect x="724" y="141" width="45" height="99" fill="#16a34a" fill-opacity="0.8"/>
+
+          <rect x="865" y="60" width="45" height="180" fill="#1d4ed8"/>
+          <rect x="924" y="140" width="45" height="100" fill="#16a34a" fill-opacity="0.8"/>
+        </g>
+
+        <!-- Valores -->
+        <g fill="rgba(255,255,255,0.95)" font-size="20" font-weight="700" text-anchor="middle">
+          <text x="87.5"  y="76" fill="red">3.21</text>
+          <text x="146.5" y="143" fill="red">1.81</text>
+
+          <text x="287.5" y="68">3.38</text>
+          <text x="346.5" y="143">1.81</text>
+
+          <text x="487.5" y="59">3.57</text>
+          <text x="546.5" y="139">1.89</text>
+
+          <text x="687.5" y="57">3.60</text>
+          <text x="746.5" y="131">2.07</text>
+
+          <text x="887.5" y="50">3.76</text>
+          <text x="946.5" y="130">2.08</text>
+        </g>
+
+        <!-- Etiquetas X -->
+        <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+          <text x="117" y="275">RandomForest</text>
+          <text x="117" y="305" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="117" y="335" fill="rgba(255,255,255,0.6)">Grid Search</text>
+
+          <text x="317" y="275">XGBoost</text>
+          <text x="317" y="305" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+          <text x="317" y="335" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+          <text x="517" y="275">XGBoost</text>
+          <text x="517" y="305" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="517" y="335" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+          <text x="717" y="275">MLPRegressor</text>
+          <text x="717" y="305" fill="rgba(255,255,255,0.6)">RFE DBOUpH</text>
+          <text x="717" y="335" fill="rgba(255,255,255,0.6)">Grid Search</text>
+
+          <text x="917" y="275">MLPRegressor</text>
+          <text x="917" y="305" fill="rgba(255,255,255,0.6)">pH RFE</text>
+          <text x="917" y="335" fill="rgba(255,255,255,0.6)">Grid Search</text>
+        </g>
+
+        <!-- Label eje Y -->
+        <text x="-55" y="120" transform="rotate(-90 -55 120)"
+              fill="rgba(255,255,255,0.75)" font-size="16">
+          Error
+        </text>
+
+      </g>
+    </svg>
+  </div>
+
+</div>
+            </div>
+            <div class="tab-content hidden">
+                <div class="overflow-x-auto mt-6">
+  <table class="w-full border border-[rgba(212,175,55,0.25)] text-sm text-white">
+    
+    <!-- Título -->
+    <caption class="caption-top text-center text-gray-300 mb-2 italic">
+        Resultados detallados del mejor modelo para DBO: RandomForest con RFE y optimización GridSearchCV.
+    </caption>
+
+    <!-- Encabezado -->
+    <thead class="bg-black bg-opacity-60">
+      <tr>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">OBJETIVO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">ESCENARIO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MODELO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">R²</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">RMSE</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MAE</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">N° VARS</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">TÉCNICA</th>
+      </tr>
+    </thead>
+
+    <!-- Cuerpo -->
+    <tbody class="bg-black bg-opacity-40 text-center">
+      <tr>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          Demanda bioquímica de oxígeno (mg O₂/L)
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          pH-RFE
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          RandomForest
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          0,91
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          3,21
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          1,81
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          5
+        </td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">
+          Grid
+        </td>
+      </tr>
+    </tbody>
+
+  </table>
+</div>
+            </div>
+            <div class="tab-content hidden">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+  <!-- ===================================================== -->
+  <!-- GRÁFICA 1: Permuted Importance (Importancia + Std) -->
+  <!-- ===================================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        Permuted Importance — DBO
+      </h4>
+      <span class="text-gray-400 text-xs italic">Media ± desviación estándar</span>
+    </div>
+
+    <svg viewBox="0 0 1180 360" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Config: max=0.04; chartW=760; scale=19000 px/unidad -->
+        <!-- SULFATOS (1.64) supera la escala → barra acotada, valor dentro -->
+
+        <!-- Grid vertical (0 a 0.04, paso 0.01) -->
+        <g stroke="rgba(255,255,255,0.10)">
+          <line x1="300" y1="10" x2="300" y2="290"/>
+          <line x1="490" y1="10" x2="490" y2="290"/>
+          <line x1="680" y1="10" x2="680" y2="290"/>
+          <line x1="870" y1="10" x2="870" y2="290"/>
+          <line x1="1060" y1="10" x2="1060" y2="290"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="300" y1="290" x2="1060" y2="290" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="300" y1="10"  x2="300"  y2="290" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Etiquetas eje X -->
+        <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          <text x="300" y="315">0.00</text>
+          <text x="490" y="315">0.01</text>
+          <text x="680" y="315">0.02</text>
+          <text x="870" y="315">0.03</text>
+          <text x="1060" y="315">0.04</text>
+        </g>
+
+        <text x="680" y="345" text-anchor="middle"
+              fill="rgba(255,255,255,0.75)" font-size="16"
+              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          Importancia media (± DE)
+        </text>
+
+        <!-- Barras + error bars [scale: value/0.04*760] -->
+        <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+          <!-- widths: 0.02→380 | 0.01→190 | 0.00→0 ; SULFATOS(1.64)→acotado 760 -->
+
+          <!-- 1) SULFATOS mean=1.64 → acotado a 760; valor dentro del bar -->
+          <text x="290" y="50" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            SULFATOS (mg SO4/L)
+          </text>
+          <rect x="300" y="30" width="760" height="34" fill="#F59E0B"/>
+          <text x="620" y="53" text-anchor="middle" fill="rgba(255,255,255,0.98)" font-size="19" font-weight="700">
+            1.64 ± 0.09  (supera escala →)
+          </text>
+
+          <!-- 2) CONDUCTIVIDAD mean=0.02→380; error 490→870 -->
+          <text x="290" y="102" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            COND. ELÉCTRICA (µS/cm)
+          </text>
+          <rect x="300" y="82" width="380" height="34" fill="#F59E0B"/>
+          <line x1="490" y1="99" x2="870" y2="99" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="490" y1="91" x2="490" y2="107" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="870" y1="91" x2="870" y2="107" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="882" y="105" fill="rgba(255,255,255,0.90)" font-size="20">0.02 ± 0.01</text>
+
+          <!-- 3) BICARBONATOS mean=0.02→380; error 490→870 -->
+          <text x="290" y="154" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            BICARBONATOS (mg CaCO3/L)
+          </text>
+          <rect x="300" y="134" width="380" height="34" fill="#F59E0B"/>
+          <line x1="490" y1="151" x2="870" y2="151" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="490" y1="143" x2="490" y2="159" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="870" y1="143" x2="870" y2="159" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="882" y="157" fill="rgba(255,255,255,0.90)" font-size="20">0.02 ± 0.01</text>
+
+          <!-- 4) POTASIO mean=0.01→190; error 300→680 -->
+          <text x="290" y="206" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            POTASIO TOTAL (mg K/L)
+          </text>
+          <rect x="300" y="186" width="190" height="34" fill="#F59E0B"/>
+          <line x1="300" y1="203" x2="680" y2="203" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="300" y1="195" x2="300" y2="211" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="680" y1="195" x2="680" y2="211" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="692" y="209" fill="rgba(255,255,255,0.90)" font-size="20">0.01 ± 0.01</text>
+
+          <!-- 5) TEMPERATURA mean≈0→2px; error 300→490 (lado positivo) -->
+          <text x="290" y="258" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            TEMPERATURA (°C)
+          </text>
+          <rect x="300" y="238" width="2" height="34" fill="#F59E0B"/>
+          <line x1="300" y1="255" x2="490" y2="255" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="300" y1="247" x2="300" y2="263" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="490" y1="247" x2="490" y2="263" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="502" y="261" fill="rgba(255,255,255,0.90)" font-size="20">0.00 ± 0.01</text>
+
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===================================== -->
+  <!-- GRÁFICA 2: SHAP Global (mean |SHAP|) -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        SHAP — Importancia global (DBO)
+      </h4>
+      <span class="text-gray-400 text-xs italic">mean(|SHAP|)</span>
+    </div>
+
+    <svg viewBox="0 0 1180 360" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Config -->
+        <!-- max = 2.32; chartW=760; x0=300; y0=30; barH=34; gap=18 -->
+
+        <!-- Grid vertical -->
+        <g stroke="rgba(255,255,255,0.10)">
+          <line x1="300" y1="10" x2="300" y2="290"/>
+          <line x1="452" y1="10" x2="452" y2="290"/>
+          <line x1="604" y1="10" x2="604" y2="290"/>
+          <line x1="756" y1="10" x2="756" y2="290"/>
+          <line x1="908" y1="10" x2="908" y2="290"/>
+          <line x1="1060" y1="10" x2="1060" y2="290"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="300" y1="290" x2="1060" y2="290" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="300" y1="10"  x2="300"  y2="290" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Etiquetas eje X (0 a 2.32) -->
+        <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          <text x="300" y="315">0.00</text>
+          <text x="452" y="315">0.46</text>
+          <text x="604" y="315">0.93</text>
+          <text x="756" y="315">1.39</text>
+          <text x="908" y="315">1.86</text>
+          <text x="1060" y="315">2.32</text>
+        </g>
+
+        <text x="680" y="345" text-anchor="middle"
+              fill="rgba(255,255,255,0.75)" font-size="16"
+              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          mean(|SHAP|)
+        </text>
+
+        <!-- Barras (orden como tu tabla) -->
+        <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+          <!-- widths: 2.32->760 ; 0.93->304 ; 0.91->298 ; 0.54->177 ; 0.27->88 -->
+
+          <!-- 1) SULFATOS -->
+          <text x="290" y="50" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            SULFATOS (mg SO4/L)
+          </text>
+          <rect x="300" y="30" width="760" height="34" fill="#F59E0B"/>
+          <text x="1075" y="53" fill="rgba(255,255,255,0.90)" font-size="20">2.32</text>
+
+          <!-- 2) CONDUCTIVIDAD -->
+          <text x="290" y="102" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            COND. ELÉCTRICA (µS/cm)
+          </text>
+          <rect x="300" y="82" width="304" height="34" fill="#F59E0B"/>
+          <text x="616" y="105" fill="rgba(255,255,255,0.90)" font-size="20">0.93</text>
+
+          <!-- 3) BICARBONATOS -->
+          <text x="290" y="154" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            BICARBONATOS (mg CaCO3/L)
+          </text>
+          <rect x="300" y="134" width="298" height="34" fill="#F59E0B"/>
+          <text x="610" y="157" fill="rgba(255,255,255,0.90)" font-size="20">0.91</text>
+
+          <!-- 4) TEMPERATURA -->
+          <text x="290" y="206" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            TEMPERATURA (°C)
+          </text>
+          <rect x="300" y="186" width="177" height="34" fill="#F59E0B"/>
+          <text x="489" y="209" fill="rgba(255,255,255,0.90)" font-size="20">0.54</text>
+
+          <!-- 5) POTASIO -->
+          <text x="290" y="258" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            POTASIO TOTAL (mg K/L)
+          </text>
+          <rect x="300" y="238" width="88" height="34" fill="#F59E0B"/>
+          <text x="400" y="261" fill="rgba(255,255,255,0.90)" font-size="20">0.27</text>
+
+        </g>
+      </g>
+    </svg>
+  </div>
+
+</div>
+            </div>
+            <div class="tab-content hidden">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+  <!-- ===================================== -->
+  <!-- IMAGEN 1: SHAP Beeswarm — DBO -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">SHAP Beeswarm — DBO</h4>
+      <span class="text-gray-400 text-xs italic">Distribución de valores SHAP</span>
+    </div>
+    <img src="shap_beeswarm_dbo_tuning.png" alt="SHAP Beeswarm DBO"
+         class="w-full h-auto rounded-lg object-contain"/>
+  </div>
+
+  <!-- ===================================== -->
+  <!-- EXPLICACIÓN: Cómo leer el beeswarm DBO -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)] flex flex-col justify-center gap-5">
+    <h4 class="text-[#d4af37] font-bold text-lg">¿Cómo leer este gráfico?</h4>
+
+    <div class="flex items-start gap-3">
+      <span class="text-2xl mt-0.5">🔵🔴</span>
+      <p class="text-gray-300 text-sm leading-relaxed">
+        <span class="text-white font-semibold">El color de cada punto</span> indica si ese parámetro tenía un valor
+        <span class="text-blue-400 font-semibold">bajo (azul)</span> o
+        <span class="text-red-400 font-semibold">alto (rojo)</span> en esa medición del río.
+      </p>
+    </div>
+
+    <div class="flex items-start gap-3">
+      <p class="text-gray-300 text-sm leading-relaxed">
+        <span class="text-white font-semibold">La posición horizontal</span> muestra si ese parámetro
+        <span class="text-green-400 font-semibold">sube</span> (derecha) o
+        <span class="text-red-400 font-semibold">baja</span> (izquierda) la predicción de DBO.
+      </p>
+    </div>
+
+    <div class="flex items-start gap-3">
+      <p class="text-gray-300 text-sm leading-relaxed">
+        <span class="text-white font-semibold">El orden vertical</span> indica importancia:
+        la variable de arriba es la que más influye en predecir cuánta
+        materia orgánica contaminante hay en el agua.
+      </p>
+    </div>
+
+    <div class="flex items-start gap-3">
+      <p class="text-gray-300 text-sm leading-relaxed">
+        <span class="text-white font-semibold">En pocas palabras:</span>
+        las filas más anchas y coloridas son las variables que el modelo considera
+        más decisivas para estimar la DBO del Río Cauca.
+      </p>
+    </div>
+  </div>
+
+</div>
+            </div>
+            <!-- ======================================================= -->
+            <!-- TAB 6: Curvas de Aprendizaje — DBO                      -->
+            <!-- ======================================================= -->
+            <div class="tab-content hidden">
+                <div class="mt-6">
+
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">Curva de Aprendizaje — DBO</h4>
+      <span class="text-gray-400 text-xs italic">Score vs. tamaño de entrenamiento</span>
+    </div>
+    <img src="curva_aprendizaje_dbo_tuning.png" alt="Curva de Aprendizaje DBO"
+         class="w-full h-auto rounded-lg object-contain"/>
+  </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RESULTADOS PH -->
+    <div id="modalResultadosPH" class="modal-overlay fixed inset-0 flex items-center justify-center z-[9999] hidden" style="background-color: rgba(10, 25, 47, 0.97);">
+        <div class="modal-content bg-map-accent border border-map-stream rounded-xl p-8 max-w-5xl w-full relative" style="max-width: 90vw; max-height: 90vh; overflow: auto;">
+            <button id="closeModalResultadosPH" class="sticky top-0 float-right text-map-stream text-xl font-bold z-10">&times;</button>
+            <h2 class="modal-title text-map-stream text-2xl font-bold mb-4">Resultados Detallados: pH</h2>
+            
+            <!-- Tab Navigation -->
+            <div class="border-b border-gray-700 mb-4">
+                <nav class="flex space-x-4" aria-label="Tabs">
+                    <button class="tab-btn text-map-stream py-2 px-4 font-semibold border-b-2 border-map-stream">Evaluación Inicial</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Modelos Optimizados</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Modelo Seleccionado</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Importancia de Variables</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">SHAP</button>
+                    <button class="tab-btn text-gray-400 py-2 px-4 font-semibold border-b-2 border-transparent">Curvas de Aprendizaje</button>
+ 
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+  <!-- ===================================== -->
+  <!-- GRÁFICA 1: Top 5 modelos por R² (pH) -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        Top 5 modelos por R² (pH)
+      </h4>
+      <span class="text-gray-400 text-xs italic">Escala 0–1</span>
+    </div>
+
+    <svg viewBox="0 0 1100 360" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Grid -->
+        <g stroke="rgba(255,255,255,0.12)">
+          <line x1="0" y1="235" x2="1000" y2="235"/>
+          <line x1="0" y1="188" x2="1000" y2="188"/>
+          <line x1="0" y1="141" x2="1000" y2="141"/>
+          <line x1="0" y1="94"  x2="1000" y2="94"/>
+          <line x1="0" y1="47"  x2="1000" y2="47"/>
+          <line x1="0" y1="0"   x2="1000" y2="0"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="0" y1="235" x2="1000" y2="235" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="0" y1="0" x2="0" y2="235" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Barras (R²) -->
+        <g>
+          <!-- R² max = 0.408 -->
+          <rect x="40"  y="11" width="130" height="224" fill="#64FFDA"/>  <!-- 0.408 -->
+          <rect x="240" y="41" width="130" height="194" fill="#64FFDA"/>  <!-- 0.335 -->
+          <rect x="440" y="55" width="130" height="180" fill="#64FFDA"/>  <!-- 0.312 -->
+          <rect x="640" y="60" width="130" height="175" fill="#64FFDA"/>  <!-- 0.305 -->
+          <rect x="840" y="89" width="130" height="146" fill="#64FFDA"/>  <!-- 0.253 -->
+        </g>
+
+        <!-- Valores -->
+        <g fill="white" font-size="20" font-weight="700" text-anchor="middle">
+          <text x="105" y="6" fill="red">0.408</text>
+          <text x="305" y="36">0.335</text>
+          <text x="505" y="50">0.312</text>
+          <text x="705" y="55">0.305</text>
+          <text x="905" y="84">0.253</text>
+        </g>
+
+        <!-- Etiquetas X -->
+        <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+          <text x="105" y="270">XGBoost</text>
+          <text x="105" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+
+          <text x="305" y="270">RandomForest</text>
+          <text x="305" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+
+          <text x="505" y="270">XGBoost</text>
+          <text x="505" y="300" fill="rgba(255,255,255,0.6)">Unión (DBOupH)</text>
+
+          <text x="705" y="270">RandomForest</text>
+          <text x="705" y="300" fill="rgba(255,255,255,0.6)">Unión RFE (DBOupH)</text>
+
+          <text x="905" y="270">RandomForest</text>
+          <text x="905" y="300" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+        </g>
+
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===================================== -->
+  <!-- GRÁFICA 2: RMSE y MAE (pH) -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        RMSE y MAE – Top 5 (pH)
+      </h4>
+      <div class="flex gap-4 text-xs text-gray-300">
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3" style="background-color: #1d4ed8;"></div>
+            <span>RMSE</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3" style="background-color: #16a34a;"></div>
+            <span>MAE</span>
+        </div>
+      </div>
+    </div>
+
+    <svg viewBox="0 0 1100 380" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Grid -->
+        <g stroke="rgba(255,255,255,0.12)">
+          <line x1="0" y1="240" x2="1000" y2="240"/>
+          <line x1="0" y1="192" x2="1000" y2="192"/>
+          <line x1="0" y1="144" x2="1000" y2="144"/>
+          <line x1="0" y1="96"  x2="1000" y2="96"/>
+          <line x1="0" y1="48"  x2="1000" y2="48"/>
+          <line x1="0" y1="0"   x2="1000" y2="0"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="0" y1="240" x2="1000" y2="240" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="0" y1="0" x2="0" y2="240" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Barras -->
+        <g>
+          <!-- Escala máx ~0.33 -->
+          <!-- Grupo 1 -->
+          <rect x="65"  y="21" width="45" height="219" fill="#1d4ed8"/>
+          <rect x="124" y="63" width="45" height="177" fill="#16a34a" fill-opacity="0.8"/>
+
+          <!-- Grupo 2 -->
+          <rect x="265" y="32" width="45" height="208" fill="#1d4ed8"/>
+          <rect x="324" y="50" width="45" height="190" fill="#16a34a" fill-opacity="0.8"/>
+
+          <!-- Grupo 3 -->
+          <rect x="465" y="32" width="45" height="208" fill="#1d4ed8"/>
+          <rect x="524" y="46" width="45" height="194" fill="#16a34a" fill-opacity="0.8"/>
+
+          <!-- Grupo 4 -->
+          <rect x="665" y="32" width="45" height="208" fill="#1d4ed8"/>
+          <rect x="724" y="46" width="45" height="194" fill="#16a34a" fill-opacity="0.8"/>
+
+          <!-- Grupo 5 -->
+          <rect x="865" y="24" width="45" height="216" fill="#1d4ed8"/>
+          <rect x="924" y="40" width="45" height="200" fill="#16a34a" fill-opacity="0.8"/>
+        </g>
+
+        <!-- Valores -->
+        <g fill="white" font-size="18" font-weight="700" text-anchor="middle">
+          <text x="87.5"  y="15" fill="red">0.30</text>
+          <text x="146.5" y="57" fill="red">0.21</text>
+
+          <text x="287.5" y="26">0.32</text>
+          <text x="346.5" y="44">0.23</text>
+
+          <text x="487.5" y="26">0.32</text>
+          <text x="546.5" y="40">0.24</text>
+
+          <text x="687.5" y="26">0.32</text>
+          <text x="746.5" y="40">0.24</text>
+
+          <text x="887.5" y="18">0.33</text>
+          <text x="946.5" y="34">0.25</text>
+        </g>
+
+        <!-- Etiquetas X -->
+        <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+          <text x="117" y="300">XGBoost</text>
+          <text x="117" y="325" fill="rgba(255,255,255,0.6)">VIF</text>
+
+          <text x="317" y="300">RandomForest</text>
+          <text x="317" y="325" fill="rgba(255,255,255,0.6)">VIF</text>
+
+          <text x="517" y="300">XGBoost</text>
+          <text x="517" y="325" fill="rgba(255,255,255,0.6)">Unión (DBOupH)</text>
+
+          <text x="717" y="300">RandomForest</text>
+          <text x="717" y="325" fill="rgba(255,255,255,0.6)">Unión RFE (DBOupH)</text>
+
+          <text x="917" y="300">RandomForest</text>
+          <text x="917" y="325" fill="rgba(255,255,255,0.6)">pH (RFE)</text>
+        </g>
+
+        <text x="-55" y="120" transform="rotate(-90 -55 120)"
+              fill="rgba(255,255,255,0.75)" font-size="16">
+          Error
+        </text>
+
+      </g>
+    </svg>
+  </div>
+
+</div>
+            </div>
+            <div class="tab-content hidden">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+  <!-- ===================================== -->
+  <!-- GRÁFICA 1: Top 5 modelos por R² (pH) - OPTIMIZADOS -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        Top 5 modelos por R² (pH) — Optimizados
+      </h4>
+      <span class="text-gray-400 text-xs italic">Escala 0–1</span>
+    </div>
+
+    <svg viewBox="0 0 1100 400" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Grid -->
+        <g stroke="rgba(255,255,255,0.12)">
+          <line x1="0" y1="235" x2="1000" y2="235"/>
+          <line x1="0" y1="188" x2="1000" y2="188"/>
+          <line x1="0" y1="141" x2="1000" y2="141"/>
+          <line x1="0" y1="94"  x2="1000" y2="94"/>
+          <line x1="0" y1="47"  x2="1000" y2="47"/>
+          <line x1="0" y1="0"   x2="1000" y2="0"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="0" y1="235" x2="1000" y2="235" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="0" y1="0" x2="0" y2="235" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Barras (R²) -->
+        <g>
+          <!-- max = 0.398  |  y = 235 - (value/max)*235  -->
+          <rect x="40"  y="0"  width="130" height="235" fill="#64FFDA"/>  <!-- 0.398 -->
+          <rect x="240" y="36" width="130" height="199" fill="#64FFDA"/>  <!-- 0.337 -->
+          <rect x="440" y="48" width="130" height="187" fill="#64FFDA"/>  <!-- 0.316 -->
+          <rect x="640" y="60" width="130" height="175" fill="#64FFDA"/>  <!-- 0.297 -->
+          <rect x="840" y="76" width="130" height="159" fill="#64FFDA"/>  <!-- 0.269 -->
+        </g>
+
+        <!-- Valores -->
+        <g fill="white" font-size="20" font-weight="700" text-anchor="middle">
+          <text x="105" y="-6" fill="red">0.398</text>
+          <text x="305" y="30">0.337</text>
+          <text x="505" y="42">0.316</text>
+          <text x="705" y="54">0.297</text>
+          <text x="905" y="70">0.269</text>
+        </g>
+
+        <!-- Etiquetas X -->
+        <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+          <text x="105" y="270">XGBoost</text>
+          <text x="105" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+          <text x="105" y="330" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+          <text x="305" y="270">RandomForest</text>
+          <text x="305" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+          <text x="305" y="330" fill="rgba(255,255,255,0.6)">Grid search</text>
+
+          <text x="505" y="270">RandomForest</text>
+          <text x="505" y="300" fill="rgba(255,255,255,0.6)">RFE DBOupH</text>
+          <text x="505" y="330" fill="rgba(255,255,255,0.6)">Grid search</text>
+
+          <text x="705" y="270">XGBoost</text>
+          <text x="705" y="300" fill="rgba(255,255,255,0.6)">RFE DBOupH</text>
+          <text x="705" y="330" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+          <text x="905" y="270">SVR (RBF)</text>
+          <text x="905" y="300" fill="rgba(255,255,255,0.6)">VIF</text>
+          <text x="905" y="330" fill="rgba(255,255,255,0.6)">Grid search</text>
+        </g>
+
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===================================== -->
+  <!-- GRÁFICA 2: RMSE y MAE (pH) - OPTIMIZADOS -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">
+        RMSE y MAE – Top 5 (pH) — Optimizados
+      </h4>
+      <div class="flex gap-4 text-xs text-gray-300">
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3" style="background-color: #1d4ed8;"></div>
+            <span>RMSE</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3" style="background-color: #16a34a;"></div>
+            <span>MAE</span>
+        </div>
+      </div>
+    </div>
+
+    <svg viewBox="0 0 1100 420" class="w-full h-auto">
+      <g transform="translate(70,30)">
+
+        <!-- Grid -->
+        <g stroke="rgba(255,255,255,0.12)">
+          <line x1="0" y1="240" x2="1000" y2="240"/>
+          <line x1="0" y1="192" x2="1000" y2="192"/>
+          <line x1="0" y1="144" x2="1000" y2="144"/>
+          <line x1="0" y1="96"  x2="1000" y2="96"/>
+          <line x1="0" y1="48"  x2="1000" y2="48"/>
+          <line x1="0" y1="0"   x2="1000" y2="0"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="0" y1="240" x2="1000" y2="240" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="0" y1="0" x2="0" y2="240" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Barras -->
+        <g>
+          <!-- Escala max = 0.33 (para RMSE); y = 240 - (value/0.33)*240 -->
+          <!-- Grupo 1: RMSE 0.30 | MAE 0.21 -->
+          <rect x="65"  y="22"  width="45" height="218" fill="#1d4ed8"/>
+          <rect x="124" y="87"  width="45" height="153" fill="#16a34a" fill-opacity="0.8"/>
+
+          <!-- Grupo 2: RMSE 0.32 | MAE 0.23 -->
+          <rect x="265" y="7"   width="45" height="233" fill="#1d4ed8"/>
+          <rect x="324" y="73"  width="45" height="167" fill="#16a34a" fill-opacity="0.8"/>
+
+          <!-- Grupo 3: RMSE 0.32 | MAE 0.23 -->
+          <rect x="465" y="7"   width="45" height="233" fill="#1d4ed8"/>
+          <rect x="524" y="73"  width="45" height="167" fill="#16a34a" fill-opacity="0.8"/>
+
+          <!-- Grupo 4: RMSE 0.32 | MAE 0.24 -->
+          <rect x="665" y="7"   width="45" height="233" fill="#1d4ed8"/>
+          <rect x="724" y="65"  width="45" height="175" fill="#16a34a" fill-opacity="0.8"/>
+
+          <!-- Grupo 5: RMSE 0.33 | MAE 0.25 -->
+          <rect x="865" y="0"   width="45" height="240" fill="#1d4ed8"/>
+          <rect x="924" y="58"  width="45" height="182" fill="#16a34a" fill-opacity="0.8"/>
+        </g>
+
+        <!-- Valores -->
+        <g fill="rgba(255,255,255,0.95)" font-size="18" font-weight="700" text-anchor="middle">
+          <text x="87.5"  y="15" fill="red">0.30</text>
+          <text x="146.5" y="80" fill="red">0.21</text>
+
+          <text x="287.5" y="0">0.32</text>
+          <text x="346.5" y="66">0.23</text>
+
+          <text x="487.5" y="0">0.32</text>
+          <text x="546.5" y="66">0.23</text>
+
+          <text x="687.5" y="0">0.32</text>
+          <text x="746.5" y="58">0.24</text>
+
+          <text x="887.5" y="-7">0.33</text>
+          <text x="946.5" y="51">0.25</text>
+        </g>
+
+        <!-- Etiquetas X -->
+        <g fill="rgba(255,255,255,0.85)" font-size="20" text-anchor="middle">
+          <text x="117" y="300">XGBoost</text>
+          <text x="117" y="325" fill="rgba(255,255,255,0.6)">VIF</text>
+          <text x="117" y="350" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+          <text x="317" y="300">RandomForest</text>
+          <text x="317" y="325" fill="rgba(255,255,255,0.6)">VIF</text>
+          <text x="317" y="350" fill="rgba(255,255,255,0.6)">Grid search</text>
+
+          <text x="517" y="300">RandomForest</text>
+          <text x="517" y="325" fill="rgba(255,255,255,0.6)">RFE DBOupH</text>
+          <text x="517" y="350" fill="rgba(255,255,255,0.6)">Grid search</text>
+
+          <text x="717" y="300">XGBoost</text>
+          <text x="717" y="325" fill="rgba(255,255,255,0.6)">RFE DBOupH</text>
+          <text x="717" y="350" fill="rgba(255,255,255,0.6)">Optuna</text>
+
+          <text x="917" y="300">SVR (RBF)</text>
+          <text x="917" y="325" fill="rgba(255,255,255,0.6)">VIF</text>
+          <text x="917" y="350" fill="rgba(255,255,255,0.6)">Grid search</text>
+        </g>
+
+        <!-- Label eje Y -->
+        <text x="-55" y="120" transform="rotate(-90 -55 120)"
+              fill="rgba(255,255,255,0.75)" font-size="16">
+          Error
+        </text>
+
+      </g>
+    </svg>
+  </div>
+
+</div>
+            </div>
+            <div class="tab-content hidden">
+                <div class="overflow-x-auto mt-6">
+  <table class="w-full border border-[rgba(212,175,55,0.25)] text-sm text-white">
+    <!-- Título -->
+    <caption class="caption-top text-center text-gray-300 mb-2 italic">
+        Resultados detallados del modelo seleccionado para pH (RFE + RandomForest)
+    </caption>
+
+    <!-- Encabezado -->
+    <thead class="bg-black bg-opacity-60">
+      <tr>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">OBJETIVO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">ESCENARIO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MODELO</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">R²</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">RMSE</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">MAE</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">N_VARS</th>
+        <th class="border border-[rgba(212,175,55,0.25)] px-3 py-2">TÉCNICA</th>
+      </tr>
+    </thead>
+
+    <!-- Cuerpo -->
+    <tbody class="bg-black bg-opacity-40 text-center">
+      <tr>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">pH</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">VIF</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">XGBoost</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">0,40</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">0,30</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">0,21</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">20</td>
+        <td class="border border-[rgba(212,175,55,0.25)] px-3 py-2">Optuna</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+            </div>
+            <div class="tab-content hidden">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+  <!-- ===================================================== -->
+  <!-- GRÁFICA 1: Permuted Importance (Importancia + Std) pH -->
+  <!-- ===================================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">Permuted Importance — pH</h4>
+      <span class="text-gray-400 text-xs italic">Media ± desviación estándar</span>
+    </div>
+
+    <!-- max(mean+std) = 0.29+0.04 = 0.33 ; chartW=760 ; x0=300 -->
+    <svg viewBox="0 0 1300 440" class="w-full h-auto">
+      <g transform="translate(160,30)">
+        <!-- Grid vertical (0 a 0.33) -->
+        <g stroke="rgba(255,255,255,0.10)">
+          <line x1="300" y1="10" x2="300" y2="330"/>
+          <line x1="452" y1="10" x2="452" y2="330"/>
+          <line x1="604" y1="10" x2="604" y2="330"/>
+          <line x1="756" y1="10" x2="756" y2="330"/>
+          <line x1="908" y1="10" x2="908" y2="330"/>
+          <line x1="1060" y1="10" x2="1060" y2="330"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="300" y1="330" x2="1060" y2="330" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="300" y1="10"  x2="300"  y2="330" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Etiquetas eje X -->
+        <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          <text x="300" y="355">0,00</text>
+          <text x="452" y="355">0,07</text>
+          <text x="604" y="355">0,13</text>
+          <text x="756" y="355">0,20</text>
+          <text x="908" y="355">0,26</text>
+          <text x="1060" y="355">0,33</text>
+        </g>
+
+        <text x="680" y="385" text-anchor="middle"
+              fill="rgba(255,255,255,0.75)" font-size="16"
+              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          Importancia media (± DE)
+        </text>
+
+        <!-- Barras (media) + error bar (± std) -->
+        <!-- barH=20 ; gap=10 ; startY=24 ; centerY = y + 10 -->
+        <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+          <!-- 1) BICARBONATOS mean=0.29 -> 668 ; std=0.04 -> 92 -->
+          <text x="290" y="44" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            BICARBONATOS (mg CaCO3/l)
+          </text>
+          <rect x="300" y="24" width="668" height="20" fill="#F59E0B"/>
+          <line x1="876" y1="34" x2="1060" y2="34" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="876" y1="27" x2="876"  y2="41" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="1060" y1="27" x2="1060" y2="41" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="1076" y="39" fill="rgba(255,255,255,0.90)" font-size="20">0,29 ± 0,04</text>
+
+          <!-- 2) NITRATOS mean=0.12 -> 276 ; std=0.03 -> 69 -->
+          <text x="290" y="74" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            NITRATOS (mg N-NO3/l)
+          </text>
+          <rect x="300" y="54" width="276" height="20" fill="#F59E0B"/>
+          <line x1="507" y1="64" x2="645" y2="64" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="507" y1="57" x2="507" y2="71" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="645" y1="57" x2="645" y2="71" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="665" y="69" fill="rgba(255,255,255,0.90)" font-size="20">0,12 ± 0,03</text>
+
+          <!-- 3) POTASIO mean=0.09 -> 207 ; std=0.02 -> 46 -->
+          <text x="290" y="104" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            POTASIO TOTAL (mg K/l)
+          </text>
+          <rect x="300" y="84" width="207" height="20" fill="#F59E0B"/>
+          <line x1="461" y1="94" x2="553" y2="94" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="461" y1="87" x2="461" y2="101" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="553" y1="87" x2="553" y2="101" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="573" y="99" fill="rgba(255,255,255,0.90)" font-size="20">0,09 ± 0,02</text>
+
+          <!-- 4) CLORUROS mean=0.06 -> 138 ; std=0.01 -> 23 -->
+          <text x="290" y="134" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            CLORUROS (mg Cl/l)
+          </text>
+          <rect x="300" y="114" width="138" height="20" fill="#F59E0B"/>
+          <line x1="415" y1="124" x2="461" y2="124" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="415" y1="117" x2="415" y2="131" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="461" y1="117" x2="461" y2="131" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="481" y="129" fill="rgba(255,255,255,0.90)" font-size="20">0,06 ± 0,01</text>
+
+          <!-- 5) OXIGENO DISUELTO mean=0.06 -> 138 ; std=0.01 -> 23 -->
+          <text x="290" y="164" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            OXIGENO DISUELTO (mg O2/l)
+          </text>
+          <rect x="300" y="144" width="138" height="20" fill="#F59E0B"/>
+          <line x1="415" y1="154" x2="461" y2="154" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="415" y1="147" x2="415" y2="161" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="461" y1="147" x2="461" y2="161" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="481" y="159" fill="rgba(255,255,255,0.90)" font-size="20">0,06 ± 0,01</text>
+
+          <!-- 6) TEMPERATURA mean=0.05 -> 115 ; std=0.01 -> 23 -->
+          <text x="290" y="194" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            TEMPERATURA (°C)
+          </text>
+          <rect x="300" y="174" width="115" height="20" fill="#F59E0B"/>
+          <line x1="392" y1="184" x2="438" y2="184" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="392" y1="177" x2="392" y2="191" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="438" y1="177" x2="438" y2="191" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="458" y="189" fill="rgba(255,255,255,0.90)" font-size="20">0,05 ± 0,01</text>
+
+          <!-- 7) SULFATOS mean=0.05 -> 115 ; std=0.01 -> 23 -->
+          <text x="290" y="224" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            SULFATOS (mg SO4/l)
+          </text>
+          <rect x="300" y="204" width="115" height="20" fill="#F59E0B"/>
+          <line x1="392" y1="214" x2="438" y2="214" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="392" y1="207" x2="392" y2="221" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="438" y1="207" x2="438" y2="221" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="458" y="219" fill="rgba(255,255,255,0.90)" font-size="20">0,05 ± 0,01</text>
+
+          <!-- 8) COLIFORMES FECALES mean=0.04 -> 92 ; std=0.01 -> 23 -->
+          <text x="290" y="254" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            COLIFORMES FECALES (NMP/100 ml)
+          </text>
+          <rect x="300" y="234" width="92" height="20" fill="#F59E0B"/>
+          <line x1="369" y1="244" x2="415" y2="244" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="369" y1="237" x2="369" y2="251" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="415" y1="237" x2="415" y2="251" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="435" y="249" fill="rgba(255,255,255,0.90)" font-size="20">0,04 ± 0,01</text>
+
+          <!-- 9) TURBIEDAD mean=0.04 -> 92 ; std=0.01 -> 23 -->
+          <text x="290" y="284" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            TURBIEDAD (UNT)
+          </text>
+          <rect x="300" y="264" width="92" height="20" fill="#F59E0B"/>
+          <line x1="369" y1="274" x2="415" y2="274" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="369" y1="267" x2="369" y2="281" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="415" y1="267" x2="415" y2="281" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="435" y="279" fill="rgba(255,255,255,0.90)" font-size="20">0,04 ± 0,01</text>
+
+          <!-- 10) DUREZA TOTAL mean=0.04 -> 92 ; std=0.01 -> 23 -->
+          <text x="290" y="314" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            DUREZA TOTAL (mg CaCO3/l)
+          </text>
+          <rect x="300" y="294" width="92" height="20" fill="#F59E0B"/>
+          <line x1="369" y1="304" x2="415" y2="304" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="369" y1="297" x2="369" y2="311" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <line x1="415" y1="297" x2="415" y2="311" stroke="rgba(255,255,255,0.85)" stroke-width="2"/>
+          <text x="435" y="309" fill="rgba(255,255,255,0.90)" font-size="20">0,04 ± 0,01</text>
+
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===================================== -->
+  <!-- GRÁFICA 2: SHAP Global (mean |SHAP|) pH -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">SHAP — Importancia global (pH)</h4>
+      <span class="text-gray-400 text-xs italic">mean(|SHAP|)</span>
+    </div>
+
+    <!-- max = 0.08 ; chartW=760 ; x0=300 -->
+    <svg viewBox="0 0 1300 440" class="w-full h-auto">
+      <g transform="translate(160,30)">
+
+        <!-- Grid vertical (0 a 0.08) -->
+        <g stroke="rgba(255,255,255,0.10)">
+          <line x1="300" y1="10" x2="300" y2="330"/>
+          <line x1="452" y1="10" x2="452" y2="330"/>
+          <line x1="604" y1="10" x2="604" y2="330"/>
+          <line x1="756" y1="10" x2="756" y2="330"/>
+          <line x1="908" y1="10" x2="908" y2="330"/>
+          <line x1="1060" y1="10" x2="1060" y2="330"/>
+        </g>
+
+        <!-- Ejes -->
+        <line x1="300" y1="330" x2="1060" y2="330" stroke="rgba(255,255,255,0.25)"/>
+        <line x1="300" y1="10"  x2="300"  y2="330" stroke="rgba(255,255,255,0.25)"/>
+
+        <!-- Etiquetas eje X -->
+        <g fill="rgba(255,255,255,0.70)" font-size="14" text-anchor="middle"
+           font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          <text x="300" y="355">0,00</text>
+          <text x="452" y="355">0,02</text>
+          <text x="604" y="355">0,03</text>
+          <text x="756" y="355">0,05</text>
+          <text x="908" y="355">0,06</text>
+          <text x="1060" y="355">0,08</text>
+        </g>
+
+        <text x="680" y="385" text-anchor="middle"
+              fill="rgba(255,255,255,0.75)" font-size="16"
+              font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+          mean(|SHAP|)
+        </text>
+
+        <!-- Barras (orden como tu tabla) -->
+        <!-- widths: value/max*760 -> 0.08=760 ; 0.05=475 ; 0.03=285 ; 0.02=190 -->
+        <g font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto">
+
+          <!-- 1) NITRATOS 0.08 -->
+          <text x="290" y="44" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            NITRATOS (mg N-NO3/l)
+          </text>
+          <rect x="300" y="24" width="760" height="20" fill="#F59E0B"/>
+          <text x="1076" y="39" fill="rgba(255,255,255,0.90)" font-size="20">0,08</text>
+
+          <!-- 2) BICARBONATOS 0.08 -->
+          <text x="290" y="74" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            BICARBONATOS (mg CaCO3/l)
+          </text>
+          <rect x="300" y="54" width="760" height="20" fill="#F59E0B"/>
+          <text x="1076" y="69" fill="rgba(255,255,255,0.90)" font-size="20">0,08</text>
+
+          <!-- 3) POTASIO TOTAL 0.05 -->
+          <text x="290" y="104" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            POTASIO TOTAL (mg K/l)
+          </text>
+          <rect x="300" y="84" width="475" height="20" fill="#F59E0B"/>
+          <text x="790" y="99" fill="rgba(255,255,255,0.90)" font-size="20">0,05</text>
+
+          <!-- 4) OXIGENO DISUELTO 0.03 -->
+          <text x="290" y="134" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            OXIGENO DISUELTO (mg O2/l)
+          </text>
+          <rect x="300" y="114" width="285" height="20" fill="#F59E0B"/>
+          <text x="600" y="129" fill="rgba(255,255,255,0.90)" font-size="20">0,03</text>
+
+          <!-- 5) DEMANDA BIOQUIMICA DE OXIGENO 0.03 -->
+          <text x="290" y="164" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            DBO (mg O2/l)
+          </text>
+          <rect x="300" y="144" width="285" height="20" fill="#F59E0B"/>
+          <text x="600" y="159" fill="rgba(255,255,255,0.90)" font-size="20">0,03</text>
+
+          <!-- 6) TEMPERATURA 0.03 -->
+          <text x="290" y="194" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            TEMPERATURA (°C)
+          </text>
+          <rect x="300" y="174" width="285" height="20" fill="#F59E0B"/>
+          <text x="600" y="189" fill="rgba(255,255,255,0.90)" font-size="20">0,03</text>
+
+          <!-- 7) CALCIO 0.03 -->
+          <text x="290" y="224" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            CALCIO (mg Ca/l)
+          </text>
+          <rect x="300" y="204" width="285" height="20" fill="#F59E0B"/>
+          <text x="600" y="219" fill="rgba(255,255,255,0.90)" font-size="20">0,03</text>
+
+          <!-- 8) SULFATOS 0.03 -->
+          <text x="290" y="254" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            SULFATOS (mg SO4/l)
+          </text>
+          <rect x="300" y="234" width="285" height="20" fill="#F59E0B"/>
+          <text x="600" y="249" fill="rgba(255,255,255,0.90)" font-size="20">0,03</text>
+
+          <!-- 9) CLORUROS 0.02 -->
+          <text x="290" y="284" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            CLORUROS (mg Cl/l)
+          </text>
+          <rect x="300" y="264" width="190" height="20" fill="#F59E0B"/>
+          <text x="505" y="279" fill="rgba(255,255,255,0.90)" font-size="20">0,02</text>
+
+          <!-- 10) SOLIDOS DISUELTOS 0.02 -->
+          <text x="290" y="314" text-anchor="end" fill="rgba(255,255,255,0.85)" font-size="20">
+            SOLIDOS DISUELTOS (mg SD/l)
+          </text>
+          <rect x="300" y="294" width="190" height="20" fill="#F59E0B"/>
+          <text x="505" y="309" fill="rgba(255,255,255,0.90)" font-size="20">0,02</text>
+
+        </g>
+      </g>
+    </svg>
+  </div>
+
+</div>
+            </div>
+            <div class="tab-content hidden">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+  <!-- ===================================== -->
+  <!-- IMAGEN 1: SHAP Beeswarm — PH -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">SHAP Beeswarm — pH</h4>
+      <span class="text-gray-400 text-xs italic">Distribución de valores SHAP</span>
+    </div>
+    <img src="shap_beeswarm_ph_tuning.png" alt="SHAP Beeswarm PH"
+         class="w-full h-auto rounded-lg object-contain"/>
+  </div>
+
+  <!-- ===================================== -->
+  <!-- EXPLICACIÓN: Cómo leer el beeswarm pH -->
+  <!-- ===================================== -->
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)] flex flex-col justify-center gap-5">
+    <h4 class="text-[#d4af37] font-bold text-lg">¿Cómo leer este gráfico?</h4>
+
+    <div class="flex items-start gap-3">
+      <span class="text-2xl mt-0.5">🔵🔴</span>
+      <p class="text-gray-300 text-sm leading-relaxed">
+        <span class="text-white font-semibold">El color de cada punto</span> indica si ese parámetro tenía un valor
+        <span class="text-blue-400 font-semibold">bajo (azul)</span> o
+        <span class="text-red-400 font-semibold">alto (rojo)</span> en esa medición del río.
+      </p>
+    </div>
+
+    <div class="flex items-start gap-3">
+      <p class="text-gray-300 text-sm leading-relaxed">
+        <span class="text-white font-semibold">La posición horizontal</span> muestra si ese parámetro
+        <span class="text-green-400 font-semibold">sube</span> (derecha) o
+        <span class="text-red-400 font-semibold">baja</span> (izquierda) la predicción de pH.
+      </p>
+    </div>
+
+    <div class="flex items-start gap-3">
+      <p class="text-gray-300 text-sm leading-relaxed">
+        <span class="text-white font-semibold">El orden vertical</span> indica importancia:
+        la variable de arriba es la que más influye en predecir si el agua
+        es más ácida o más alcalina en el Río Cauca.
+      </p>
+    </div>
+
+    <div class="flex items-start gap-3">
+      <p class="text-gray-300 text-sm leading-relaxed">
+        <span class="text-white font-semibold">En pocas palabras:</span>
+        las filas más anchas y coloridas son las variables que el modelo considera
+        más decisivas para estimar el pH del Río Cauca.
+      </p>
+    </div>
+  </div>
+
+</div>
+            </div>
+            <!-- ======================================================= -->
+            <!-- TAB 6: Curvas de Aprendizaje — pH                       -->
+            <!-- ======================================================= -->
+            <div class="tab-content hidden">
+                <div class="mt-6">
+
+  <div class="bg-black bg-opacity-40 p-6 rounded-xl border border-[rgba(212,175,55,0.15)]">
+    <div class="flex items-center justify-between mb-4">
+      <h4 class="text-white font-semibold text-lg">Curva de Aprendizaje — pH</h4>
+      <span class="text-gray-400 text-xs italic">Score vs. tamaño de entrenamiento</span>
+    </div>
+    <img src="curva_aprendizaje_ph_tuning.png" alt="Curva de Aprendizaje pH"
+         class="w-full h-auto rounded-lg object-contain"/>
+  </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Río Animado (Línea de corriente) -->
+    <div class="river-line-container">
+        <svg width="100%" height="100%" preserveAspectRatio="none">
+            <path id="riverPath" class="river-path" d="M -100,200 Q 200,50 400,300 T 900,100 T 1500,400" />
+        </svg>
+    </div>
+
+    <button id="prevBtn" class="nav-btn left-[50px]">Prev</button>
+    <button id="nextBtn" class="nav-btn right-[50px]">Next</button>
+
+    <!-- MODAL BIBLIOGRAFÍA -->
+    <div id="modalBibliografia" class="modal-overlay fixed inset-0 flex items-center justify-center z-[9999] hidden" style="background-color: rgba(10, 25, 47, 0.97);">
+        <div class="modal-content bg-map-accent border border-map-stream rounded-xl p-8 max-w-5xl w-full relative" style="max-width: 80rem; max-height: 88vh; overflow-y: auto;">
+            <button id="closeModalBibliografia" class="sticky top-0 float-right text-map-stream text-xl font-bold z-10">&times;</button>
+            <h2 class="modal-title text-map-stream text-2xl font-bold mb-1">Bibliografía</h2>
+            <p class="text-gray-400 text-sm mb-6 border-l-4 border-map-stream pl-4 italic">23 referencias en formato IEEE — fundamento del pipeline metodológico aplicado al análisis de calidad del agua del Río Cauca.</p>
+
+            <div class="space-y-3">
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[1]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">K. Wu et al., "Drivers of 2013–2020 ozone trends in the Sichuan Basin, China: Impacts of meteorology and precursor emission changes", <em>Environmental Pollution</em>, vol. 300, may 2022, doi: 10.1016/j.envpol.2022.118914.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[2]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">S. Chidiac, P. El Najjar, N. Ouaini, Y. El Rayess, y D. El Azzi, "A comprehensive review of water quality indices (WQIs): history, models, attempts and perspectives", 1 de junio de 2023, Springer Science and Business Media B.V. doi: 10.1007/s11157-023-09650-7.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[3]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">Q. Xu, Y. Shi, J. Bamber, Y. Tuo, R. Ludwig, y X. X. Zhu, "Physics-aware Machine Learning Revolutionizes Scientific Paradigm for Machine Learning and Process-based Hydrology", jul. 2024. [En línea]. Disponible en: http://arxiv.org/abs/2310.05227</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[4]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">K. A. Bueno-Zabala, P. Torres-Lozada, y L. Germán Delgado-Cabrera, "Monitoreo y medición del ajuste del pH del agua tratada del Río Cauca mediante índices de estabilización", 2014.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[5]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">S. K. Dewangan, S. K. Shrivastava, V. Tigga, y M. Lakra, "Review Paper on the Role of pH in Water Quality: Implications for Aquatic Life, Human Health, and Environmental Sustainability", <em>IARJSET</em>, vol. 3297, 2007, doi: 10.17148/IARJSET.2023.10633.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[6]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">K. Wu et al., "Drivers of 2013–2020 ozone trends in the Sichuan Basin, China: Impacts of meteorology and precursor emission changes", <em>Environmental Pollution</em>, vol. 300, may 2022, doi: 10.1016/j.envpol.2022.118914.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[7]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">C. Lavanya, M. Nikitha, N. Swetha, K. Nikhitha, y L. Hussein, "Assessment and estimation of water quality using multi-linear regression", en <em>E3S Web of Conferences</em>, EDP Sciences, may 2024. doi: 10.1051/e3sconf/202452903007.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[8]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">H. Blockeel, L. Devos, B. Frénay, G. Nanfack, y S. Nijssen, "Decision trees: from efficient prediction to responsible AI", 2023, <em>Frontiers Media SA</em>. doi: 10.3389/frai.2023.1124553.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[9]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">S. M. Alomani, N. I. Alhawiti, y A. Alhakamy, "Prediction of Quality of Water According to a Random Forest Classifier", <em>International Journal of Advanced Computer Science and Applications</em>, vol. 13, núm. 6, pp. 892–899, 2022, doi: 10.14569/IJACSA.2022.01306105.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[10]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">X. Su, X. He, G. Zhang, Y. Chen, y K. Li, "Research on SVR Water Quality Prediction Model Based on Improved Sparrow Search Algorithm", <em>Comput Intell Neurosci</em>, vol. 2022, 2022, doi: 10.1155/2022/7327072.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[11]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">W. Zhi, A. P. Appling, H. E. Golden, J. Podgorski, y L. Li, "Deep learning for water quality", 1 de marzo de 2024, <em>Springer Nature</em>. doi: 10.1038/s44221-024-00202-z.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[12]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">M. Imani, A. Beikmohammadi, y H. R. Arabnia, "Comprehensive Analysis of Random Forest and XGBoost Performance with SMOTE, ADASYN, and GNUS Under Varying Imbalance Levels", <em>Technologies (Basel)</em>, vol. 13, núm. 3, mar. 2025, doi: 10.3390/technologies13030088.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[13]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">S. Shekhar, A. Bansode, y A. Salim, "A Comparative study of Hyper-Parameter Optimization Tools", ene. 2022. [En línea]. Disponible en: http://arxiv.org/abs/2201.06433</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[14]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">A. C. Aguilar Aguilar y F. F. Obando-Díaz, "Aprendizaje automático para la predicción de calidad de agua potable", <em>Ingeniare</em>, núm. 28, pp. 47–62, may 2020, doi: 10.18041/1909-2458/ingeniare.28.6215.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[15]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">C. Molnar, <em>Interpretable Machine Learning: A Guide for Making Black Box Models Explainable</em>, 2019. [En línea]. Disponible en: http://leanpub.com/interpretable-machine-learning</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[16]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">R. Choudhary, A. Kumar, P. C, M. M. Naik, M. Choudhury, y N. A. Khan, "Predicting water quality index using stacked ensemble regression and SHAP based explainable artificial intelligence", <em>Scientific Reports</em>, vol. 15, núm. 1, pp. 1–15, ago. 2025, doi: 10.1038/s41598-025-09463-4.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[17]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">T. Viering y M. Loog, "The Shape of Learning Curves: a Review", nov. 2022. [En línea]. Disponible en: http://arxiv.org/abs/2103.10948</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[18]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">I. D. López, A. Figueroa, y J. C. Corrales, "Un mapeo sistemático sobre predicción de calidad del agua mediante técnicas de inteligencia computacional", <em>Revista Ingenierías Universidad de Medellín</em>, vol. 15, núm. 28, pp. 35–52, 2016, doi: 10.22395/rium.v15n28a2.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[19]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">Md. J. Islam et al., "Machine Learning-Driven Water Quality Index Prediction: Enhancing Accuracy with Gradient Boosting and Explainable AI for Sustainable Water Monitoring", <em>Applied Agriculture Sciences</em>, vol. 2, núm. 1, pp. 1–7, feb. 2024, doi: 10.25163/agriculture.2110031.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[20]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">A. O. Al-Sulttani, S. K. Ali, A. A. Abdulhameed, y D. T. Jassim, "Artificial Neural Network Assessment of Groundwater Quality for Agricultural Use in Babylon City: An Evaluation of Salinity and Ionic Composition", <em>International Journal of Design and Nature and Ecodynamics</em>, vol. 19, núm. 1, pp. 329–336, feb. 2024, doi: 10.18280/ijdne.190136.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[21]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">S. Senthilnathan, "Usefulness of correlation analysis", 2019. [En línea]. Disponible en: https://ssrn.com/abstract=3416918</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[22]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">K. P. Vatcheva y M. Lee, "Multicollinearity in Regression Analyses Conducted in Epidemiologic Studies", <em>Epidemiology: Open Access</em>, vol. 06, núm. 02, 2016, doi: 10.4172/2161-1165.1000227.</p>
+                </div>
+
+                <div class="flex gap-3 p-4 rounded-xl border border-map-stream/10 bg-map-blue/20">
+                    <span class="text-map-stream font-bold text-sm flex-none w-8">[23]</span>
+                    <p class="text-gray-300 text-sm leading-relaxed">N. V. Sharma y N. S. Yadav, "An optimal intrusion detection system using recursive feature elimination and ensemble of classifiers", <em>Microprocess. Microsyst.</em>, vol. 85, p. 104293, sep. 2021, doi: 10.1016/j.micpro.2021.104293.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const riverPath = document.getElementById('riverPath');
+        let current = 0;
+
+            // Lógica para los modales de la diapositiva 4
+            const slide4 = slides[3];
+            if (slide4) {
+                const buttons = slide4.querySelectorAll('.grid button');
+                const modals = [
+                    document.getElementById('modalModulo1'),
+                    document.getElementById('modalModulo2'),
+                    document.getElementById('modalModulo3'),
+                    document.getElementById('modalModulo4'),
+                    document.getElementById('modalModulo5')
+                ];
+                buttons.forEach((btn, idx) => {
+                    btn.onclick = () => {
+                        modals[idx].classList.remove('hidden');
+                    };
+                });
+                // Cerrar cada modal
+                modals.forEach((modal, idx) => {
+                    const closeBtn = modal.querySelector('button');
+                    closeBtn.onclick = () => {
+                        modal.classList.add('hidden');
+                    };
+                    // Cerrar al hacer clic fuera del contenido
+                    modal.onclick = (e) => {
+                        if (e.target === modal) modal.classList.add('hidden');
+                    };
+                });
+            }
+
+            // Lógica para el modal de bibliografía (diapositiva 11)
+            const btnBibliografia = document.getElementById('btnBibliografia');
+            if (btnBibliografia) {
+                const modalBib = document.getElementById('modalBibliografia');
+                btnBibliografia.onclick = () => { modalBib.classList.remove('hidden'); };
+                document.getElementById('closeModalBibliografia').onclick = () => { modalBib.classList.add('hidden'); };
+                modalBib.onclick = (e) => { if (e.target === modalBib) modalBib.classList.add('hidden'); };
+            }
+
+            // Lógica para el modal de la diapositiva 6
+            const btnMetodologia = document.getElementById('btnMetodologia');
+            if (btnMetodologia) {
+                const modalMet = document.getElementById('modalMetodologia');
+                btnMetodologia.onclick = () => { modalMet.classList.remove('hidden'); };
+                document.getElementById('closeModalMetodologia').onclick = () => { modalMet.classList.add('hidden'); };
+                modalMet.onclick = (e) => { if (e.target === modalMet) modalMet.classList.add('hidden'); };
+            }
+
+            // Lógica para los modales de la diapositiva 5
+            const btnLitES = document.getElementById('btnLitES');
+            const btnLitEN = document.getElementById('btnLitEN');
+            if (btnLitES && btnLitEN) {
+                btnLitES.onclick = () => { document.getElementById('modalLitES').classList.remove('hidden'); };
+                btnLitEN.onclick = () => { document.getElementById('modalLitEN').classList.remove('hidden'); };
+                ['modalLitES', 'modalLitEN'].forEach(id => {
+                    const modal = document.getElementById(id);
+                    modal.querySelector('button').onclick = () => { modal.classList.add('hidden'); };
+                    modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
+                });
+            }
+
+            // Lógica para los modales de la diapositiva 8 (Resultados)
+            const btnResultadosDBO = document.getElementById('btnResultadosDBO');
+            const btnResultadosPH = document.getElementById('btnResultadosPH');
+            if (btnResultadosDBO && btnResultadosPH) {
+                const modalDBO = document.getElementById('modalResultadosDBO');
+                const modalPH = document.getElementById('modalResultadosPH');
+
+                btnResultadosDBO.onclick = () => { modalDBO.classList.remove('hidden'); };
+                btnResultadosPH.onclick = () => { modalPH.classList.remove('hidden'); };
+
+                document.getElementById('closeModalResultadosDBO').onclick = () => { modalDBO.classList.add('hidden'); };
+                document.getElementById('closeModalResultadosPH').onclick = () => { modalPH.classList.add('hidden'); };
+                
+                modalDBO.onclick = (e) => { if (e.target === modalDBO) modalDBO.classList.add('hidden'); };
+                modalPH.onclick = (e) => { if (e.target === modalPH) modalPH.classList.add('hidden'); };
+
+                const setupTabs = (modal) => {
+                    const tabBtns = modal.querySelectorAll('.tab-btn');
+                    const tabContents = modal.querySelectorAll('.tab-content');
+                    
+                    tabBtns.forEach((btn, index) => {
+                        btn.addEventListener('click', () => {
+                            tabBtns.forEach(b => {
+                                b.classList.remove('text-map-stream', 'border-map-stream');
+                                b.classList.add('text-gray-400', 'border-transparent');
+                            });
+                            btn.classList.add('text-map-stream', 'border-map-stream');
+                            btn.classList.remove('text-gray-400', 'border-transparent');
+                            tabContents.forEach(c => c.classList.add('hidden'));
+                            tabContents[index].classList.remove('hidden');
+                        });
+                    });
+                };
+                
+                setupTabs(modalDBO);
+                setupTabs(modalPH);
+            }
+
+        function update() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            const progressPercent = ((current + 1) / slides.length) * 100;
+            progressBar.style.width = progressPercent + '%';
+            
+            // Variar el camino del río sutilmente en cada slide
+            const offset = current * 50;
+            riverPath.setAttribute('d', `M -100,${200+offset} Q 200,${50-offset} 400,${300+offset} T 900,${100-offset} T 1500,${400+offset}`);
+        }
+
+        document.getElementById('nextBtn').onclick = () => { if(current < slides.length - 1) { current++; update(); } };
+        document.getElementById('prevBtn').onclick = () => { if(current > 0) { current--; update(); } };
+        
+        document.addEventListener('keydown', e => { 
+            if(e.key === 'ArrowRight' || e.key === ' ') document.getElementById('nextBtn').click();
+            if(e.key === 'ArrowLeft') document.getElementById('prevBtn').click();
+        });
+    </script>
+</body>
+</html>
